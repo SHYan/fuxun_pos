@@ -20,19 +20,9 @@ package com.floreantpos.model;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.cfg.Configuration;
-
 import com.floreantpos.model.base.BaseShopTable;
 import com.floreantpos.model.dao.ShopTableStatusDAO;
 
-//@Entity
-//@Table(name = "shop_table")
 public class ShopTable extends BaseShopTable {
 	private static final long serialVersionUID = 1L;
 
@@ -76,12 +66,6 @@ public class ShopTable extends BaseShopTable {
 	@Override
 	public String toString() {
 		return String.valueOf(getTableNumber());
-	}
-	
-	public String getDescOrNum(){
-		if(this.getDescription()==null || this.getDescription().equals(""))
-			return String.valueOf(getTableNumber());
-		return this.getDescription();
 	}
 
 	public boolean isTemporary() {
@@ -200,5 +184,4 @@ public class ShopTable extends BaseShopTable {
 	public void setTicketCreateTime(Date ticketCreateTime) {
 		this.ticketCreateTime = ticketCreateTime;
 	}
-	
 }

@@ -87,7 +87,6 @@ import com.floreantpos.ui.dialog.PasswordEntryDialog;
 import com.floreantpos.ui.dialog.SeatSelectionDialog;
 import com.floreantpos.ui.tableselection.TableSelectorDialog;
 import com.floreantpos.ui.tableselection.TableSelectorFactory;
-import com.floreantpos.ui.util.MobiServo;
 import com.floreantpos.ui.views.CookingInstructionSelectionView;
 import com.floreantpos.ui.views.order.actions.TicketEditListener;
 import com.floreantpos.ui.views.payment.PaymentListener;
@@ -292,12 +291,6 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 		btnCancel.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 
-				/* John Test */
-				
-				MobiServo ms = new MobiServo();
-				ms.newTicket();
-				/*
-				
 				if (ticketView.isCancelable()) {
 					ticketView.doCancelOrder();
 					return;
@@ -310,7 +303,6 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 
 				ticketView.doCancelOrder();
 				ticketView.setAllowToLogOut(true);
-				*/
 			}
 		});
 
@@ -593,14 +585,11 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 			}
 			List<ShopTable> tables = dialog.getSelectedTables();
 			List<Integer> addedTables = new ArrayList<>();
-			List<String> addedTableNames = new ArrayList<>();
 			for (ShopTable shopTable : tables) {
 				addedTables.add(shopTable.getId());
-				addedTableNames.add(shopTable.getDescOrNum());
 			}
 			ShopTableStatusDAO.getInstance().removeTicketFromShopTableStatus(currentTicket, null);
 			currentTicket.setTableNumbers(addedTables);
-			currentTicket.setTableNames(addedTableNames);
 			ShopTableDAO.getInstance().occupyTables(currentTicket);
 			actionUpdate();
 		} catch (Exception e) {
@@ -860,8 +849,7 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 
 				if (tableNumbers != null) {
 
-					//String tables = getTableNumbers(currentTicket.getTableNumbers());
-					String tables = (currentTicket.getTableNames()==null) ? "" :  String.join(", ", currentTicket.getTableNames());
+					String tables = getTableNumbers(currentTicket.getTableNumbers());
 
 					btnTableNumber.setText("<html><center>" + "TABLE" + ": " + tables + "</center><html/>");
 

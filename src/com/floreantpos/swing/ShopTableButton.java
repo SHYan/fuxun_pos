@@ -121,7 +121,7 @@ public class ShopTableButton extends PosButton {
 		else {
 			userName = "";
 		}
-		setText("<html><center><b>" + shopTable.getDescOrNum() + "<small>" + userName + ticketIdAsString + "</small></center></b></html>"); //$NON-NLS-1$
+		setText("<html><center><b>" + shopTable.toString() + "<small>" + userName + ticketIdAsString + "</small></center></b></html>"); //$NON-NLS-1$
 		if (shopTable.getUserId() != null && shopTable.getUserId().intValue() != Application.getCurrentUser().getAutoId().intValue()) {
 			setBackground(new Color(139, 0, 139));
 		}
@@ -141,15 +141,13 @@ public class ShopTableButton extends PosButton {
 	public boolean hasUserAccess() {
 		User user = getUser();
 		if (user == null) {
-			//shopTable.setFree(true);
-			//return true;
 			return false;
 		}
 		User currentUser = Application.getCurrentUser();
 
 		int currentUserId = currentUser.getUserId();
 		int ticketUserId = user.getUserId();
-		//POSMessageDialog.showError(this, currentUserId +"... "+ticketUserId);
+
 		if (currentUserId == ticketUserId) {
 			return true;
 		}
@@ -168,7 +166,6 @@ public class ShopTableButton extends PosButton {
 			POSMessageDialog.showError(Application.getPosWindow(), "Incorrect password"); //$NON-NLS-1$
 			return false;
 		}
-		//POSMessageDialog.showError(this, "FALSE");
 		return true;
 	}
 

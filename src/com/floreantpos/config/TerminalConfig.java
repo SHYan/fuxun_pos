@@ -99,19 +99,7 @@ public class TerminalConfig {
 	private static final String Kitchen_Display_Button = "kitchendisplay";
 
 	private static final String KDS_TICKETS_PER_PAGE = "kds.ticket.per_page";
-	
-	//Diana - allow open price
-	private static final String ALLOW_OPEN_PRICE = "allow_open_price";
-	
-	private static final String PRINT_RECEIPT = "receipt_print";
 
-	private static final String SC_INCLUDE_DIS = "sc_include_dis";
-	private static final String TAX_INCLUDE_SC = "tax_include_sc";
-	private static final String PC_NO_SC = "pc_no_sc";
-	private static final String PC_NO_TAX = "pc_no_tax";
-	
-	
-	
 	private static PropertiesConfiguration config = AppConfig.getConfig();
 
 	public static int getTerminalId() {
@@ -345,14 +333,6 @@ public class TerminalConfig {
 	public static void setUseTranslatedName(boolean useTranslatedName) {
 		config.setProperty("use_translated_name", useTranslatedName); //$NON-NLS-1$
 	}
-	
-	public static boolean isChineseTranName() {
-		return config.getBoolean("chinese_tran_name", false); //$NON-NLS-1$
-	}
-
-	public static void setChineseTranName(boolean chineseTranslatedName) {
-		config.setProperty("chinese_tran_name", chineseTranslatedName); //$NON-NLS-1$
-	}
 
 	public static String getOrderTypeFilter() {
 		return config.getString(ORDER_TYPE_FILTER, "ALL"); //$NON-NLS-1$
@@ -562,63 +542,5 @@ public class TerminalConfig {
 
 	public static int getKDSTicketsPerPage() {
 		return config.getInt(KDS_TICKETS_PER_PAGE, 4);
-	}
-
-	//Diana
-	public static void setAllowOpenPrice(boolean selected) {
-		config.setProperty(ALLOW_OPEN_PRICE, selected);
-	}
-	public static boolean isAllowOpenPrice() {
-		return config.getBoolean(ALLOW_OPEN_PRICE, true);
-	}
-	
-	//Diana
-		public static void setPrintReceipt(boolean selected) {
-			config.setProperty(PRINT_RECEIPT, selected);
-		}
-		public static boolean isPrintReceipt() {
-			return config.getBoolean(PRINT_RECEIPT, true);
-		}
-	
-	//John
-	/**
-	 * @return the scIncludeDis
-	 */
-	public static Boolean isScIncludeDis() {
-		return config.getBoolean(SC_INCLUDE_DIS, false);
-	}
-
-	public static void setScIncludeDis(boolean selected) {
-		config.setProperty(SC_INCLUDE_DIS, selected);
-	}
-	/**
-	 * @return the taxIncludeSc
-	 */
-	public static Boolean isTaxIncludeSc() {
-		return config.getBoolean(TAX_INCLUDE_SC, false);
-	}
-
-	public static void setTaxIncludeSc(boolean selected) {
-		config.setProperty(TAX_INCLUDE_SC, selected);
-	}
-	/**
-	 * @return the pcNoSc
-	 */
-	public static Boolean isPcNoSc() {
-		return config.getBoolean(PC_NO_SC, true);
-	}
-
-	public static void setPcNoSc(boolean selected) {
-		config.setProperty(PC_NO_SC, selected);
-	}
-	/**
-	 * @return the pcNoTax
-	 */
-	public static Boolean isPcNoTax() {
-		return config.getBoolean(PC_NO_TAX, false);
-	}
-	
-	public static void setPcNoTax(boolean selected) {
-		config.setProperty(PC_NO_TAX, selected);
 	}
 }

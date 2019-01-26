@@ -62,7 +62,7 @@ public abstract class BaseKitchenTicketItem  implements Comparable, Serializable
 		protected java.lang.String menuItemName;
 		protected java.lang.Integer menuItemGroupId;
 		protected java.lang.String menuItemGroupName;
-		protected java.lang.Double quantity;
+		protected java.lang.Integer quantity;
 		protected java.lang.Double fractionalQuantity;
 		protected java.lang.Boolean fractionalUnit;
 		protected java.lang.String unitName;
@@ -216,7 +216,7 @@ public abstract class BaseKitchenTicketItem  implements Comparable, Serializable
 	/**
 	 * Return the value associated with the column: QUANTITY
 	 */
-	public java.lang.Double getQuantity () {
+	public java.lang.Integer getQuantity () {
 									return quantity == null ? Integer.valueOf(0) : quantity;
 					}
 
@@ -224,7 +224,7 @@ public abstract class BaseKitchenTicketItem  implements Comparable, Serializable
 	 * Set the value related to the column: QUANTITY
 	 * @param quantity the QUANTITY value
 	 */
-	public void setQuantity (java.lang.Double quantity) {
+	public void setQuantity (java.lang.Integer quantity) {
 		this.quantity = quantity;
 	}
 

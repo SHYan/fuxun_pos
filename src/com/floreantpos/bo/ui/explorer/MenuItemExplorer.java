@@ -18,7 +18,6 @@
 package com.floreantpos.bo.ui.explorer;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -50,7 +49,6 @@ import com.floreantpos.Messages;
 import com.floreantpos.POSConstants;
 import com.floreantpos.bo.ui.BOMessageDialog;
 import com.floreantpos.bo.ui.CustomCellRenderer;
-import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.main.Application;
 import com.floreantpos.model.MenuGroup;
 import com.floreantpos.model.MenuItem;
@@ -59,7 +57,6 @@ import com.floreantpos.model.dao.MenuGroupDAO;
 import com.floreantpos.model.dao.MenuItemDAO;
 import com.floreantpos.model.dao.OrderTypeDAO;
 import com.floreantpos.swing.BeanTableModel;
-import com.floreantpos.swing.PosUIManager;
 import com.floreantpos.swing.TransparentPanel;
 import com.floreantpos.ui.dialog.BeanEditorDialog;
 import com.floreantpos.ui.dialog.ComboItemSelectionDialog;
@@ -97,18 +94,9 @@ public class MenuItemExplorer extends TransparentPanel {
 		tableModel.addRows(findAll);
 		table = new JXTable(tableModel);
 		//		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
-		
-		/*
-		if(TerminalConfig.isChineseTranName()) {
-			String uiFont = "SimSun";
-			Font font = new Font(uiFont, Font.PLAIN, PosUIManager.getDefaultFontSize());
-			table.setDefaultRenderer(Object.class, new CustomCellRenderer(font, -1, 3));
-		}else
-		*/ 
 		table.setDefaultRenderer(Object.class, new CustomCellRenderer());
 		table.setRowHeight(60);
-		
+
 		setLayout(new BorderLayout(5, 5));
 		add(new JScrollPane(table));
 

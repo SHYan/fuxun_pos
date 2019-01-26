@@ -17,20 +17,13 @@
  */
 package com.floreantpos.model;
 
-import java.util.List;
-
 import com.floreantpos.model.base.BaseInventoryTransaction;
+
+
 
 public class InventoryTransaction extends BaseInventoryTransaction {
 	private static final long serialVersionUID = 1L;
-	
-	//Diana
-	private Integer item_id; 
-	private String item_name;
-	private String vendor_name;
-	private String tran_type;
-	private String remark;
-	
+
 /*[CONSTRUCTOR MARKER BEGIN]*/
 	public InventoryTransaction () {
 		super();
@@ -57,58 +50,4 @@ public class InventoryTransaction extends BaseInventoryTransaction {
 		this.type = type;
 	}
 
-	public Object getStockAmount() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setStockAmount(double stockAmount) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setOrderTypeList(List<OrderType> orderTypes) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-    public String getItemName() {
-        return item_name;
-    }
-
-    public void setItemName(String item_name) {
-        this.item_name = item_name;
-    }
-    
-    public String getVendorName() {
-        return vendor_name;
-    }
-
-    public void setVendorName(String vendor_name) {
-        this.vendor_name = vendor_name;
-    }
-    
-    public String getTranType() {
-        return tran_type;
-    }
-
-    public void setTranType(String tran_type) {
-        this.tran_type = tran_type;
-    }
-    
-    public Integer getItemId () {
-		return item_id;
-	}
-	public void setItemId (Integer item_id ) {
-		this.item_id = item_id;
-	}
-    
-   /* public String getRemark() {
-        return remark;
-    }
-    
-    public void setRemark(String remark) {
-    	this.remark = remark;
-    }
-*/
 }

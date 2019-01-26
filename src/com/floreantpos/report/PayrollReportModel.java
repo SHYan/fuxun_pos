@@ -25,7 +25,7 @@ import com.floreantpos.swing.ListTableModel;
 public class PayrollReportModel extends ListTableModel {
 	SimpleDateFormat dateFormat2 = new SimpleDateFormat("MMM-dd-yyyy hh:mm a"); //$NON-NLS-1$
 
-	DecimalFormat decimalFormat = new DecimalFormat("###,###"); //$NON-NLS-1$
+	DecimalFormat decimalFormat = new DecimalFormat("0.00"); //$NON-NLS-1$
 
 	public PayrollReportModel() {
 		super(new String[] { "userID", "userName", "from", "to", "total", "rate", "payment", "userSSN" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$

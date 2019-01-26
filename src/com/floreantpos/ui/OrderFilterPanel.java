@@ -47,7 +47,6 @@ import com.floreantpos.ui.dialog.PasswordEntryDialog;
 public class OrderFilterPanel extends JXCollapsiblePane {
 	private ITicketList ticketList;
 	private TicketListView ticketLists;
-	private POSToggleButton btnFilterByAllStatus;
 	private POSToggleButton btnFilterByOpenStatus;
 	private POSToggleButton btnFilterByPaidStatus;
 	private POSToggleButton btnFilterByUnPaidStatus;
@@ -116,13 +115,11 @@ public class OrderFilterPanel extends JXCollapsiblePane {
 	}*/
 
 	private void createPaymentStatusFilterPanel() {
-		btnFilterByAllStatus = new POSToggleButton(PaymentStatusFilter.ALL.toString());
 		btnFilterByOpenStatus = new POSToggleButton(PaymentStatusFilter.OPEN.toString());
 		btnFilterByPaidStatus = new POSToggleButton(PaymentStatusFilter.PAID.toString());
 		btnFilterByUnPaidStatus = new POSToggleButton(PaymentStatusFilter.CLOSED.toString());
 
 		final ButtonGroup paymentGroup = new ButtonGroup();
-		paymentGroup.add(btnFilterByAllStatus);
 		paymentGroup.add(btnFilterByOpenStatus);
 		paymentGroup.add(btnFilterByPaidStatus);
 		paymentGroup.add(btnFilterByUnPaidStatus);
@@ -130,10 +127,6 @@ public class OrderFilterPanel extends JXCollapsiblePane {
 		PaymentStatusFilter paymentStatusFilter = TerminalConfig.getPaymentStatusFilter();
 
 		switch (paymentStatusFilter) {
-			case ALL:
-				btnFilterByAllStatus.setSelected(true);
-				break;
-
 			case OPEN:
 				btnFilterByOpenStatus.setSelected(true);
 				break;
@@ -185,15 +178,13 @@ public class OrderFilterPanel extends JXCollapsiblePane {
 
 			}
 		};
-		
-		btnFilterByAllStatus.addActionListener(psFilterHandler);
+
 		btnFilterByOpenStatus.addActionListener(psFilterHandler);
 		btnFilterByPaidStatus.addActionListener(psFilterHandler);
 		btnFilterByUnPaidStatus.addActionListener(psFilterHandler);
 
 		JPanel filterByPaymentStatusPanel = new JPanel(new MigLayout("", "fill, grow", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		filterByPaymentStatusPanel.setBorder(new TitledBorder(Messages.getString("SwitchboardView.3"))); //$NON-NLS-1$
-		filterByPaymentStatusPanel.add(btnFilterByAllStatus);
 		filterByPaymentStatusPanel.add(btnFilterByOpenStatus);
 		filterByPaymentStatusPanel.add(btnFilterByPaidStatus);
 		filterByPaymentStatusPanel.add(btnFilterByUnPaidStatus);
@@ -224,9 +215,7 @@ public class OrderFilterPanel extends JXCollapsiblePane {
 
 	private void updateButton() {
 		PaymentStatusFilter paymentStatusFilter = TerminalConfig.getPaymentStatusFilter();
-		if (paymentStatusFilter.name().equals("ALL")) {
-			btnFilterByAllStatus.setSelected(true);
-		}else if (paymentStatusFilter.name().equals("OPEN")) {
+		if (paymentStatusFilter.name().equals("OPEN")) {
 			btnFilterByOpenStatus.setSelected(true);
 		}
 		else if (paymentStatusFilter.name().equals("PAID")) {

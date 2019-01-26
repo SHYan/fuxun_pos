@@ -404,7 +404,6 @@ public class SplitTicketDialog extends POSDialog {
 			List<Integer> tables = new ArrayList<>();
 			tables.addAll(tableNumbers);
 			splitTicket.setTableNumbers(tables);
-			
 		}
 		if (originalTicket.getId() != splitTicket.getId() && originalTicket.getPaidAmount() > originalTicket.getTotalAmount()) {
 			transferTicketTransactionToSplitTicket(originalTicket, splitTicket);

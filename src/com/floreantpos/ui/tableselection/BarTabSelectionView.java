@@ -38,7 +38,6 @@ import javax.swing.border.TitledBorder;
 import com.floreantpos.main.Application;
 import com.floreantpos.model.OrderType;
 import com.floreantpos.model.Ticket;
-import com.floreantpos.model.dao.OrderTypeDAO;
 import com.floreantpos.model.dao.TicketDAO;
 import com.floreantpos.swing.BarTabButton;
 import com.floreantpos.swing.PosUIManager;
@@ -76,7 +75,6 @@ public class BarTabSelectionView extends JPanel {
 	}
 
 	private void rendererBarTickets() {
-		//if(orderType==null) return;
 		List<Ticket> openTickets = TicketDAO.getInstance().findOpenTicketsByOrderType(orderType);
 		for (Ticket ticket : openTickets) {
 			BarTabButton barTabButton = new BarTabButton(ticket);
@@ -141,7 +139,6 @@ public class BarTabSelectionView extends JPanel {
 	}
 
 	public void updateView(OrderType orderType) {
-		//if(orderType==null) orderType = OrderTypeDAO.instance.get(1);
 		this.orderType = orderType;
 		buttonsPanel.getContentPane().removeAll();
 		tableButtonMap.clear();

@@ -7,10 +7,9 @@
 		</id>
 
 		<property column="ITEM_ID" name="itemId" type="java.lang.Integer" />
-		<property column="ITEM_COUNT" length="10" name="itemCount" type="java.lang.Double" />
+		<property column="ITEM_COUNT" length="10" name="itemCount" type="java.lang.Integer" />
 		<property column="ITEM_QUANTITY" length="52" name="itemQuantity" type="java.lang.Double" />
 		<property column="ITEM_NAME" length="120" name="name" type="string" />
-		<property column="ITEM_TRANSLATED_NAME" length="120" name="translatedName" type="string" />
 		<property column="ITEM_UNIT_NAME" length="20" name="itemUnitName" type="java.lang.String" />
 		<property column="GROUP_NAME" length="120" name="groupName" type="string" />
 		<property column="CATEGORY_NAME" length="120" name="categoryName" type="string" />
@@ -21,7 +20,6 @@
 		<property column="DISCOUNT" name="discountAmount" type="java.lang.Double" />
 		<property column="TAX_AMOUNT" name="taxAmount" type="java.lang.Double" />
 		<property column="TAX_AMOUNT_WITHOUT_MODIFIERS" name="taxAmountWithoutModifiers" type="java.lang.Double" />
-		<property column="SERVICE_CHARGE_AMOUNT" name="serviceChargeAmount" type="java.lang.Double" />
 		<property column="TOTAL_PRICE" name="totalAmount" type="java.lang.Double" />
 		<property column="TOTAL_PRICE_WITHOUT_MODIFIERS" name="totalAmountWithoutModifiers" type="java.lang.Double" />
 		<property column="BEVERAGE" name="beverage" type="java.lang.Boolean" />
@@ -84,12 +82,5 @@
 		</many-to-one>
 
 		<property name="pizzaSectionModeType" column="PIZZA_SECTION_MODE" type="java.lang.Integer" />
-		<!--  Diana - 2018-07-29 -->
-		<property column="is_return" name="isReturn" type="java.lang.Boolean" />
-		<property column="return_item_id" name="returnItemId" type="java.lang.Integer" />
-		
-		<!--  Diana - 2018-08-11 for service charge  -->
-		<property column="ITEM_SERVICE_CHARGE_RATE" length="52" name="serviceChargeRate" type="java.lang.Double" />
-		<property column="SERVICE_CHARGE" name="serviceCharge" type="java.lang.Double" />
 	</class>
 </hibernate-mapping>

@@ -19,7 +19,6 @@ package com.floreantpos.ui.views.payment;
 
 import java.awt.HeadlessException;
 import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -86,17 +85,6 @@ public class SettleTicketProcessor implements CardInputListener {
 			POSMessageDialog.showError(POSUtil.getFocusedWindow(), com.floreantpos.POSConstants.TICKET_IS_EMPTY_);
 			return;
 		}
-		/*double diff = (Double)tenderAmount - ticket.getTotalAmount();
-		if(diff >= 0)	{
-			ticket.setPaid(true);
-			ticket.setClosed(true);
-			ticket.setClosingDate(new Date());
-			ticket.setDueAmount(0.0);
-			ticket.setPaidAmount( ticket.getTotalAmount() );
-		}
-		else{
-			//ticket.setTotalAmount(ticket.getTotalAmount() - (Double)tenderAmount);
-		}*/
 
 		OrderController.saveOrder(ticket);
 

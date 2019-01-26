@@ -65,7 +65,6 @@ import com.floreantpos.main.Application;
 import com.floreantpos.model.OrderType;
 import com.floreantpos.model.PaymentStatusFilter;
 import com.floreantpos.model.Ticket;
-import com.floreantpos.model.TicketItem;
 import com.floreantpos.model.User;
 import com.floreantpos.model.UserPermission;
 import com.floreantpos.model.UserType;
@@ -101,8 +100,6 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 	private static SwitchboardView instance;
 
 	private JPanel orderPanel;
-	
-	Ticket[] merge_arr = new Ticket[]{null,null}; //Diana 
 
 	//TicketListView tickteListViewObj;
 	/** Creates new form SwitchboardView */
@@ -116,15 +113,11 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 		btnEditTicket.addActionListener(this);
 		btnGroupSettle.addActionListener(this);
 		btnOrderInfo.addActionListener(this);
-	//	btnReopenTicket.addActionListener(this);
+		btnReopenTicket.addActionListener(this);
 		btnSettleTicket.addActionListener(this);
 		btnSplitTicket.addActionListener(this);
 		btnVoidTicket.setAction(new VoidTicketAction(this));
 
-		//Diana - 2018-08-03 for merge ticket 
-		btnMergeTicket.addActionListener(this);
-						
-				
 		orderServiceExtension = (OrderServiceExtension) ExtensionManager.getPlugin(OrderServiceExtension.class);
 
 		if (orderServiceExtension == null) {
@@ -289,21 +282,17 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 			firstRowButtonPanel.add(btnCloseOrder);
 
 			secondRowButtonPanel.getContentPane().add(btnSplitTicket);
-			//secondRowButtonPanel.getContentPane().add(btnReopenTicket);
+			secondRowButtonPanel.getContentPane().add(btnReopenTicket);
 			secondRowButtonPanel.getContentPane().add(btnVoidTicket);
 			secondRowButtonPanel.getContentPane().add(btnRefundTicket);
 			secondRowButtonPanel.getContentPane().add(btnAssignDriver);
-			//Diana - 2018-08-03 for merge ticket 
-			secondRowButtonPanel.getContentPane().add(btnMergeTicket);
 		}
 		else {
 			firstRowButtonPanel.add(btnOrderInfo);
 			firstRowButtonPanel.add(btnEditTicket);
 			firstRowButtonPanel.add(btnCloseOrder);
 			firstRowButtonPanel.add(btnSplitTicket);
-			//Diana - 2018-08-03 for merge ticket 
-			firstRowButtonPanel.add(btnMergeTicket);
-			
+
 			secondRowButtonPanel.getContentPane().add(btnReopenTicket);
 			secondRowButtonPanel.getContentPane().add(btnVoidTicket);
 			secondRowButtonPanel.getContentPane().add(btnRefundTicket);
@@ -535,85 +524,6 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 		}
 	}
 
-	//Diana - 2018-08-03 for merge ticket 
-			private void doMergeTicket() {
-				try {
-					Ticket selectedTicket = getFirstSelectedTicket();
-
-					if (selectedTicket == null) {
-						return;
-					}
-
-					// initialize the ticket.
-					Ticket ticket = TicketDAO.getInstance().loadFullTicket(selectedTicket.getId());
-					
-					if(ticket.getClosingDate() == null){ //Diana - 2018-08-07 - prevent split bill on closed bill
-						if(merge_arr[0] == null){
-							merge_arr[0]= ticket;
-							int alarm = POSMessageDialog.showYesNoQuestionDialog(Application.getPosWindow(),
-									"Do you select another ticket to merge? ", Messages.getString("Confirmation") ); //$NON-NLS-1$ //$NON-NLS-2$
-							if (alarm == JOptionPane.NO_OPTION) {
-								merge_arr = new Ticket[]{null,null};
-							}
-						}	
-						else 
-							merge_arr[1]= ticket;
-						
-						//merge ticket
-						if(merge_arr[0] != null && merge_arr[1] != null){
-						//	System.out.print(merge_arr[0].getId()+" "+merge_arr[1].getId());
-							if(merge_arr[0].getId() == merge_arr[1].getId()){
-								POSMessageDialog.showMessage("You cannot merge same ticket. Select Ticket is "+merge_arr[0].getId()+".");
-								merge_arr[1] = null;
-							}else{
-								int option = POSMessageDialog.showYesNoQuestionDialog(Application.getPosWindow(),
-										"Are you sure to merge ticket "+merge_arr[0].getId()+" and "+merge_arr[1].getId()+"?", Messages.getString("Confirmation") ); //$NON-NLS-1$ //$NON-NLS-2$
-								if (option == JOptionPane.YES_OPTION) {
-									//merge
-									Ticket firstticket = TicketDAO.getInstance().loadFullTicket(merge_arr[0].getId());
-									firstticket.setServiceCharge(firstticket.getServiceCharge()+ticket.getServiceCharge());
-									firstticket.setSubtotalAmount(firstticket.getSubtotalAmount()+ticket.getSubtotalAmount());
-									firstticket.setTaxAmount(firstticket.getTaxAmount()+ticket.getTaxAmount());
-									firstticket.setTotalAmount(firstticket.getTotalAmount()+ticket.getTotalAmount());
-									firstticket.setDiscountAmount(firstticket.getDiscountAmount()+ticket.getDiscountAmount());
-									firstticket.setDueAmount(firstticket.getDueAmount()+ticket.getDueAmount());
-									TicketDAO.getInstance().saveOrUpdate(firstticket);
-									
-									ticket.setMergeId(merge_arr[0].getId());
-									ticket.setServiceCharge(0.0);
-									ticket.setSubtotalAmount(0.0);
-									ticket.setTaxAmount(0.0);
-									ticket.setTotalAmount(0.0);
-									ticket.setDiscountAmount(0.0);
-									ticket.setDueAmount(0.0);
-									ticket.setClosed(true);
-									ticket.setPaid(true);
-									List<TicketItem>  ticketitems = ticket.getTicketItems();
-									for (TicketItem item : ticketitems) {
-									    item.setTicket(merge_arr[0]);
-									}
-									try{
-										TicketDAO.getInstance().saveOrUpdate(ticket);
-										//merge_arr = new Ticket[]{null,null};
-									}
-									catch(Exception ex){
-										POSMessageDialog.showMessage("You cannot merge same ticket. Select Ticket is "+merge_arr[0].getId()+".");	
-										//merge_arr[1] = null;
-									}
-								}
-								merge_arr = new Ticket[]{null,null};
-								updateView();
-							}
-						}
-					}else{
-						POSMessageDialog.showMessage("You cannot merge ticket. Ticket is already paid!");
-					}
-					
-				} catch (Exception e) {
-					POSMessageDialog.showError(this, POSConstants.ERROR_MESSAGE, e);
-				}
-			}
-
 	private void doEditTicket() {
 		try {
 			Ticket ticket = null;
@@ -640,12 +550,7 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 	}
 
 	private void editTicket(Ticket ticket) {
-		/*if (ticket.isPaid()) {
-			POSMessageDialog.showMessage(this, Messages.getString("SwitchboardView.14")); //$NON-NLS-1$
-			return;
-		}*/
-		//Diana - prevent re-open closed ticket
-		if (ticket.isPaid() & ticket.isClosed()) {
+		if (ticket.isPaid()) {
 			POSMessageDialog.showMessage(this, Messages.getString("SwitchboardView.14")); //$NON-NLS-1$
 			return;
 		}
@@ -711,10 +616,9 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 
 				btnEditTicket.setEnabled(false);
 				btnGroupSettle.setEnabled(false);
-				//btnReopenTicket.setEnabled(false);
+				btnReopenTicket.setEnabled(false);
 				btnSettleTicket.setEnabled(false);
 				btnSplitTicket.setEnabled(false);
-				btnMergeTicket.setEnabled(true); 	//Diana - 2018-08-03 for merge
 
 				for (UserPermission permission : permissions) {
 					if (permission.equals(UserPermission.VOID_TICKET)) {
@@ -724,18 +628,14 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 						btnSettleTicket.setEnabled(true);
 						btnGroupSettle.setEnabled(true);
 					}
-					/*else if (permission.equals(UserPermission.REOPEN_TICKET)) {
+					else if (permission.equals(UserPermission.REOPEN_TICKET)) {
 						btnReopenTicket.setEnabled(true);
-					}*/
+					}
 					else if (permission.equals(UserPermission.SPLIT_TICKET)) {
 						btnSplitTicket.setEnabled(true);
 					}
 					else if (permission.equals(UserPermission.CREATE_TICKET)) {
 						btnEditTicket.setEnabled(true);
-					}
-					//Diana - 2018-08-03 for merge ticket 
-					else if (permission.equals(UserPermission.MERGE_TICKET)) {
-						btnMergeTicket.setEnabled(true);
 					}
 					/*
 					 else if (permission.equals(UserPermission.TAKE_OUT)) {
@@ -775,9 +675,6 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 	private PosButton btnCloseOrder = new PosButton(POSConstants.CLOSE_ORDER_BUTTON_TEXT);
 	//private PosBlinkButton btnRefreshTicketList = new PosBlinkButton(Messages.getString(Messages.getString("SwitchboardView.21"))); //NON-NLS-1$ //$NON-NLS-1$
 
-	//Diana - 2018-08-03 for merge ticket 
-	private PosButton btnMergeTicket = new PosButton(POSConstants.MERGE_TICKET_BUTTON_TEXT);  
-		
 	private com.floreantpos.ui.TicketListView ticketList = new com.floreantpos.ui.TicketListView();
 
 	private TitledBorder ticketsListPanelBorder;
@@ -807,18 +704,14 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 		else if (source == btnOrderInfo) {
 			doShowOrderInfo();
 		}
-		/*else if (source == btnReopenTicket) {
+		else if (source == btnReopenTicket) {
 			doReopenTicket();
-		}*/
+		}
 		else if (source == btnSettleTicket) {
 			doSettleTicket();
 		}
 		else if (source == btnSplitTicket) {
 			doSplitTicket();
-		}
-		//Diana - 2018-08-03 for merge ticket 
-		else if (source == btnMergeTicket) {
-			doMergeTicket();
 		}
 	}
 

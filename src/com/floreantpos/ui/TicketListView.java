@@ -51,11 +51,9 @@ import com.floreantpos.POSConstants;
 import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.main.Application;
 import com.floreantpos.model.DataUpdateInfo;
-import com.floreantpos.model.ShopTable;
 import com.floreantpos.model.Ticket;
 import com.floreantpos.model.User;
 import com.floreantpos.model.dao.DataUpdateInfoDAO;
-import com.floreantpos.model.dao.ShopTableDAO;
 import com.floreantpos.model.dao.TicketDAO;
 import com.floreantpos.swing.POSToggleButton;
 import com.floreantpos.swing.PaginatedTableModel;
@@ -112,8 +110,7 @@ public class TicketListView extends JPanel implements ITicketList {
 		table.setColumnControlVisible(true);
 		table.setModel(tableModel = new TicketListTableModel());
 		tableModel.setPageSize(25);
-		//table.setRowHeight(PosUIManager.getSize(60));
-		table.setRowHeight(PosUIManager.getSize(30)); //Diana - reduce row height - 2018-08-02
+		table.setRowHeight(PosUIManager.getSize(60));
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		table.setDefaultRenderer(Object.class, new PosTableRenderer());
 		table.setGridColor(Color.LIGHT_GRAY);
@@ -450,19 +447,7 @@ public class TicketListView extends JPanel implements ITicketList {
 					return Integer.valueOf(ticket.getId());
 
 				case 1:
-					ShopTableDAO stdao = new ShopTableDAO();
-					try{
-						ShopTable st = (ShopTable) stdao.getByNumber(ticket.getTableNumbers().get(0));
-					
-						if(st.getDescription().equals(""))
-							return ticket.getTableNumbers();
-						else return st.getDescription();
-					}catch(Exception e){
-						return ticket.getTableNumbers();
-					}
-					//}
-					
-					//return ticket.getTableNumbers();
+					return ticket.getTableNumbers();
 
 				case 2:
 					User owner = ticket.getOwner();

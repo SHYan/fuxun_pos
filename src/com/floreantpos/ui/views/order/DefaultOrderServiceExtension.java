@@ -35,7 +35,6 @@ import com.floreantpos.model.Customer;
 import com.floreantpos.model.OrderType;
 import com.floreantpos.model.ShopTable;
 import com.floreantpos.model.Ticket;
-import com.floreantpos.model.dao.ShopTableDAO;
 import com.floreantpos.model.dao.TicketDAO;
 import com.floreantpos.ui.dialog.POSMessageDialog;
 import com.floreantpos.ui.views.IView;
@@ -63,7 +62,7 @@ public class DefaultOrderServiceExtension extends OrderServiceExtension {
 	@Override
 	public void createNewTicket(OrderType ticketType, List<ShopTable> selectedTables, Customer customer) throws TicketAlreadyExistsException {
 		int numberOfGuests = 0;
-		//System.out.println(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
+
 		if (ticketType.isShowGuestSelection()) {
 			numberOfGuests = PosGuiUtil.captureGuestNumber();
 		}
@@ -96,9 +95,6 @@ public class DefaultOrderServiceExtension extends OrderServiceExtension {
 			for (ShopTable shopTable : selectedTables) {
 				shopTable.setServing(true);
 				ticket.addTable(shopTable.getTableNumber());
-				//ShopTable sp = ShopTableDAO.getInstance().getByNumber(shopTable.getTableNumber());
-				//System.out.println(shopTable.getDescOrNum()+"-- is desc :"+sp.getDescOrNum());
-				ticket.addTableName(shopTable.getDescOrNum());
 			}
 		}
 

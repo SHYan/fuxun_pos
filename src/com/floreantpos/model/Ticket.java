@@ -17,7 +17,6 @@
  */
 package com.floreantpos.model;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,17 +30,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.floreantpos.Messages;
 import com.floreantpos.actions.NewBarTabAction;
-import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.main.Application;
 import com.floreantpos.model.base.BaseTicket;
 import com.floreantpos.model.dao.CustomerDAO;
@@ -57,8 +51,6 @@ import com.floreantpos.util.POSUtil;
 public class Ticket extends BaseTicket {
 
 	private static final long serialVersionUID = 1L;
-	private static Log logger = LogFactory.getLog(Ticket.class);
-	
 	// public final static int TAKE_OUT = -1;
 
 	//	public final static String DINE_IN = "DINE IN";
@@ -140,32 +132,13 @@ public class Ticket extends BaseTicket {
 	//	}
 
 	public void addTable(int tableNumber) {
-		//logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
 		List<Integer> numbers = getTableNumbers();
 		if (numbers == null) {
 			numbers = new ArrayList<Integer>();
 			setTableNumbers(numbers);
-		}else {
-			if(numbers.contains(tableNumber)) return;
 		}
 
 		numbers.add(tableNumber);
-		//john
-		setTableNumbers(numbers);
-	}
-	
-	public void addTableName(String tableName){
-		List<String> numbers = getTableNames();
-		if (numbers == null) {
-			numbers = new ArrayList<String>();
-			setTableNames(numbers);
-		}else {
-			if(numbers.contains(tableName)) return;
-		}
-
-		numbers.add(tableName);
-		//john
-		setTableNames(numbers);
 	}
 
 	@Override
@@ -201,7 +174,6 @@ public class Ticket extends BaseTicket {
 		gratuity.setTicket(this);
 		gratuity.setTerminal(Application.getInstance().getTerminal());
 		gratuity.setOwner(getOwner());
-		//gratuity.setOwner(null);
 		gratuity.setPaid(false);
 		return gratuity;
 	}
@@ -239,38 +211,6 @@ public class Ticket extends BaseTicket {
 			super.setTicketItems(items);
 		}
 		return items;
-	}
-	
-	
-	public List<TicketItem> getTicketItemsSummary() {
-		List<TicketItem> items = super.getTicketItems();
-		List<TicketItem> sumItems = new ArrayList<TicketItem> ();
-		
-		if (items == null) {
-			items = new ArrayList<TicketItem>();
-			super.setTicketItems(items);
-			return items;
-		}else {
-			boolean dupFlag = false;
-			TicketItem item, sItem;
-			for(int i=0; i<items.size(); i++) {
-				dupFlag = false;
-				//item = items.get(i);
-				item = (TicketItem) SerializationUtils.clone(items.get(i));
-				for(int j=0; j<sumItems.size(); j++) {
-					sItem = sumItems.get(j);
-					if(item.getName().equals(sItem.getName())) {
-						sumItems.get(j).setItemCount(sItem.getItemCount()+item.getItemCount());
-						sumItems.get(j).setSubtotalAmount(sItem.getSubtotalAmount()+item.getSubtotalAmount());
-						dupFlag = true;
-					}
-				}
-				
-				if(!dupFlag) sumItems.add(item);				
-			}
-			return sumItems;
-		}
-		
 	}
 
 	@Override
@@ -319,24 +259,16 @@ public class Ticket extends BaseTicket {
 
 	public void calculatePrice() {
 		priceIncludesTax = Application.getInstance().isPriceIncludesTax();
-		
-		double itemQty = 0;
+
 		List<TicketItem> ticketItems = getTicketItems();
 		if (ticketItems == null) {
 			return;
 		}
 
 		for (TicketItem ticketItem : ticketItems) {
-			//ticketItem.calculatePrice();
-			//Diana
-			if(ticketItem.getIsReturn() && ticketItem.getReturnItemId()>0)
-				ticketItem.calculatePriceforReturn();
-			else
-				ticketItem.calculatePrice();
-			itemQty += ticketItem.getItemCount();
+			ticketItem.calculatePrice();
 		}
-		this.setItemQty(itemQty);
-		
+
 		double subtotalAmount = calculateSubtotalAmount();
 		double discountAmount = calculateItemsDiscountAmount();
 		double toleranceAmount = calculateToleranceAmount();
@@ -347,46 +279,35 @@ public class Ticket extends BaseTicket {
 
 		setSubtotalAmount(subtotalAmount);
 		discountAmount += toleranceAmount;
-		setDiscountAmount(discountAmount);
-		
-		Boolean isParcel = false;
-		if(getTableNumbers()!=null && getTableNames()!=null) {
-			if(getTableNames().toString().toUpperCase().contains("PC")) isParcel = true;
-		}
-		String type = getTicketType();
-		if(type!=null && !type.equals("DINE IN")) isParcel = true;;
-		
-		double serviceChargeAmount = calculateServiceCharge(discountAmount, isParcel);
 
-		double taxAmount = calculateTax(discountAmount, isParcel);
+		double taxAmount = calculateTax();
 		if (ticketDiscountAmount > 0) {
-			//double discountTax = taxAmount * (ticketDiscountAmount / subtotalAmount);
-			double discountTax = ticketDiscountAmount * (ticketDiscountAmount / subtotalAmount);
-			taxAmount = taxAmount - discountTax;  //for recalculate tax - Diana 20181118
+			double discountTax = taxAmount * ticketDiscountAmount / subtotalAmount;
+			taxAmount = taxAmount - discountTax;
 		}
+		setDiscountAmount(discountAmount);
 		setTaxAmount(taxAmount);
-		
-		Double deliveryChargeAmount = NumberUtil.roundToTwoDigit(getDeliveryCharge());		
-				
+
+		Double deliveryChargeAmount = NumberUtil.roundToTwoDigit(getDeliveryCharge());
+
+		double serviceChargeAmount = calculateServiceCharge();
 		double totalAmount = 0;
 
 		if (priceIncludesTax) {
 			totalAmount = subtotalAmount - discountAmount + deliveryChargeAmount + serviceChargeAmount;
 		}
-		else {//totalAmount = subtotalAmount - discountAmount + deliveryChargeAmount + taxAmount + serviceChargeAmount;
+		else {
 			totalAmount = subtotalAmount - discountAmount + deliveryChargeAmount + taxAmount + serviceChargeAmount;
 		}
-		
 
 		if (getGratuity() != null) {
 			totalAmount += getGratuity().getAmount();
 		}
-		//System.out.print("adj amount "+getAdjustmentAmount());
+		
 		totalAmount += getAdjustmentAmount();
 		totalAmount = fixInvalidAmount(totalAmount);
 
 		setServiceCharge(serviceChargeAmount);
-		
 		setTotalAmount(NumberUtil.roundToTwoDigit(totalAmount));
 
 		double dueAmount = totalAmount - getPaidAmount();
@@ -453,18 +374,10 @@ public class Ticket extends BaseTicket {
 		if (ticketItems != null) {
 			for (TicketItem ticketItem : ticketItems) {
 				ticketItemDiscounts += ticketItem.getDiscountAmount();
-				if(ticketItem.getDiscountAmount() > 0) {
-					try {
-						setDiscountRate(new DecimalFormat("0.#").format(ticketItem.getDiscounts().get(0).getValue()));
-					}catch(Exception e) {
-						logger.debug(e.getMessage());
-					}
-				}
 			}
 		}
 		ticketItemDiscounts = fixInvalidAmount(ticketItemDiscounts);
 		return NumberUtil.roundToTwoDigit(ticketItemDiscounts);
-		//return ticketItemDiscounts;
 	}
 
 	public double calculateToleranceAmount() {
@@ -492,9 +405,6 @@ public class Ticket extends BaseTicket {
 			for (TicketDiscount tDiscount : getDiscounts()) {
 				if (tDiscount.getName().equals("Tolerance")) { //$NON-NLS-1$
 					continue;
-				}
-				if(tDiscount.getType()==1) {
-					setDiscountRate(new DecimalFormat("0.#").format(tDiscount.getValue()));
 				}
 				discounts.add(tDiscount);
 			}
@@ -543,9 +453,7 @@ public class Ticket extends BaseTicket {
 		return ticketDiscount;
 	}
 
-	private double calculateTax(double discount, boolean isParcel) {
-		if(isParcel && TerminalConfig.isPcNoTax()) return 0.0;
-		
+	private double calculateTax() {
 		List<TicketItem> ticketItems = getTicketItems();
 		if (ticketItems == null) {
 			return 0;
@@ -554,9 +462,6 @@ public class Ticket extends BaseTicket {
 		double tax = 0;
 		for (TicketItem ticketItem : ticketItems) {
 			tax += ticketItem.getTaxAmount();
-			if(ticketItem.getTaxRate() > 0 && getTaxRate()==null) {
-				setTaxRate(new DecimalFormat("0.#").format(ticketItem.getTaxRate()));
-			}
 		}
 
 		return NumberUtil.roundToTwoDigit(fixInvalidAmount(tax));
@@ -669,7 +574,6 @@ public class Ticket extends BaseTicket {
 
 		List<TicketItem> ticketItems = getTicketItems();
 		for (TicketItem item : ticketItems) {
-			//JOptionPane.showMessageDialog(null, "need "+item.isShouldPrintToKitchen());
 			if (item.isShouldPrintToKitchen() && !item.isPrintedToKitchen()) {
 				return true;
 			}
@@ -721,26 +625,20 @@ public class Ticket extends BaseTicket {
 	//		return tip;
 	//	}
 
-	public double calculateServiceCharge(double discount, Boolean isParcel) {
-		//logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
-		
+	public double calculateServiceCharge() {
+		/*if (getType() != OrderType.DINE_IN) {
+			return 0;
+		}*/
+
 		Restaurant restaurant = Application.getInstance().getRestaurant();
 		double serviceChargePercentage = restaurant.getServiceChargePercentage();
-		if(serviceChargePercentage==0.0) return 0.0;
-		if(isParcel && TerminalConfig.isPcNoSc()) return 0.0;
-		
+
 		double serviceCharge = 0.0;
-		
-		//serviceCharge = (getSubtotalAmount() - getDiscountAmount()) * (serviceChargePercentage / 100.0);
-		//serviceCharge = (getSubtotalAmount() - getDiscountAmount()) * (serviceChargePercentage / 100.0); //Diana
-		if(TerminalConfig.isScIncludeDis()) {
-			serviceCharge = (getSubtotalAmount() - discount) * (serviceChargePercentage / 100.0);
-		}else {
-			serviceCharge = (getSubtotalAmount()) * (serviceChargePercentage / 100.0);
+
+		if (serviceChargePercentage > 0.0) {
+			serviceCharge = (getSubtotalAmount() - getDiscountAmount()) * (serviceChargePercentage / 100.0);
 		}
-		
-		setServiceChargeRate(new DecimalFormat("0.#").format(serviceChargePercentage));
-	
+
 		return NumberUtil.roundToTwoDigit(fixInvalidAmount(serviceCharge));
 	}
 

@@ -45,38 +45,43 @@ import com.floreantpos.bo.actions.CategoryExplorerAction;
 import com.floreantpos.bo.actions.ConfigureRestaurantAction;
 import com.floreantpos.bo.actions.CookingInstructionExplorerAction;
 import com.floreantpos.bo.actions.CouponExplorerAction;
+import com.floreantpos.bo.actions.CreditCardReportAction;
 import com.floreantpos.bo.actions.CurrencyExplorerAction;
-import com.floreantpos.bo.actions.DailySalesReportAction;
+import com.floreantpos.bo.actions.CustomPaymentReportAction;
 import com.floreantpos.bo.actions.DataExportAction;
 import com.floreantpos.bo.actions.DataImportAction;
 import com.floreantpos.bo.actions.DrawerPullReportExplorerAction;
+import com.floreantpos.bo.actions.EmployeeAttendanceAction;
 import com.floreantpos.bo.actions.GroupExplorerAction;
-import com.floreantpos.bo.actions.InventoryTransactonListAction;
+import com.floreantpos.bo.actions.HourlyLaborReportAction;
 import com.floreantpos.bo.actions.ItemExplorerAction;
+import com.floreantpos.bo.actions.JournalReportAction;
+import com.floreantpos.bo.actions.KeyStatisticsSalesReportAction;
 import com.floreantpos.bo.actions.LanguageSelectionAction;
 import com.floreantpos.bo.actions.MenuItemSizeExplorerAction;
+import com.floreantpos.bo.actions.MenuUsageReportAction;
 import com.floreantpos.bo.actions.ModifierExplorerAction;
 import com.floreantpos.bo.actions.ModifierGroupExplorerAction;
 import com.floreantpos.bo.actions.MultiplierExplorerAction;
-import com.floreantpos.bo.actions.OrderStatusReportAction;
+import com.floreantpos.bo.actions.OpenTicketSummaryReportAction;
 import com.floreantpos.bo.actions.OrdersTypeExplorerAction;
-import com.floreantpos.bo.actions.PayoutReportAction;
+import com.floreantpos.bo.actions.PayrollReportAction;
 import com.floreantpos.bo.actions.PizzaCrustExplorerAction;
+import com.floreantpos.bo.actions.PizzaExplorerAction;
 import com.floreantpos.bo.actions.PizzaItemExplorerAction;
 import com.floreantpos.bo.actions.PizzaModifierExplorerAction;
-import com.floreantpos.bo.actions.ProductSalesReportAction;
-import com.floreantpos.bo.actions.ProfitLossReportAction;
-import com.floreantpos.bo.actions.SaleSummaryAction;
+import com.floreantpos.bo.actions.SalesAnalysisReportAction;
+import com.floreantpos.bo.actions.SalesBalanceReportAction;
+import com.floreantpos.bo.actions.SalesDetailReportAction;
+import com.floreantpos.bo.actions.SalesExceptionReportAction;
+import com.floreantpos.bo.actions.SalesReportAction;
+import com.floreantpos.bo.actions.ServerProductivityReportAction;
 import com.floreantpos.bo.actions.ShiftExplorerAction;
-import com.floreantpos.bo.actions.StockAdjustReportAction;
-import com.floreantpos.bo.actions.StockReportAction;
 import com.floreantpos.bo.actions.TaxExplorerAction;
 import com.floreantpos.bo.actions.TicketExplorerAction;
-import com.floreantpos.bo.actions.TruncateTransactionAction;
 import com.floreantpos.bo.actions.UserExplorerAction;
 import com.floreantpos.bo.actions.UserTypeExplorerAction;
 import com.floreantpos.bo.actions.ViewGratuitiesAction;
-import com.floreantpos.bo.actions.YearlyReportAction;
 import com.floreantpos.config.AppConfig;
 import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.customPayment.CustomPaymentBrowserAction;
@@ -90,11 +95,6 @@ import com.floreantpos.model.UserType;
 import com.floreantpos.swing.PosUIManager;
 import com.floreantpos.table.ShowTableBrowserAction;
 import com.jidesoft.swing.JideTabbedPane;
-
-//Diana
-import com.floreantpos.bo.actions.InventoryTransactonAction;
-import com.floreantpos.bo.actions.InventoryVendorAction;
-import com.floreantpos.bo.actions.InventoryWarehouseAction;
 
 /**
  *
@@ -163,7 +163,6 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		if (newUserType == null) {
 			createAdminMenu(menuBar);
 			createExplorerMenu(menuBar);
-			createInventoryMenu(menuBar);
 			createReportMenu(menuBar);
 			createFloorMenu(menuBar);
 		}
@@ -173,9 +172,6 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 			}
 			if (permissions != null && permissions.contains(UserPermission.VIEW_EXPLORERS)) {
 				createExplorerMenu(menuBar);
-			}
-			if (permissions != null && permissions.contains(UserPermission.VIEW_INVENTORY)) {
-				createInventoryMenu(menuBar);
 			}
 			if (permissions != null && permissions.contains(UserPermission.VIEW_REPORTS)) {
 				createReportMenu(menuBar);
@@ -188,7 +184,7 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		}
 
 		JMenu helpMenu = new JMenu(Messages.getString("BackOfficeWindow.0")); //$NON-NLS-1$
-		//helpMenu.add(new UpdateAction());
+		helpMenu.add(new UpdateAction());
 		helpMenu.add(new AboutAction());
 		menuBar.add(helpMenu);
 
@@ -197,13 +193,9 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 
 	private void createReportMenu(JMenuBar menuBar) {
 		JMenu reportMenu = new JMenu(com.floreantpos.POSConstants.REPORTS);
-		reportMenu.add(new YearlyReportAction());
-		reportMenu.add(new DailySalesReportAction());
-		reportMenu.add(new OrderStatusReportAction());
-		reportMenu.add(new ProductSalesReportAction());
-		//reportMenu.add(new SalesReportAction());
-		//reportMenu.add(new OpenTicketSummaryReportAction());
-		/*reportMenu.add(new HourlyLaborReportAction());
+		reportMenu.add(new SalesReportAction());
+		reportMenu.add(new OpenTicketSummaryReportAction());
+		reportMenu.add(new HourlyLaborReportAction());
 		reportMenu.add(new PayrollReportAction());
 		reportMenu.add(new EmployeeAttendanceAction());
 		reportMenu.add(new KeyStatisticsSalesReportAction());
@@ -216,13 +208,8 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		reportMenu.add(new SalesBalanceReportAction());
 		reportMenu.add(new SalesExceptionReportAction());
 		reportMenu.add(new SalesDetailReportAction());
-		reportMenu.add(new PurchaseReportAction());
-		reportMenu.add(new InventoryOnHandReportAction());*/
-		reportMenu.add(new StockReportAction());
-		reportMenu.add(new StockAdjustReportAction());
-		reportMenu.add(new PayoutReportAction());
-		reportMenu.add(new ProfitLossReportAction());
-		reportMenu.add(new SaleSummaryAction());
+		//reportMenu.add(new PurchaseReportAction());
+		//reportMenu.add(new InventoryOnHandReportAction());
 		menuBar.add(reportMenu);
 	}
 
@@ -247,7 +234,7 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		explorerMenu.add(new DrawerPullReportExplorerAction());
 		explorerMenu.add(new TicketExplorerAction());
 		explorerMenu.add(new AttendanceHistoryAction());
-		//explorerMenu.add(new PizzaExplorerAction());
+		explorerMenu.add(new PizzaExplorerAction());
 		//explorerMenu.add(subMenuPizza);
 
 		subMenuPizza.add(new MenuItemSizeExplorerAction());
@@ -274,19 +261,6 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		adminMenu.add(new DataExportAction());
 		adminMenu.add(new DataImportAction());
 		adminMenu.add(new LanguageSelectionAction());
-		
-		User user = Application.getCurrentUser();
-		UserType newUserType = user.getType();
-
-		Set<UserPermission> permissions = null;
-
-		if (newUserType != null) {
-			permissions = newUserType.getPermissions();
-		}
-		if (permissions != null && permissions.contains(UserPermission.TRUNCATE_DATA)) {
-			adminMenu.add(new TruncateTransactionAction());
-		}
-		
 		menuBar.add(adminMenu);
 	}
 
@@ -297,16 +271,6 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 
 		menuBar.add(floorPlanMenu);
 
-	}
-	
-	private void createInventoryMenu(JMenuBar menuBar){
-		JMenu inventoryMenu = new JMenu(com.floreantpos.POSConstants.INVENTORY);
-		inventoryMenu.add(new InventoryTransactonAction());
-		inventoryMenu.add(new InventoryTransactonListAction());
-		inventoryMenu.add(new InventoryVendorAction());
-		inventoryMenu.add(new InventoryWarehouseAction());
-		menuBar.add(inventoryMenu);
-		
 	}
 
 	/** This method is called from within the constructor to

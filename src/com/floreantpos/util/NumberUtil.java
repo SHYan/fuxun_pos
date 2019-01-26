@@ -28,28 +28,25 @@ import org.apache.commons.lang.StringUtils;
 public class NumberUtil {
 	private final static NumberFormat numberFormat = NumberFormat.getNumberInstance();
 	private final static NumberFormat numberFormat2 = NumberFormat.getNumberInstance();
-	private final static DecimalFormat decimalFormat = new DecimalFormat("###,###"); //$NON-NLS-1$
+	private final static DecimalFormat decimalFormat = new DecimalFormat("#.##"); //$NON-NLS-1$
 
 	static {
-		numberFormat.setMinimumFractionDigits(0);
-		numberFormat.setMaximumFractionDigits(0);
+		numberFormat.setMinimumFractionDigits(2);
+		numberFormat.setMaximumFractionDigits(2);
 
-		numberFormat2.setMinimumFractionDigits(0);
-		numberFormat2.setMaximumFractionDigits(0);
+		numberFormat2.setMinimumFractionDigits(3);
+		numberFormat2.setMaximumFractionDigits(3);
 	}
 
 	public static double roundToTwoDigit(double value) {
-		
-		
 		BigDecimal bd = new BigDecimal(value);
-		bd = bd.setScale(0, RoundingMode.HALF_UP);
+		bd = bd.setScale(2, RoundingMode.HALF_UP);
 		return bd.doubleValue();
-		
 	}
 
 	public static double roundToThreeDigit(double value) {
 		BigDecimal bd = new BigDecimal(value);
-		bd = bd.setScale(0, RoundingMode.HALF_UP);
+		bd = bd.setScale(3, RoundingMode.HALF_UP);
 		return bd.doubleValue();
 	}
 

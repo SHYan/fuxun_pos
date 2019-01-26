@@ -51,15 +51,10 @@ public abstract class BaseInventoryTransaction  implements Comparable, Serializa
 	private java.lang.Integer id;
 
 	// fields
-	/*protected java.util.Date transactionDate;
+		protected java.util.Date transactionDate;
 	protected java.lang.Double quantity;
-	protected java.lang.Double unitPrice;
-	protected java.lang.String remark;*/
-	protected java.util.Date transaction_date;
-	protected java.lang.Double old_quantity;
-	protected java.lang.Double unit_quantity;
-	protected java.lang.Double unit_price;
-	protected java.lang.String remark;
+		protected java.lang.Double unitPrice;
+		protected java.lang.String remark;
 
 	// many to one
 	private com.floreantpos.model.PurchaseOrder referenceNo;
@@ -96,7 +91,7 @@ public abstract class BaseInventoryTransaction  implements Comparable, Serializa
 	 * Return the value associated with the column: TRANSACTION_DATE
 	 */
 	public java.util.Date getTransactionDate () {
-					return transaction_date;
+					return transactionDate;
 			}
 
 	/**
@@ -104,7 +99,7 @@ public abstract class BaseInventoryTransaction  implements Comparable, Serializa
 	 * @param transactionDate the TRANSACTION_DATE value
 	 */
 	public void setTransactionDate (java.util.Date transactionDate) {
-		this.transaction_date = transactionDate;
+		this.transactionDate = transactionDate;
 	}
 
 
@@ -113,7 +108,7 @@ public abstract class BaseInventoryTransaction  implements Comparable, Serializa
 	 * Return the value associated with the column: UNIT_QUANTITY
 	 */
 	public java.lang.Double getQuantity() {
-		return unit_quantity == null ? Double.valueOf(0) : unit_quantity;
+		return quantity == null ? Double.valueOf(0) : quantity;
 	}
 
 	/**
@@ -121,19 +116,7 @@ public abstract class BaseInventoryTransaction  implements Comparable, Serializa
 	 * @param quantity the UNIT_QUANTITY value
 	 */
 	public void setQuantity(java.lang.Double quantity) {
-		this.unit_quantity = quantity;
-	}
-	
-	public java.lang.Double getOldQuantity() {
-		return old_quantity == null ? Double.valueOf(0) : old_quantity;
-	}
-
-	/**
-	 * Set the value related to the column: UNIT_QUANTITY
-	 * @param quantity the UNIT_QUANTITY value
-	 */
-	public void setOldQuantity(java.lang.Double old_qty) {
-		this.old_quantity = old_qty;
+		this.quantity = quantity;
 	}
 
 
@@ -142,7 +125,7 @@ public abstract class BaseInventoryTransaction  implements Comparable, Serializa
 	 * Return the value associated with the column: UNIT_PRICE
 	 */
 	public java.lang.Double getUnitPrice () {
-									return unit_price == null ? Double.valueOf(0) : unit_price;
+									return unitPrice == null ? Double.valueOf(0) : unitPrice;
 					}
 
 	/**
@@ -150,7 +133,7 @@ public abstract class BaseInventoryTransaction  implements Comparable, Serializa
 	 * @param unitPrice the UNIT_PRICE value
 	 */
 	public void setUnitPrice (java.lang.Double unitPrice) {
-		this.unit_price = unitPrice;
+		this.unitPrice = unitPrice;
 	}
 
 

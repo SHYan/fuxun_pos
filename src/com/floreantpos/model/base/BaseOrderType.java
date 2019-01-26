@@ -40,8 +40,6 @@ public abstract class BaseOrderType  implements Comparable, Serializable {
 	public static String PROP_SHOW_PRICE_ON_BUTTON = "showPriceOnButton"; //$NON-NLS-1$
 	public static String PROP_CONSOLIDATE_ITEMS_IN_RECEIPT = "consolidateItemsInReceipt"; //$NON-NLS-1$
 
-	//public static String NO_TAX = "noTax"; //$NON-NLS-1$
-	//public static String NO_SERVICE_CHARGE = "noServiceCharge"; //$NON-NLS-1$
 
 	// constructors
 	public BaseOrderType () {
@@ -99,10 +97,6 @@ public abstract class BaseOrderType  implements Comparable, Serializable {
 		protected java.lang.Boolean showPriceOnButton;
 		protected java.lang.Boolean showStockCountOnButton;
 		protected java.lang.Boolean showUnitPriceInTicketGrid;
-		
-	//	protected java.lang.Boolean noServiceCharge;
-	//	protected java.lang.Boolean noTax;
-		
 		protected java.lang.String properties;
 
 
@@ -485,19 +479,6 @@ public abstract class BaseOrderType  implements Comparable, Serializable {
 	}
 
 
-	/*public java.lang.Boolean isNoServicecharge () {
-		return noServiceCharge == null ? Boolean.FALSE : noServiceCharge;
-	}
-	public void setNoServicecharge (java.lang.Boolean noServicecharge) {
-		this.noServiceCharge = noServicecharge;
-	}
-	
-	public java.lang.Boolean isNoTax () {
-		return noTax == null ? Boolean.FALSE : noTax;
-	}
-	public void setNoTax (java.lang.Boolean noTax) {
-		this.noTax = noTax;
-	}*/
 
 	/**
 	 * Return the value associated with the column: PROPERTIES

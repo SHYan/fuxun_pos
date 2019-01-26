@@ -19,7 +19,6 @@ package com.floreantpos.bo.ui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Image;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,34 +33,15 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class CustomCellRenderer extends DefaultTableCellRenderer {
 	private Border unselectedBorder = null;
 	private Border selectedBorder = null;
-	//private Font font;
-	//private int modRow;
-	//private int modColumn;
-	
+
 	public CustomCellRenderer() {
 //		setLineWrap(true);
 //		setWrapStyleWord(true);
 //		setOpaque(true);
-		//this.modRow=-2;
 	}
-	/*
-	public CustomCellRenderer(Font font, int row, int column) {
-		this.font = font;
-		this.modRow = row;
-		this.modColumn = column;
-	}
-	*/
+
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		/*
-		if(this.modRow != -2) {
-			if(this.modRow==-1 && this.modColumn==-1)
-				this.setFont(font);
-			else if(this.modRow==-1 && this.modColumn==column)
-				this.setFont(font);
-			else if(this.modRow==row && this.modColumn==-1)
-				this.setFont(font);
-		}
-		*/
+
 		if (selectedBorder == null) {
 			selectedBorder = BorderFactory.createMatteBorder(5, 5, 5, 5, table.getSelectionBackground());
 		}
@@ -112,7 +92,6 @@ public class CustomCellRenderer extends DefaultTableCellRenderer {
 		
 		if(value instanceof String) {
 			value = "<html>" + value + "</html>"; //$NON-NLS-1$ //$NON-NLS-2$
-			
 		}
 
 		return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);

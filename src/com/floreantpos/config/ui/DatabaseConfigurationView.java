@@ -119,7 +119,7 @@ public class DatabaseConfigurationView extends ConfigurationView implements Acti
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		btnCreateDb = new JButton(Messages.getString("DatabaseConfigurationDialog.29")); //$NON-NLS-1$
 		btnCreateDb.setActionCommand(CONFIGURE_DB);
-		//buttonPanel.add(btnCreateDb);
+		buttonPanel.add(btnCreateDb);
 		buttonPanel.add(btnTestConnection);
 		buttonPanel.add(btnSave);
 
@@ -138,12 +138,12 @@ public class DatabaseConfigurationView extends ConfigurationView implements Acti
 		databaseCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Database selectedDb = (Database) databaseCombo.getSelectedItem();
-				/* John Start
+
 				if (selectedDb == Database.DERBY_SINGLE) {
 					setFieldsVisible(false);
 					return;
 				}
-				*/
+
 				setFieldsVisible(true);
 
 				String databasePort = AppConfig.getDatabasePort();
@@ -194,13 +194,13 @@ public class DatabaseConfigurationView extends ConfigurationView implements Acti
 				if (i != JOptionPane.YES_OPTION) {
 					return;
 				}
-//Diana - Not ask to generate sample data
-				/*i = JOptionPane.showConfirmDialog(POSUtil.getBackOfficeWindow(),
+
+				i = JOptionPane.showConfirmDialog(POSUtil.getBackOfficeWindow(),
 						Messages.getString("DatabaseConfigurationView.3"), Messages.getString("DatabaseConfigurationView.4"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 				boolean generateSampleData = false;
 				if (i == JOptionPane.YES_OPTION)
-					generateSampleData = true;*/
-				boolean generateSampleData = false;
+					generateSampleData = true;
+
 				saveConfig(selectedDb, providerName, databaseURL, databasePort, databaseName, user, pass, connectionString, hibernateDialect);
 
 				String connectionString2 = selectedDb.getCreateDbConnectString(databaseURL, databasePort, databaseName);
@@ -279,15 +279,14 @@ public class DatabaseConfigurationView extends ConfigurationView implements Acti
 		tfDatabaseName.setText(AppConfig.getDatabaseName());
 		tfUserName.setText(AppConfig.getDatabaseUser());
 		tfPassword.setText(AppConfig.getDatabasePassword());
-		/* John Start
+
 		if (selectedDb == Database.DERBY_SINGLE) {
 			setFieldsVisible(false);
 		}
 		else {
 			setFieldsVisible(true);
 		}
-		 */
-		setFieldsVisible(true);
+
 		setInitialized(true);
 	}
 

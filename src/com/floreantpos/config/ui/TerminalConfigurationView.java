@@ -75,11 +75,6 @@ public class TerminalConfigurationView extends ConfigurationView {
 	private JTextArea taTerminalLocation;
 
 	private JCheckBox cbTranslatedName = new JCheckBox(Messages.getString("TerminalConfigurationView.2")); //$NON-NLS-1$
-	private JCheckBox cbChineseTranName = new JCheckBox(Messages.getString("TerminalConfigurationView.48")); //$NON-NLS-1$
-	//Diana - allow open price
-	private JCheckBox cbOpenPrice = new JCheckBox(Messages.getString("TerminalConfigurationView.49")); //$NON-NLS-1$
-	private JCheckBox cbPrintReceipt = new JCheckBox(Messages.getString("TerminalConfigurationView.50")); //$NON-NLS-1$
-	
 	private JCheckBox cbFullscreenMode = new JCheckBox(Messages.getString("TerminalConfigurationView.3")); //$NON-NLS-1$
 	private JCheckBox cbUseSettlementPrompt = new JCheckBox(Messages.getString("TerminalConfigurationView.4")); //$NON-NLS-1$
 	private JCheckBox cbShowDbConfiguration = new JCheckBox(Messages.getString("TerminalConfigurationView.5")); //$NON-NLS-1$
@@ -89,11 +84,6 @@ public class TerminalConfigurationView extends ConfigurationView {
 	private JCheckBox chkAllowToDelPrintedItem = new JCheckBox("Allow to delete printed ticket item");
 	private JCheckBox chkAllowQuickMaintenance = new JCheckBox("Allow quick maintenance");
 	private JCheckBox chkModifierCannotExceedMaxLimit = new JCheckBox("Allow adding modifier when it reaches max limit");
-	
-	private JCheckBox pc_no_sc = new JCheckBox("Parcel No SC");
-	private JCheckBox pc_no_tax = new JCheckBox("Parcel No Tax");
-	private JCheckBox sc_include_dis = new JCheckBox("*SC Include Discount");
-	private JCheckBox tax_include_sc = new JCheckBox("*Tax Include SC");
 
 	private JComboBox<String> cbFonts = new JComboBox<String>();
 	private JComboBox<String> cbDefaultView;
@@ -152,18 +142,11 @@ public class TerminalConfigurationView extends ConfigurationView {
 				}
 			}
 		});
-		contentPanel.add(sc_include_dis, "newline"); //$NON-NLS-1$
-		contentPanel.add(tax_include_sc, "wrap"); //$NON-NLS-1$
-		contentPanel.add(pc_no_sc, "newline"); //$NON-NLS-1$
-		contentPanel.add(pc_no_tax, "wrap"); //$NON-NLS-1$
-		
 		contentPanel.add(cbAutoLogoff, "newline"); //$NON-NLS-1$
 		contentPanel.add(tfLogoffTime, "wrap"); //$NON-NLS-1$
 
 		contentPanel.add(cbTranslatedName, "span 2"); //$NON-NLS-1$
-		//contentPanel.add(cbChineseTranName, "span 2"); //$NON-NLS-1$
-		contentPanel.add(cbFullscreenMode, "span 2"); //$NON-NLS-1$
-		
+		contentPanel.add(cbFullscreenMode, "newline, span"); //$NON-NLS-1$
 		contentPanel.add(cbUseSettlementPrompt, "newline, span"); //$NON-NLS-1$
 		contentPanel.add(cbShowBarCodeOnReceipt, "newline,span"); //$NON-NLS-1$
 		contentPanel.add(cbGroupKitchenReceiptItems, "newline,span"); //$NON-NLS-1$
@@ -171,10 +154,7 @@ public class TerminalConfigurationView extends ConfigurationView {
 		contentPanel.add(chkAllowToDelPrintedItem, "newline,span"); //$NON-NLS-1$
 		contentPanel.add(chkAllowQuickMaintenance, "newline,span"); //$NON-NLS-1$
 		contentPanel.add(chkModifierCannotExceedMaxLimit, "newline,span"); //$NON-NLS-1$
-		//Diana
-		contentPanel.add(cbOpenPrice, "span 2"); //$NON-NLS-1$
-		contentPanel.add(cbPrintReceipt, "span 2"); //$NON-NLS-1$
-		
+
 		contentPanel.add(new JLabel(Messages.getString("TerminalConfigurationView.17")), "newline"); //$NON-NLS-1$//$NON-NLS-2$
 		contentPanel.add(cbFonts, "span 2, wrap"); //$NON-NLS-1$
 
@@ -288,15 +268,9 @@ public class TerminalConfigurationView extends ConfigurationView {
 
 		TerminalConfig.setTerminalId(terminalNumber);
 		TerminalConfig.setDefaultPassLen(defaultPassLen);
-		TerminalConfig.setScIncludeDis(sc_include_dis.isSelected());
-		TerminalConfig.setTaxIncludeSc(tax_include_sc.isSelected());
-		TerminalConfig.setPcNoSc(pc_no_sc.isSelected());
-		TerminalConfig.setPcNoTax(pc_no_tax.isSelected());
-		
 		TerminalConfig.setFullscreenMode(cbFullscreenMode.isSelected());
 		TerminalConfig.setShowDbConfigureButton(cbShowDbConfiguration.isSelected());
 		TerminalConfig.setUseTranslatedName(cbTranslatedName.isSelected());
-		//TerminalConfig.setChineseTranName(cbChineseTranName.isSelected());
 
 		TerminalConfig.setTouchScreenButtonHeight(buttonHeight);
 		TerminalConfig.setMenuItemButtonWidth(menuItemButtonWidth);
@@ -312,10 +286,6 @@ public class TerminalConfigurationView extends ConfigurationView {
 		TerminalConfig.setEnabledMultiCurrency(chkEnabledMultiCurrency.isSelected());
 		TerminalConfig.setAllowToDeletePrintedTicketItem(chkAllowToDelPrintedItem.isSelected());
 		TerminalConfig.setAllowQuickMaintenance(chkAllowQuickMaintenance.isSelected());
-		//Diana
-		TerminalConfig.setAllowOpenPrice(cbOpenPrice.isSelected());
-		TerminalConfig.setPrintReceipt(cbPrintReceipt.isSelected());
-		
 
 		//POSMessageDialog.showMessage(com.floreantpos.util.POSUtil.getFocusedWindow(), Messages.getString("TerminalConfigurationView.40")); //$NON-NLS-1$
 		String selectedFont = (String) cbFonts.getSelectedItem();
@@ -357,12 +327,6 @@ public class TerminalConfigurationView extends ConfigurationView {
 
 		tfTerminalNumber.setText(String.valueOf(TerminalConfig.getTerminalId()));
 		tfSecretKeyLength.setText(String.valueOf(TerminalConfig.getDefaultPassLen()));
-		
-		sc_include_dis.setSelected(TerminalConfig.isScIncludeDis());
-		tax_include_sc.setSelected(TerminalConfig.isTaxIncludeSc());
-		pc_no_sc.setSelected(TerminalConfig.isPcNoSc());
-		pc_no_tax.setSelected(TerminalConfig.isPcNoTax());
-		
 		cbFullscreenMode.setSelected(TerminalConfig.isFullscreenMode());
 		cbShowDbConfiguration.setSelected(TerminalConfig.isShowDbConfigureButton());
 		cbUseSettlementPrompt.setSelected(TerminalConfig.isUseSettlementPrompt());
@@ -371,17 +335,13 @@ public class TerminalConfigurationView extends ConfigurationView {
 		chkEnabledMultiCurrency.setSelected(TerminalConfig.isEnabledMultiCurrency());
 		chkAllowToDelPrintedItem.setSelected(TerminalConfig.isAllowedToDeletePrintedTicketItem());
 		chkAllowQuickMaintenance.setSelected(TerminalConfig.isAllowedQuickMaintenance());
-		//Diana
-		cbOpenPrice.setSelected(TerminalConfig.isAllowOpenPrice());
-		cbPrintReceipt.setSelected(TerminalConfig.isPrintReceipt());
-		
+
 		tfButtonHeight.setText("" + TerminalConfig.getTouchScreenButtonHeight()); //$NON-NLS-1$
 		tfScaleFactor.setText("" + TerminalConfig.getScreenScaleFactor()); //$NON-NLS-1$
 		tfFontSize.setText("" + TerminalConfig.getTouchScreenFontSize()); //$NON-NLS-1$
 		jsResize.setValue((int) (TerminalConfig.getScreenScaleFactor() * 10));
 
 		cbTranslatedName.setSelected(TerminalConfig.isUseTranslatedName());
-		cbChineseTranName.setSelected(TerminalConfig.isChineseTranName());
 		cbAutoLogoff.setSelected(TerminalConfig.isAutoLogoffEnable());
 		tfLogoffTime.setText("" + TerminalConfig.getAutoLogoffTime()); //$NON-NLS-1$
 		tfLogoffTime.setEnabled(cbAutoLogoff.isSelected());

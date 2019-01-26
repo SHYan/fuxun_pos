@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.logging.LogFactory;
-//import org.bouncycastle.util.Strings;
 
 import com.floreantpos.main.Application;
 import com.floreantpos.model.base.BaseUser;
@@ -165,16 +164,12 @@ public class User extends BaseUser {
 	}
 
 	public String getFullName() {
-		if(getLastName()!= null)
-			return (getFirstName() + " " + getLastName()).trim(); //$NON-NLS-1$
-		else return getFirstName();
+		return getFirstName() + " " + getLastName(); //$NON-NLS-1$
 	}
 
 	@Override
 	public String toString() {
-		if(getLastName()!= null)
-			return (getFirstName() + " " + getLastName()).trim(); //$NON-NLS-1$
-		else return getFirstName();
+		return getFirstName() + " " + getLastName(); //$NON-NLS-1$
 	}
 
 	public boolean isManager() {

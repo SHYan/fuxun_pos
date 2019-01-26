@@ -17,7 +17,6 @@
  */
 package com.floreantpos.report;
 
-import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -82,15 +81,11 @@ public class KitchenTicketDataSource extends AbstractReportDataSource {
 						return String.valueOf((int) itemQuantity) + item.getUnitName();
 					}
 					return String.valueOf(itemQuantity) + item.getUnitName();
-					//DecimalFormat format = new DecimalFormat("0.##");
-					//return format.format(itemQuantity).toString() + item.getUnitName();
 				}
 				if (item.getQuantity() == 0) {
 					return "";
 				}
-				DecimalFormat format = new DecimalFormat("0.##");
-				return format.format(item.getQuantity()).toString();
-				//return String.valueOf(item.getQuantity());
+				return String.valueOf(item.getQuantity());
 		}
 		return null;
 	}

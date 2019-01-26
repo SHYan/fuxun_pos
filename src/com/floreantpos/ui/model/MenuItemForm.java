@@ -27,7 +27,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -68,7 +67,6 @@ import org.hibernate.Session;
 
 import com.floreantpos.Messages;
 import com.floreantpos.PosLog;
-import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.extension.ExtensionManager;
 import com.floreantpos.extension.InventoryPlugin;
 import com.floreantpos.main.Application;
@@ -92,7 +90,6 @@ import com.floreantpos.swing.FixedLengthTextField;
 import com.floreantpos.swing.IUpdatebleView;
 import com.floreantpos.swing.IntegerTextField;
 import com.floreantpos.swing.MessageDialog;
-import com.floreantpos.swing.PosUIManager;
 import com.floreantpos.ui.BeanEditor;
 import com.floreantpos.ui.dialog.BeanEditorDialog;
 import com.floreantpos.ui.dialog.ConfirmDeleteDialog;
@@ -307,12 +304,6 @@ public class MenuItemForm extends BeanEditor<MenuItem> implements ActionListener
 
 		tfTranslatedName = new FixedLengthTextField(20);
 		tfTranslatedName.setLength(120);
-		/*
-		if(TerminalConfig.isChineseTranName()) {
-			String uiFont = "SimSun";
-			Font font = new Font(uiFont, Font.PLAIN, PosUIManager.getDefaultFontSize());
-			tfTranslatedName.setFont(font);
-		}*/
 
 		lblUnitName = new JLabel(Messages.getString("MenuItemForm.23")); //$NON-NLS-1$
 		lblKitchenPrinter = new JLabel(Messages.getString("MenuItemForm.27")); //$NON-NLS-1$
@@ -886,12 +877,6 @@ public class MenuItemForm extends BeanEditor<MenuItem> implements ActionListener
 
 		menuItem.setButtonColorCode(btnButtonColor.getBackground().getRGB());
 		menuItem.setTextColorCode(btnTextColor.getForeground().getRGB());
-		
-		MenuGroup group =  (MenuGroup) cbGroup.getSelectedItem();
-		if(group != null) {
-			menuItem.setGroupName(group.getDisplayName());
-			menuItem.setCategoryName(group.getParent().getDisplayName());
-		}
 
 		/*	if (!terminalList.getCheckedValues().isEmpty()) {
 				menuItem.setTerminals(terminalList.getCheckedValues());

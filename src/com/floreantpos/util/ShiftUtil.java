@@ -33,7 +33,7 @@ public class ShiftUtil {
 	private static final String DEFAULT_SHIFT = "DEFAULT SHIFT"; //$NON-NLS-1$
 	private static final Calendar calendar = Calendar.getInstance();
 	private static final Calendar calendar2 = Calendar.getInstance();
-	private static final NumberFormat format = new DecimalFormat("###,###"); //$NON-NLS-1$
+	private static final NumberFormat format = new DecimalFormat("00"); //$NON-NLS-1$
 	
 	static {
 		calendar.clear();

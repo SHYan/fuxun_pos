@@ -25,9 +25,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -45,9 +42,6 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import net.miginfocom.swing.MigLayout;
 
 import com.floreantpos.IconFactory;
@@ -61,7 +55,6 @@ import com.floreantpos.main.Application;
 import com.floreantpos.model.OrderType;
 import com.floreantpos.model.ShopTable;
 import com.floreantpos.model.ShopTableStatus;
-import com.floreantpos.model.TableStatus;
 import com.floreantpos.model.Ticket;
 import com.floreantpos.model.dao.ShopTableDAO;
 import com.floreantpos.model.dao.ShopTableStatusDAO;
@@ -74,7 +67,6 @@ import com.floreantpos.swing.ShopTableButton;
 import com.floreantpos.ui.dialog.NumberSelectionDialog2;
 import com.floreantpos.ui.dialog.POSDialog;
 import com.floreantpos.ui.dialog.POSMessageDialog;
-//import com.floreantpos.ui.dialog.SampleComparator;
 import com.floreantpos.ui.views.order.OrderView;
 import com.floreantpos.ui.views.order.RootView;
 import com.floreantpos.ui.views.payment.SplitedTicketSelectionDialog;
@@ -83,8 +75,7 @@ import com.floreantpos.util.TicketAlreadyExistsException;
 import com.jidesoft.swing.JideScrollPane;
 
 public class DefaultTableSelectionView extends TableSelector implements ActionListener {
-	Log logger = LogFactory.getLog(DefaultTableSelectionView.class);
-	
+
 	private DefaultListModel<ShopTableButton> addedTableListModel = new DefaultListModel<ShopTableButton>();
 	private DefaultListModel<ShopTableButton> removeTableListModel = new DefaultListModel<ShopTableButton>();
 	private Map<ShopTable, ShopTableButton> tableButtonMap = new HashMap<ShopTable, ShopTableButton>();
@@ -109,6 +100,7 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 	}
 
 	private void init() {
+		setLayout(new BorderLayout(10, 10));
 
 		buttonsPanel = new ScrollableFlowPanel(FlowLayout.CENTER);
 		TitledBorder titledBorder1 = BorderFactory.createTitledBorder(null, POSConstants.TABLES, TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION);
@@ -129,7 +121,6 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 
 		add(tabbedPane, java.awt.BorderLayout.CENTER);
 		createButtonActionPanel();
-		//redererTables();
 	}
 
 	private void createButtonActionPanel() {
@@ -209,7 +200,6 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 	}
 
 	public synchronized void redererTables() {
-		logger.debug("DefaultTableSelectionView : redererTables : ");
 		clearSelection();
 		buttonsPanel.getContentPane().removeAll();
 
@@ -217,67 +207,10 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 
 		List<ShopTable> tables = new ArrayList<>();
 		tables.addAll(ShopTableDAO.getInstance().findAll());
-		//Sort Table by Table Name - Diana 20181126
-		/*Collections.sort(tables,new Comparator<ShopTable>(){
-			@Override
-		    public int compare(ShopTable o1, ShopTable o2)
-		    {
-				int compare = 0;
-				try{
-				if(o1.getDescription() == null && o2.getDescription() == null){
-					Integer num1 = o1.getId();
-			        Integer num2 = o2.getId();
-			        compare =  num1.compareTo(num2);
-				}
-				else{
-			        String[]  ob1 =o1.getDescription().split("(?<=[\\w&&\\D])(?=\\d)");
-			        String[]  ob2 =o2.getDescription().split("(?<=[\\w&&\\D])(?=\\d)");
-			        if(!ob1[0].equals(ob2[0])){
-			            return ob1[0].compareTo(ob2[0]);
-			        }
-			        Integer num1 = Integer.parseInt(ob1[1]);
-			        Integer num2 = Integer.parseInt(ob2[1]);
-			        compare =  num1.compareTo(num2);
-				}
-				return compare;
-		      
-		    }catch(Exception ex){
-		    	return compare;
-		    }
-		    }
-		}
-		);*/
-		Collections.sort(tables,new Comparator<ShopTable>(){
-			@Override
-			public int compare(ShopTable o1, ShopTable o2)
-		    {
-				int compare = 0;
-				if(o1.getDescription()==null || o2.getDescription()==null)
-					return 0;
-		        String[]  ob1 =o1.getDescription().split("(?<=[\\w&&\\D])(?=\\d)");
-		        String[]  ob2 =o2.getDescription().split("(?<=[\\w&&\\D])(?=\\d)");
-		        if(!ob1[0].equals(ob2[0]) || ob1.length==1 || ob2.length==1){
-		        	try {
-		        		Integer num1 = Integer.parseInt(ob1[0]);
-				        Integer num2 = Integer.parseInt(ob2[0]);
-				        return num1.compareTo(num2);
-		        	}catch(Exception e) {
-		        		return ob1[0].compareTo(ob2[0]);
-		        	}
-		            
-		        }else{
-		        	Integer num1 = Integer.parseInt(ob1[1]);
-			        Integer num2 = Integer.parseInt(ob2[1]);
-			        return num1.compareTo(num2);	
-		        }
-		    }
-		});
-
-
-		
 		if (RootView.getInstance().isMaintenanceMode()) {
 			tables.add(new ShopTable(null, 0, 0, null));
 		}
+
 		for (ShopTable shopTable : tables) {
 			ShopTableButton tableButton = new ShopTableButton(shopTable);
 			tableButton.setPreferredSize(PosUIManager.getSize(157, 138));
@@ -312,7 +245,7 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 
 		ShopTableButton button = (ShopTableButton) e.getSource();
 		int tableNumber = button.getId();
-		
+
 		ShopTable shopTable = ShopTableDAO.getInstance().getByNumber(tableNumber);
 		if (shopTable == null) {
 			POSMessageDialog.showError(this, Messages.getString("TableSelectionDialog.2") + e + Messages.getString("TableSelectionDialog.3")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -370,35 +303,20 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 			this.removeTableListModel.addElement(button);
 			return;
 		}
-		
 		if (shopTableStatus.hasMultipleTickets() && !btnUnGroup.isSelected()) {
 			if (isCreateNewTicket()) {
 				showSplitTickets(shopTableStatus, shopTable);
 			}
 			return;
 		}
-		
 		if (shopTable.isServing() && !btnGroup.isSelected()) {
 			if (!button.hasUserAccess()) {
-				
-				//Diana - 20181116 - overcomes table lock 
-				List<ShopTable> selectedTables = getSelectedTables();
-				selectedTables.add(shopTable);
-				try {
-					OrderServiceFactory.getOrderService().createNewTicket(getOrderType(), selectedTables, null);
-					closeDialog(false);
-				} catch (TicketAlreadyExistsException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				//Diana - 20181116
 				return;
 			}
 			if (isCreateNewTicket()) {
 				editTicket(button.getTicket());
 				closeDialog(false);
 			}
-			//POSMessageDialog.showError(this, "selected 2");
 			return;
 		}
 

@@ -25,9 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -67,7 +65,7 @@ import com.floreantpos.swing.PaginatedTableModel;
 
 public class TicketDAO extends BaseTicketDAO {
 	private final static TicketDAO instance = new TicketDAO();
-	Log logger = LogFactory.getLog(TicketDAO.class);
+
 	/**
 	 * Default constructor. Can be used in place of getInstance()
 	 */
@@ -109,8 +107,6 @@ public class TicketDAO extends BaseTicketDAO {
 
 	@Override
 	public void saveOrUpdate(Ticket ticket, Session session) {
-		logger.debug("TicketDAO ： saveOrUpdate() ");
-
 		//TODO: INVENTORY PLUGIN SUPPORT
 		adjustInventoryItems(session, ticket);
 
@@ -293,7 +289,6 @@ public class TicketDAO extends BaseTicketDAO {
 	}
 
 	public List<Ticket> findOpenTicketsByOrderType(OrderType orderType) {
-		logger.debug("TicketDAO : findOpenTicketsByOrderType : ");
 		Session session = null;
 
 		try {
@@ -1052,7 +1047,6 @@ public class TicketDAO extends BaseTicketDAO {
 
 			if (ticketItem.isFractionalUnit()) {
 				itemMap.put(ticketItem.getItemId(), ticketItem.getItemQuantity() + previousValue);
-				
 			}
 			else {
 				itemMap.put(ticketItem.getItemId(), ticketItem.getItemCount() + previousValue);

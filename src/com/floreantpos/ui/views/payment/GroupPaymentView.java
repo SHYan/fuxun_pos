@@ -527,7 +527,7 @@ public class GroupPaymentView extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 
 			try {
-				DecimalFormat format = new DecimalFormat("###,###"); //$NON-NLS-1$
+				DecimalFormat format = new DecimalFormat("##.00"); //$NON-NLS-1$
 
 				PosButton button = (PosButton) e.getSource();
 

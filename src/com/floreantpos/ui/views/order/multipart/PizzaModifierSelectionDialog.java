@@ -462,7 +462,7 @@ public class PizzaModifierSelectionDialog extends POSDialog implements ModifierS
 	}
 
 	private void updatePizzaQuantityAndPrice() {
-		ticketItem.setItemCount((double) pizzaQuantity);
+		ticketItem.setItemCount(pizzaQuantity);
 
 		List<TicketItemModifier> ticketItemModifiers = ticketItem.getTicketItemModifiers();
 		if (ticketItemModifiers != null)
@@ -475,8 +475,8 @@ public class PizzaModifierSelectionDialog extends POSDialog implements ModifierS
 	}
 
 	private void resetPizzaQuantityAndPrice() {
-		pizzaQuantity = Integer.parseInt(ticketItem.getItemCount().toString());
-		ticketItem.setItemCount(1.0);
+		pizzaQuantity = ticketItem.getItemCount();
+		ticketItem.setItemCount(1);
 		List<TicketItemModifier> ticketItemModifiers = ticketItem.getTicketItemModifiers();
 		if (ticketItemModifiers != null)
 			for (TicketItemModifier ticketItemModifier : ticketItemModifiers) {

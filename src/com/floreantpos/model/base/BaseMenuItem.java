@@ -41,8 +41,7 @@ public abstract class BaseMenuItem  implements Comparable, Serializable {
 	public static String PROP_BUY_PRICE = "buyPrice"; //$NON-NLS-1$
 	public static String PROP_BUTTON_COLOR_CODE = "buttonColorCode"; //$NON-NLS-1$
 
-	public static String PROP_CATEGORY_NAME = "categoryName";
-	public static String PROP_GROUP_NAME = "groupName";
+
 	// constructors
 	public BaseMenuItem () {
 		initialize();
@@ -101,8 +100,6 @@ public abstract class BaseMenuItem  implements Comparable, Serializable {
 		protected java.lang.Boolean fractionalUnit;
 		protected java.lang.Boolean pizzaType;
 		protected java.lang.Integer defaultSellPortion;
-		protected java.lang.String categoryName;
-		protected java.lang.String groupName;
 
 	// many to one
 	private com.floreantpos.model.MenuGroup parent;
@@ -158,28 +155,7 @@ public abstract class BaseMenuItem  implements Comparable, Serializable {
 		this.name = name;
 	}
 
-	public java.lang.String getCategoryName () {
-		return categoryName;
-	}
-	
-	/**
-	* Set the value related to the column: NAME
-	* @param name the NAME value
-	*/
-	public void setCategoryName (java.lang.String categoryName) {
-	this.categoryName = categoryName;
-	}
-	public java.lang.String getGroupName () {
-		return groupName;
-	}
-	
-	/**
-	* Set the value related to the column: NAME
-	* @param name the NAME value
-	*/
-	public void setGroupName (java.lang.String groupName) {
-	this.groupName = groupName;
-	}
+
 
 	/**
 	 * Return the value associated with the column: DESCRIPTION

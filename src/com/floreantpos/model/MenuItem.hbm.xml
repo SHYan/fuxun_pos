@@ -42,9 +42,6 @@
 			<column name="GROUP_ID" />
 		</many-to-one>
 		
-		<property column="CATEGORY_NAME" length="120" name="categoryName" type="java.lang.String" />
-		<property column="GROUP_NAME" length="120" name="groupName" type="java.lang.String" />
-		
 		<bag cascade="all" inverse="false" lazy="false" name="pizzaPriceList" table="MENUITEM_PIZZAPIRCE">
 			<key column="MENU_ITEM_ID" />
 			<many-to-many class="PizzaPrice" column="PIZZA_PRICE_ID" />

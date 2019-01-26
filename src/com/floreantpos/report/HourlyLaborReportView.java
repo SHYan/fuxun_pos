@@ -156,7 +156,7 @@ public class HourlyLaborReportView extends TransparentPanel {
 		AttendenceHistoryDAO attendenceHistoryDAO = new AttendenceHistoryDAO();
 		ArrayList<LaborReportData> rows = new ArrayList<LaborReportData>();
 
-		DecimalFormat formatter = new DecimalFormat("###,###"); //$NON-NLS-1$
+		DecimalFormat formatter = new DecimalFormat("00"); //$NON-NLS-1$
 
 		int grandTotalChecks = 0;
 		int grandTotalGuests = 0;
