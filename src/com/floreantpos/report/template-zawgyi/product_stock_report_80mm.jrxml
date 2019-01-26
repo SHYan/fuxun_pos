@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="GoodsSale" pageWidth="202" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="162" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["reportStyle.jrtx"]]></template>
+	<parameter name="TEMPLATE_FILE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["reportStyle_zh_TW.jrtx"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="periodString" class="java.lang.String">
+		<defaultValueExpression><![CDATA["not duration"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="branchName" class="java.lang.String">
+		<defaultValueExpression><![CDATA["no branch"]]></defaultValueExpression>
+	</parameter>
+	<field name="categoryName" class="java.lang.String"/>
+	<field name="productName" class="java.lang.String"/>
+	<field name="stockAmount" class="java.lang.Double"/>
+	<field name="productNo" class="java.lang.Integer"/>
+	<field name="productBarcode" class="java.lang.String"/>
+	<field name="unitName" class="java.lang.String"/>
+	<field name="beverage" class="java.lang.Boolean"/>
+	<pageHeader>
+		<band height="60">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="reportTitle" stretchType="RelativeToTallestObject" x="0" y="0" width="162" height="40"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Stock Report"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="zhtext_left" stretchType="RelativeToTallestObject" x="0" y="40" width="162" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font fontName="Monospaced"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{branchName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_left" stretchType="RelativeToTallestObject" x="0" y="0" width="116" height="30"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Product"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_right" stretchType="RelativeToTallestObject" x="116" y="0" width="46" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Stock"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="zhtext_left" stretchType="RelativeToTallestObject" x="0" y="0" width="116" height="18"/>
+				<textElement textAlignment="Left">
+					<font fontName="Zawgyi-One"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{productName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="dotOne" stretchType="RelativeToTallestObject" x="116" y="0" width="46" height="18"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Monospaced"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{stockAmount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="20">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="pageFooter_line" stretchType="RelativeToTallestObject" x="0" y="0" width="162" height="20"/>
+				<textElement textAlignment="Left" markup="none"/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

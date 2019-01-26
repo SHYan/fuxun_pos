@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="inventory_transaction">
+	
+	<select id="get_inventory_transaction" parameterType="HashMap" resultType="com.floreantpos.model.InventoryTransaction">
+        SELECT menu_item.name as item_name, 
+		inventory_transaction.id, 
+		inventory_transaction.transaction_date, 
+		inventory_transaction.old_quantity, 
+		inventory_transaction.unit_quantity, 
+		inventory_transaction.unit_price, 
+		inventory_transaction.remark, 
+		inventory_transaction.tran_type, 
+		inventory_transaction.reference_id, 
+		inventory_transaction.item_id, 
+		inventory_transaction.vendor_id, 
+		inventory_transaction.from_warehouse_id, 
+		inventory_transaction.to_warehouse_id, 
+		inventory_vendor.name as vendor_name
+		FROM inventory_transaction 
+		LEFT JOIN inventory_vendor ON inventory_transaction.vendor_id = inventory_vendor.id
+		INNER JOIN menu_item ON inventory_transaction.item_id = menu_item.id
+		WHERE menu_item.name  LIKE '%${keyword}%'
+		<if test="selectedType != null">
+		    	AND tran_type = #{selectedType}
+	  	</if>
+		order by inventory_transaction.transaction_date desc, menu_item.name 
+		<if test="selectedType == null">limit 100</if>
+    </select>
+    
+	<!-- 
+	<select id="get_inventory_vendor" parameterType="HashMap" resultType="com.floreantpos.model.InventoryVendor">
+        SELECT id, name, address, city, state, zip, country, email, phone, fax from inventory_vendor
+    </select>
+     -->
+	
+    <insert id="insert_inventory_transaction" parameterType="HashMap"> 
+    <!-- <choose>
+    	<when test='tran_type=="Procurement"'>
+    		INSERT INTO menu_item_adjustment(transaction_date, unit_quantity, unit_price, remark, tran_type, item_id, vendor_id)
+			VALUES(#{transaction_date}, #{qty}, #{price}, #{remark}, #{tran_type}, #{item_id}, #{vendor_id})
+    	</when>
+    	<when test='tran_type=="Demage"'>	
+		INSERT INTO menu_item_adjustment(transaction_date, unit_quantity, unit_price, remark, tran_type, item_id, vendor_id)
+		VALUES(#{transaction_date}
+		</when>
+		<otherwise>
+		</otherwise>
+    </choose> -->
+    	INSERT INTO inventory_transaction(transaction_date, old_quantity, unit_quantity, unit_price, remark, tran_type, item_id, vendor_id)
+		VALUES(#{transaction_date}, #{old_qty}, #{qty}, #{price}, #{remark}, #{tran_type}, #{item_id}, #{vendor_id})
+	</insert>
+    
+    <update id="update_inventory_transaction" parameterType="HashMap">
+    <choose>
+    	<when test='tran_type=="Inventory"'>
+    		UPDATE menu_item SET stock_amount=#{qty} WHERE id=#{item_id}
+    	</when>
+    	<otherwise>
+    		UPDATE menu_item SET stock_amount=stock_amount+#{qty} WHERE id=#{item_id}
+		</otherwise>
+	</choose>
+    <!-- <if test='tran_type=="Procurement"'>
+			UPDATE menu_item SET stock_amount=stock_amount+#{qty} WHERE id=#{item_id}
+		</if>
+		<if test='tran_type=="Demage"'>	
+			UPDATE menu_item SET stock_amount=stock_amount-#{qty} WHERE id=#{item_id}
+		</if>
+		<if test='tran_type=="Inventory"'>
+			UPDATE menu_item SET stock_amount=#{qty} WHERE id=#{item_id}
+		</if>
+		<if test='tran_type=="Others"'>
+			UPDATE menu_item SET stock_amount=stock_amount+#{qty} WHERE id=#{item_id}
+		</if> -->	
+	</update> 
+	
+	<select id="get_menu_item" parameterType="HashMap" resultType="com.floreantpos.model.MenuItem">
+        SELECT menu_item.id as id, menu_item.name as name, menu_item.translated_name as translatedName,
+		menu_item.stock_amount stockAmount
+		FROM menu_item
+		WHERE menu_item.visible=true
+		<if test="item_name != ''">
+		    	AND name like '%${item_name}%'
+	  	</if>
+		<if test="group_id != 0">
+		    	AND group_id = #{group_id}
+	  	</if>
+		order by menu_item.id
+    </select>
+</mapper>

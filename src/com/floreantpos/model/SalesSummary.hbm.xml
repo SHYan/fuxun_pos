@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.floreantpos.model">
+	<class lazy="false" name="com.floreantpos.model.SalesSummary"  table="SALES_SUMMARY">
+		<id column="ID" name="id" type="java.lang.Integer">
+			<generator class="identity" />
+		</id>
+		<property column="TRANSACTION_DATE" index="transactionDate" length="10" name="transactionDate" type="java.util.Date" />
+		<property column="ITEM_QTY" name="itemQty" type="java.lang.Integer" />
+		<property column="SUB_TOTAL" length="52" name="subtotalAmount" type="java.lang.Double" />
+		<property column="DELIVERY_CHARGE" name="deliveryCharge" type="java.lang.Double" />
+		<property column="TOTAL_DISCOUNT" length="52" name="discountAmount" type="java.lang.Double" />
+		<property column="TOTAL_TAX" length="52" name="taxAmount" type="java.lang.Double" />
+		<property column="SERVICE_CHARGE" name="serviceCharge" type="java.lang.Double" />
+		<property column="TOTAL_PRICE" length="52" name="totalAmount" type="java.lang.Double" />
+		<property column="NUMBER_OF_GUESTS" name="numberOfGuests" type="java.lang.Integer" />
+	</class>
+</hibernate-mapping>

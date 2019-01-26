@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="daily_sales_report" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["reportStyle.jrtx"]]></template>
+	<parameter name="TEMPLATE_FILE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["reportStyle.jrtx"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="periodString" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="branchName" class="java.lang.String" isForPrompting="false"/>
+	<field name="factdate" class="java.lang.String"/>
+	<field name="customer_subtotal" class="java.lang.Long"/>
+	<field name="item_subtotal" class="java.lang.Double"/>
+	<field name="service_charge_subtotal" class="java.lang.Double"/>
+	<field name="tax_subtotal" class="java.lang.Double"/>
+	<field name="due_subtotal" class="java.lang.Double"/>
+	<field name="discount_subtotal" class="java.lang.Double"/>
+	<field name="payment_subtotal" class="java.lang.Double"/>
+	<field name="sale" class="java.lang.Double"/>
+	<field name="qty_subtotal" class="java.lang.Long"/>
+	<field name="food_subtotal" class="java.lang.Double"/>
+	<field name="beverage_subtotal" class="java.lang.Double"/>
+	<variable name="customer_subtotalSum" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{customer_subtotal}]]></variableExpression>
+	</variable>
+	<variable name="item_subtotalSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{item_subtotal}]]></variableExpression>
+	</variable>
+	<variable name="service_charge_subtotalSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{service_charge_subtotal}]]></variableExpression>
+	</variable>
+	<variable name="tax_subtotalSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{tax_subtotal}]]></variableExpression>
+	</variable>
+	<variable name="discount_subtotalSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{discount_subtotal}]]></variableExpression>
+	</variable>
+	<variable name="payment_subtotalSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{payment_subtotal}]]></variableExpression>
+	</variable>
+	<variable name="due_subtotalSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{due_subtotal}]]></variableExpression>
+	</variable>
+	<variable name="saleSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sale}]]></variableExpression>
+	</variable>
+	<variable name="food_subtotalSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{food_subtotal}]]></variableExpression>
+	</variable>
+	<variable name="beverage_subtotalSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{beverage_subtotal}]]></variableExpression>
+	</variable>
+	<variable name="qty_subtotalSum" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{qty_subtotal}]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="53">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="reportTitle" x="0" y="0" width="456" height="53"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Daily Sales Report"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="zhtext_right" x="456" y="0" width="60" height="32"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Duration : "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement style="zhtext_left" x="516" y="0" width="286" height="32"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{periodString}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="zhtext_left" stretchType="RelativeToTallestObject" x="516" y="32" width="286" height="21"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="PMingLiU"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{branchName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="zhtext_right" stretchType="RelativeToTallestObject" x="456" y="32" width="60" height="21"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Branch : "]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="0" y="11" width="157" height="42"/>
+				<imageExpression class="java.lang.String"><![CDATA["rpt_logo.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_left" stretchType="RelativeToTallestObject" x="0" y="0" width="116" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Date"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_right" stretchType="RelativeToTallestObject" x="116" y="0" width="41" height="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["CST#"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_right" stretchType="RelativeToTallestObject" x="207" y="0" width="69" height="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Subtotal"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_right" stretchType="RelativeToTallestObject" x="276" y="0" width="60" height="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["SC"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_right" stretchType="RelativeToTallestObject" x="336" y="0" width="60" height="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Tax"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_right" stretchType="RelativeToTallestObject" x="396" y="0" width="60" height="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Discount"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_right" stretchType="RelativeToTallestObject" x="668" y="0" width="68" height="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Payment"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_right" stretchType="RelativeToTallestObject" x="736" y="0" width="66" height="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Due Amount"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_right" stretchType="RelativeToTallestObject" x="576" y="0" width="92" height="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Total"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_right" stretchType="RelativeToTallestObject" x="157" y="0" width="50" height="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Qty"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_right" stretchType="RelativeToTallestObject" x="516" y="0" width="60" height="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Beverage"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_line_right" stretchType="RelativeToTallestObject" x="456" y="0" width="60" height="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Food"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="116" y="0" width="41" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{customer_subtotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="zhtext" stretchType="RelativeToTallestObject" x="0" y="0" width="116" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{factdate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dotOne" stretchType="RelativeToTallestObject" x="207" y="0" width="69" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{item_subtotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dotOne" stretchType="RelativeToTallestObject" x="276" y="0" width="60" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{service_charge_subtotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dotOne" stretchType="RelativeToTallestObject" x="336" y="0" width="60" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{tax_subtotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dotOne" stretchType="RelativeToTallestObject" x="396" y="0" width="60" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{discount_subtotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dotOne" stretchType="RelativeToTallestObject" x="668" y="0" width="68" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{payment_subtotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dotOne" stretchType="RelativeToTallestObject" x="736" y="0" width="66" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{due_subtotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dotOne" stretchType="RelativeToTallestObject" x="576" y="0" width="92" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="157" y="0" width="50" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{qty_subtotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dotOne" stretchType="RelativeToTallestObject" x="456" y="0" width="60" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{food_subtotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="dotOne" stretchType="RelativeToTallestObject" x="516" y="0" width="60" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{beverage_subtotal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="zhtext" stretchType="RelativeToTallestObject" x="157" y="0" width="511" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page :"+$V{PAGE_NUMBER}+" /"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Report">
+				<reportElement style="zhtext" stretchType="RelativeToTallestObject" x="668" y="0" width="134" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="zhtext_left" stretchType="RelativeToTallestObject" x="0" y="0" width="157" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="zhtext_line_top" stretchType="RelativeToTallestObject" x="0" y="0" width="116" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["TOTAL"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="number_line_top" stretchType="RelativeToTallestObject" x="116" y="0" width="41" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$V{customer_subtotalSum}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="dotOne_line_top" stretchType="RelativeToTallestObject" x="207" y="0" width="69" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{item_subtotalSum}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="dotOne_line_top" stretchType="RelativeToTallestObject" x="276" y="0" width="60" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{service_charge_subtotalSum}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="dotOne_line_top" stretchType="RelativeToTallestObject" x="336" y="0" width="60" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{tax_subtotalSum}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="dotOne_line_top" stretchType="RelativeToTallestObject" x="396" y="0" width="60" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{discount_subtotalSum}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="dotOne_line_top" stretchType="RelativeToTallestObject" x="668" y="0" width="68" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{payment_subtotalSum}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="dotOne_line_top" stretchType="RelativeToTallestObject" x="736" y="0" width="66" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{due_subtotalSum}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="dotOne_line_top" stretchType="RelativeToTallestObject" x="576" y="0" width="92" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{saleSum}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="number_line_top" stretchType="RelativeToTallestObject" x="157" y="0" width="50" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$V{qty_subtotalSum}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="dotOne_line_top" stretchType="RelativeToTallestObject" x="456" y="0" width="60" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{food_subtotalSum}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="dotOne_line_top" stretchType="RelativeToTallestObject" x="516" y="0" width="60" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{beverage_subtotalSum}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

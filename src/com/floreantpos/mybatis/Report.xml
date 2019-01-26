@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Report">
+	
+	<!-- Yearly Sales Report -->
+	<select id="getYearly_Sales" parameterType="Map" resultType="com.floreantpos.model.mybatis.YearlySalesReportM">
+        SELECT 
+        SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) =  1 THEN total_price ELSE 0 END) AS janSale,
+        SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) =  2 THEN total_price ELSE 0 END) AS febSale,
+        SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) =  3 THEN total_price ELSE 0 END) AS marSale,
+        SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) =  4 THEN total_price ELSE 0 END) AS aprSale,
+        SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) =  5 THEN total_price ELSE 0 END) AS maySale,
+        SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) =  6 THEN total_price ELSE 0 END) AS junSale,
+        SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) =  7 THEN total_price ELSE 0 END) AS julSale,
+        SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) =  8 THEN total_price ELSE 0 END) AS augSale,
+        SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) =  9 THEN total_price ELSE 0 END) AS sepSale,
+        SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) = 10 THEN total_price ELSE 0 END) AS octSale,
+        SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) = 11 THEN total_price ELSE 0 END) AS novSale,
+        SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) = 12 THEN total_price ELSE 0 END) AS decSale
+        FROM ticket AS t
+        WHERE closing_date BETWEEN #{startDate} AND #{endDate} AND paid='true' AND t.voided='false'
+    </select>
+    
+    <select id="getDaily_Sales" parameterType="HashMap" resultType="com.floreantpos.model.mybatis.DailySalesReportM">
+		SELECT date(t.closing_date) AS factdate, 
+		SUM(t.number_of_guests) AS customer_subtotal, SUM(t.sub_total) AS item_subtotal, SUM(t.item_qty) AS qty_subtotal,
+		SUM(t.due_amount) AS due_subtotal, SUM(t.total_tax) AS tax_subtotal, SUM(t.total_discount) AS discount_subtotal,
+		SUM(t.service_charge) AS service_charge_subtotal, SUM(t.paid_amount) AS payment_subtotal, SUM(t.total_price) AS sale
+		FROM ticket AS t
+	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate} AND t.paid='true' AND t.voided='false'
+	    GROUP BY factdate
+      	ORDER BY factdate ASC
+	</select>
+	
+	<select id="getFoodBeverage_Sales" parameterType="HashMap" resultType="com.floreantpos.model.mybatis.DailySalesReportM">
+		SELECT date(t.closing_date) AS factdate,
+		SUM(CASE WHEN ti.beverage='true' THEN ti.total_price ELSE 0 END) AS beverage_subtotal,
+		SUM(CASE WHEN ti.beverage='false' THEN ti.total_price ELSE 0 END) AS food_subtotal 
+		FROM ticket AS t, ticket_item AS ti
+	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate} AND t.id=ti.ticket_id AND t.paid='true' AND t.voided='false'
+	    GROUP BY factdate ORDER BY factdate
+	</select>
+	
+	<select id="getSales" parameterType="HashMap" resultType="com.floreantpos.model.mybatis.DailySalesReportM">
+		SELECT 
+		SUM(t.number_of_guests) AS customer_subtotal, SUM(t.sub_total) AS item_subtotal, 
+		SUM(t.due_amount) AS due_subtotal, SUM(t.total_tax) AS tax_subtotal, SUM(t.total_discount) AS discount_subtotal,
+		SUM(t.service_charge) AS service_charge_subtotal, SUM(t.paid_amount) AS payment_subtotal, SUM(t.total_price) AS sale
+		FROM ticket AS t
+	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate} AND t.paid='true' AND t.voided='false'
+	</select>
+	
+	<!--  <select id="getProduct_Sales" parameterType="Map" resultType="com.floreantpos.model.mybatis.ProductSalesM">
+        SELECT ti.item_id productNo, ti.item_name productName, ti.category_name categoryName, ti.beverage beverage, ti.item_price itemPrice, sum(ti.discount) discount,
+        sum(ti.sub_total) subtotal, sum(ti.tax_amount) taxAmount, sum(ti.service_charge_amount) scAmount, sum(ti.total_price) totalSale, sum(ti.item_quantity) totalFractionQty, sum(ti.item_count) totalQty
+        FROM ticket AS t, ticket_item AS ti
+	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate} AND ti.item_count&gt;0 AND t.paid='true' AND t.voided='false' AND t.id=ti.ticket_id
+	    <if test="categoryName != null "> AND ti.category_name=#{categoryName} </if>
+        GROUP By productNo, productName, categoryName, beverage, itemPrice
+        ORDER by categoryName, productNo
+    </select>-->
+    <select id="getProduct_Sales" parameterType="Map" resultType="com.floreantpos.model.mybatis.ProductSalesM">
+        SELECT ti.item_id productNo, ti.item_name productName, ti.category_name categoryName, ti.beverage beverage, ti.item_price itemPrice, sum(ti.discount) discount,
+        sum(ti.sub_total) subtotal, sum(ti.tax_amount) taxAmount, sum(ti.service_charge_amount) scAmount, sum(ti.total_price) totalSale, sum(ti.item_quantity) totalFractionQty, sum(ti.item_count) totalQty
+        FROM ticket AS t, ticket_item AS ti
+	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate}  AND t.paid='true' AND t.voided='false' AND t.id=ti.ticket_id
+	    <if test="categoryName != null "> AND ti.category_name=#{categoryName} </if>
+        GROUP By productNo, productName, categoryName, beverage, itemPrice
+        ORDER by categoryName, productNo
+    </select>
+    
+    <select id="getOrder_Status" parameterType="Map" resultType="com.floreantpos.model.mybatis.OrderStatusReportM">
+    	SELECT t.id, t.create_date::timestamp(0) AS factdate, t.number_of_guests, t.sub_total, t.total_discount, t.total_tax, t.total_price, t.item_qty,
+    	t.paid_amount, t.due_amount, t.service_charge, t.ticket_type, t.shift_id, t.terminal_id, t.owner_name, t.voided, t.paid, t.settled, t.void_by_user_name,
+    	(CASE WHEN voided = 'true' THEN 'VOIDED' 
+    		WHEN paid = 'true' THEN 'FINISH'
+    		WHEN settled = 'false' THEN 'STORE' END) AS status
+		FROM ticket AS t
+	    WHERE t.create_date BETWEEN #{startDate} AND #{endDate}
+	    <if test="paid != null "> AND t.paid='true' </if>
+	    <if test="voided != null"> AND t.voided='true' </if>
+	    <if test="store != null "> AND t.paid='false' AND t.voided='false' </if>
+	    ORDER BY factdate ASC, id
+    </select>  
+    
+    <select id="getCategory_List" parameterType="Map" resultType="java.lang.String">
+    	SELECT name FROM menu_category WHERE visible='true' ORDER BY sort_order, id
+    </select>
+
+    <select id="getProduct_Stock" parameterType="Map" resultType="com.floreantpos.model.mybatis.MenuItemM">
+        SELECT mi.id productNo, mi.name productName, c.name categoryName, g.name groupName, c.beverage beverage, mi.sort_order sortOrder, c.sort_order AS categoryId,
+        mi.price price, mi.stock_amount stockAmount, mi.buy_price buyPrice, mi.unit_name unitName, mi.translated_name translatedName, mi.barcode productBarcode
+        FROM menu_item AS mi LEFT JOIN menu_group AS g ON (mi.group_id=g.id) LEFT JOIN menu_category AS c ON (g.category_id=c.id)
+	    WHERE c.visible='true' AND g.visible='true' AND mi.visible='true'
+	    <if test="categoryName != null "> AND c.name=#{categoryName} </if>
+	    <if test="stockAmount != null "> AND mi.stock_amount &gt; 0 </if>
+        ORDER by c.name, mi.name
+    </select>
+    
+    <select id="getProduct_Stock_Adjust" parameterType="Map" resultType="com.floreantpos.model.mybatis.MenuItemM">
+    	SELECT t.transaction_date transactionDate, t.unit_quantity changeQty, t.unit_price buyPrice, t.remark remark, t.tran_type transactionType,
+    	t.old_quantity beforeChange, mi.name productName, mi.id productNo, mi.unit_name unitName,  mi.stock_amount stockAmount,
+    	mi.category_name categoryName, mi.group_name groupName, v.name vendorName
+    	FROM inventory_transaction AS t LEFT JOIN menu_item AS mi ON (t.item_id=mi.id) 
+    	LEFT JOIN inventory_vendor AS v ON (t.vendor_id=v.id)
+    	WHERE mi.visible='true'
+	    <if test="categoryName != null "> AND mi.category_name=#{categoryName} </if>
+	    <if test="transactionType != null "> AND t.tran_type=#{transactionType} </if>
+	    <if test="stockAmount != null "> AND mi.stock_amount &gt; 0 </if>
+        ORDER by mi.category_name, mi.name
+    </select>
+    
+     <select id="get_sale_summary" parameterType="Map" resultType="com.floreantpos.model.mybatis.DailySalesReportM">
+    	SELECT transaction_date as transactionDate, item_qty as qty_subtotal, sub_total as item_subtotal,
+    	delivery_charge, total_discount as discount_subtotal, total_tax as tax_subtotal,
+    	service_charge as service_charge_subtotal, total_price, number_of_guests  as customer_subtotal 
+    	FROM sales_summary
+    	WHERE transaction_date BETWEEN #{startDate} AND #{endDate}
+   	</select>
+   	
+   	<select id="get_payout" parameterType="Map" resultType="com.floreantpos.model.mybatis.PayoutM">
+    	select trans.transaction_time as transactionDate, trans.amount,
+		trans.note, recp.name as recp_name, reason.reason from transactions trans 
+		left join payout_recepients recp 
+		on trans.payout_recepient_id = recp.id
+		left join payout_reasons reason 
+		on trans.payout_reason_id = reason.id
+		where trans.transaction_type='DEBIT' and  transaction_time BETWEEN #{startDate} AND #{endDate}
+   	</select>
+   	
+   	<select id="get_profitloss" parameterType="Map" resultType="com.floreantpos.model.mybatis.PayoutM">
+   		SELECT date(transaction_time) as transactionDate,
+        SUM(CASE WHEN transaction_type =  'CREDIT' THEN amount else 0 END ) as IN,
+       	SUM(CASE WHEN transaction_type =  'DEBIT' THEN amount else 0 END) as OUT
+		FROM transactions
+		where transaction_time BETWEEN #{startDate} AND #{endDate}
+		group by  date(transaction_time)
+		order by date(transaction_time)
+    </select>
+</mapper>

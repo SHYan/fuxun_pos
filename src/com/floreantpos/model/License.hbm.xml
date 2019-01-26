@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping package="com.floreantpos.model">
+	<class lazy="false" name="com.floreantpos.model.License" table="License">
+		<id column="ID" name="id" type="java.lang.Integer">
+	      <generator class="identity"/>
+	    </id>
+		<property column="MADDRESS" length="255" name="maddress" type="java.lang.String" />
+		<property column="LKEY" length="255" name="lkey" type="java.lang.String" />
+		<property column="KEY_TYPE" name="key_type" type="java.lang.Boolean" />
+		<property column="CREATE_DATE" length="10" name="create_date" type="java.util.Date" />
+	</class>
+</hibernate-mapping>

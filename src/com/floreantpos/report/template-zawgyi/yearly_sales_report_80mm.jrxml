@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="yearly_sales_report" printOrder="Horizontal" pageWidth="590" pageHeight="595" orientation="Landscape" columnWidth="550" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["reportStyle.jrtx"]]></template>
+	<subDataset name="New Dataset 1">
+		<queryString language="SQL">
+			<![CDATA[SELECT b.name AS branchname,m.s_year AS annual, m.s_month AS month,
+			                sum(m.total) AS sale_sum
+                     FROM vivitrend_orders_hourly m LEFT JOIN branches b ON (b.branch_id=m.branch_id)
+                     WHERE m.status='1' AND b.valid='true'
+                     GROUP BY b.name, m.s_year, m.s_month
+                     ORDER BY b.name, m.s_year, m.s_month]]>
+		</queryString>
+		<field name="branchname" class="java.lang.String"/>
+		<field name="annual" class="java.lang.String"/>
+		<field name="month" class="java.lang.String"/>
+		<field name="sale_sum" class="java.math.BigDecimal"/>
+		<group name="branchname">
+			<groupExpression><![CDATA[$F{branchname}]]></groupExpression>
+		</group>
+		<group name="annual">
+			<groupExpression><![CDATA[$F{annual}]]></groupExpression>
+		</group>
+		<group name="month">
+			<groupExpression><![CDATA[$F{month}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="periodString" class="java.lang.String"/>
+	<parameter name="branchName" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT t.name groupname, bs.name branchname, b.branch_id,
+            SUM(CASE WHEN s_month = 1 THEN total ELSE 0 END) AS jansale,
+            SUM(CASE WHEN s_month = 2 THEN total ELSE 0 END) AS febsale,
+            SUM(CASE WHEN s_month = 3 THEN total ELSE 0 END) AS marsale,
+            SUM(CASE WHEN s_month = 4 THEN total ELSE 0 END) AS aprsale,
+            SUM(CASE WHEN s_month = 5 THEN total ELSE 0 END) AS maysale,
+            SUM(CASE WHEN s_month = 6 THEN total ELSE 0 END) AS junsale,
+            SUM(CASE WHEN s_month = 7 THEN total ELSE 0 END) AS julsale,
+            SUM(CASE WHEN s_month = 8 THEN total ELSE 0 END) AS augsale,
+            SUM(CASE WHEN s_month = 9 THEN total ELSE 0 END) AS sepsale,
+            SUM(CASE WHEN s_month = 10 THEN total ELSE 0 END) AS octsale,
+            SUM(CASE WHEN s_month = 11 THEN total ELSE 0 END) AS novsale,
+            SUM(CASE WHEN s_month = 12 THEN total ELSE 0 END) AS decsale
+        FROM vivitrend_orders_hourly b
+        LEFT JOIN branches bs ON (b.branch_id = bs.branch_id)
+        LEFT JOIN branches_tags g ON (g.branch_id = b.branch_id)
+        LEFT JOIN tags t ON (t.id = g.tag_id)
+        WHERE b.status='1' AND g.valid='true' AND s_year = $P{periodString}::int
+        group by t.name, bs.name, b.branch_id
+        ORDER BY t.name, bs.name, b.branch_id]]>
+	</queryString>
+	<field name="janSale" class="java.lang.Double"/>
+	<field name="febSale" class="java.lang.Double"/>
+	<field name="marSale" class="java.lang.Double"/>
+	<field name="aprSale" class="java.lang.Double"/>
+	<field name="maySale" class="java.lang.Double"/>
+	<field name="junSale" class="java.lang.Double"/>
+	<field name="julSale" class="java.lang.Double"/>
+	<field name="augSale" class="java.lang.Double"/>
+	<field name="sepSale" class="java.lang.Double"/>
+	<field name="octSale" class="java.lang.Double"/>
+	<field name="novSale" class="java.lang.Double"/>
+	<field name="decSale" class="java.lang.Double"/>
+	<variable name="janSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{janSale}]]></variableExpression>
+	</variable>
+	<variable name="febSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{febSale}]]></variableExpression>
+	</variable>
+	<variable name="marSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{marSale}]]></variableExpression>
+	</variable>
+	<variable name="aprSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{aprSale}]]></variableExpression>
+	</variable>
+	<variable name="maySum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{maySale}]]></variableExpression>
+	</variable>
+	<variable name="junSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{junSale}]]></variableExpression>
+	</variable>
+	<variable name="julSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{julSale}]]></variableExpression>
+	</variable>
+	<variable name="augSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{augSale}]]></variableExpression>
+	</variable>
+	<variable name="sepSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sepSale}]]></variableExpression>
+	</variable>
+	<variable name="octSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{octSale}]]></variableExpression>
+	</variable>
+	<variable name="novSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{novSale}]]></variableExpression>
+	</variable>
+	<variable name="decSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{decSale}]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="34" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="reportTitle" stretchType="RelativeToTallestObject" x="0" y="0" width="391" height="33"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Yearly Sales Report"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement style="zhtext_left" stretchType="RelativeToTallestObject" x="471" y="0" width="80" height="33"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{periodString}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="zhtext_right" stretchType="RelativeToTallestObject" x="391" y="0" width="80" height="33"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Year："]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_left" stretchType="RelativeToTallestObject" x="0" y="0" width="71" height="30"/>
+				<textElement markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Branch"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_right" stretchType="RelativeToTallestObject" x="71" y="0" width="40" height="30"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["JAN"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_right" stretchType="RelativeToTallestObject" x="111" y="0" width="40" height="30"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["FEB"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_right" stretchType="RelativeToTallestObject" x="151" y="0" width="40" height="30"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["MAR"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_right" stretchType="RelativeToTallestObject" x="191" y="0" width="40" height="30"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["APR"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_right" stretchType="RelativeToTallestObject" x="231" y="0" width="40" height="30"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["MAY"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_right" stretchType="RelativeToTallestObject" x="271" y="0" width="40" height="30"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["JUN"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_right" stretchType="RelativeToTallestObject" x="311" y="0" width="40" height="30"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["JUL"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_right" stretchType="RelativeToTallestObject" x="351" y="0" width="40" height="30"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["AUG"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_right" stretchType="RelativeToTallestObject" x="391" y="0" width="40" height="30"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["SEP"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_right" stretchType="RelativeToTallestObject" x="431" y="0" width="40" height="30"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["OCT"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_right" stretchType="RelativeToTallestObject" x="471" y="0" width="40" height="30"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["NOV"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="columnHeader_right" stretchType="RelativeToTallestObject" x="511" y="0" width="40" height="30"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["DEC"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="zhtext" stretchType="RelativeToTallestObject" x="0" y="0" width="71" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{branchName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="71" y="0" width="40" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{janSale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="111" y="0" width="40" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{febSale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="151" y="0" width="40" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{marSale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="191" y="0" width="40" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{aprSale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="231" y="0" width="40" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{maySale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="271" y="0" width="40" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{junSale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="311" y="0" width="40" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{julSale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="351" y="0" width="40" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{augSale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="391" y="0" width="40" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sepSale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="431" y="0" width="40" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{octSale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="471" y="0" width="40" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{novSale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement style="number" stretchType="RelativeToTallestObject" x="511" y="0" width="40" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{decSale}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="25">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="pageFooter_line" stretchType="RelativeToTallestObject" x="391" y="5" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["PAGE"+$V{PAGE_NUMBER}+" /"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Report">
+				<reportElement style="pageFooter_line" stretchType="RelativeToTallestObject" x="471" y="5" width="80" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER} + "PAGE"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="pageFooter_line" stretchType="RelativeToTallestObject" x="0" y="5" width="391" height="20"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="20">
+			<textField>
+				<reportElement style="zhtext_line_top" x="0" y="0" width="71" height="20"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["TOTAL"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="number_line_top" x="71" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{janSum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="number_line_top" x="111" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{febSum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="number_line_top" x="151" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{marSum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="number_line_top" x="191" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{aprSum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="number_line_top" x="231" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{maySum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="number_line_top" x="271" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{junSum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="number_line_top" x="311" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{julSum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="number_line_top" x="351" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{augSum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="number_line_top" x="391" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{sepSum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="number_line_top" x="431" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{octSum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="number_line_top" x="471" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{novSum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="number_line_top" x="511" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{decSum}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

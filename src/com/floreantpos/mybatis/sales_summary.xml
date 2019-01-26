@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sales_summary">
+	<select id="get_sales_summary_from_ticket" parameterType="HashMap" resultType="com.floreantpos.model.SalesSummary">
+	        select date(closing_date) transactionDate, sum(item_qty) itemQty, sum(sub_total) subtotalAmount, 
+	        sum(delivery_charge) deliveryCharge, sum(total_discount) discountAmount, sum(total_tax) taxAmount, 
+	        sum(service_charge) serviceCharge, sum(total_price) totalAmount, sum(number_of_guests) numberOfGuests
+ 			from ticket 
+ 			where date(closing_date)=date(#{transaction_date}) and paid = true and settled = true
+			group by date(closing_date)
+    </select>
+    
+    <select id="get_all_sales_summary_from_ticket" parameterType="HashMap" resultType="com.floreantpos.model.SalesSummary">
+	        select date(closing_date) transactionDate, sum(item_qty) itemQty, sum(sub_total) subtotalAmount, 
+	        sum(delivery_charge) deliveryCharge, sum(total_discount) discountAmount, sum(total_tax) taxAmount, 
+	        sum(service_charge) serviceCharge, sum(total_price) totalAmount, sum(number_of_guests) numberOfGuests
+ 			from ticket 
+ 			where  paid = true and settled = true
+			group by date(closing_date)
+    </select>
+    
+    
+    <select id="get_sales_summary_exist" parameterType="HashMap" resultType="com.floreantpos.model.SalesSummary">
+	        select max(date(transaction_date)) transactionDate, count(*) as id
+ 			from sales_summary 
+    </select>
+    
+    
+     <insert id="insert_sales_summary" parameterType="HashMap"> 
+     	INSERT INTO sales_summary(transaction_date, item_qty, sub_total, delivery_charge, total_discount, total_tax, service_charge, total_price, number_of_guests )
+		VALUES(#{transaction_date}, #{qty},#{sub_total}, #{delivery}, #{discount}, #{tax}, #{service_charge}, #{total}, #{guest})
+     </insert>
+</mapper>

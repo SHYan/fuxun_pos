@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+
+<mapper namespace="MenuItem">
+	<select id="getmenu_item" parameterType="HashMap" resultType="com.floreantpos.model.MenuItem">
+	        SELECT *
+			FROM menu_item
+			WHERE name  LIKE '%${item_name}%'
+			<if test="group_id != 0 and group_id != null">
+		    	AND group_id = #{group_id}
+		  	</if>
+			order by menu_item.name
+    </select>
+</mapper>
