@@ -41,6 +41,7 @@ import com.floreantpos.model.MenuGroup;
 import com.floreantpos.model.MenuItem;
 import com.floreantpos.model.MenuItemModifierGroup;
 import com.floreantpos.model.OrderType;
+import com.floreantpos.model.ShopTable;
 import com.floreantpos.model.Terminal;
 
 public class MenuItemDAO extends BaseMenuItemDAO {
@@ -51,24 +52,16 @@ public class MenuItemDAO extends BaseMenuItemDAO {
 	public MenuItemDAO() {
 	}
 
+	@Override
+	public Order getDefaultOrder() {
+		
+		return Order.asc(MenuItem.PROP_ID);
+	}
+	
 	public MenuItem loadInitialized(Integer key) throws HibernateException {
-		Session session = null;
-		try {
-			session = createNewSession();
-			MenuItem menuItem = get(key, session);
-			Hibernate.initialize(menuItem.getMenuItemModiferGroups());
-
-			List<MenuItemModifierGroup> menuItemModiferGroups = menuItem.getMenuItemModiferGroups();
-			if (menuItemModiferGroups != null) {
-				for (MenuItemModifierGroup menuItemModifierGroup : menuItemModiferGroups) {
-					Hibernate.initialize(menuItemModifierGroup.getModifierGroup().getModifiers());
-				}
-			}
-			Hibernate.initialize(menuItem.getShifts());
-			return menuItem;
-		} finally {
-			closeSession(session);
-		}
+		MenuItem menuItem = super.get(key);
+		menuItem = initialize(menuItem);
+		return menuItem;
 	}
 
 	public MenuItem initialize(MenuItem menuItem) {
@@ -198,14 +191,14 @@ public class MenuItemDAO extends BaseMenuItemDAO {
 				criteria.add(Restrictions.eq("type.id", orderType.getId()));
 
 				/*List<MenuItem> selectedMenuItems = new ArrayList();
-				
+
 				List<MenuItem> items = findAll();
-				
+
 				for (MenuItem item : items) {
-				
+
 					List<OrderType> types = item.getOrderTypeList();
 					OrderType type = (OrderType) selectedType;
-				
+
 					if (types.contains(type.getName()) || types.isEmpty()) {
 						selectedMenuItems.add(item);
 					}
@@ -247,11 +240,11 @@ public class MenuItemDAO extends BaseMenuItemDAO {
 				criteria.add(Restrictions.eq("type.id", orderType.getId()));
 
 				/*List<MenuItem> selectedMenuItems = new ArrayList();
-				
+
 				List<MenuItem> items = findAll();
-				
+
 				for (MenuItem item : items) {
-				
+
 					List<OrderType> types = item.getOrderTypeList();
 					OrderType type = (OrderType) selectedType;
 					if (types.contains(type.getName()) || types.isEmpty()) {

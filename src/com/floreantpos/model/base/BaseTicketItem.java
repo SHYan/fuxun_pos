@@ -3,7 +3,10 @@ package com.floreantpos.model.base;
 import java.lang.Comparable;
 import java.io.Serializable;
 
+import com.floreantpos.main.Application;
+import com.floreantpos.model.Restaurant;
 import com.floreantpos.model.TicketItemCookingInstruction;
+import com.floreantpos.util.NumberUtil;
 
 
 /**
@@ -40,8 +43,10 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 	public static String PROP_ITEM_COUNT = "itemCount"; //$NON-NLS-1$
 	public static String PROP_UNIT_PRICE = "unitPrice"; //$NON-NLS-1$
 	public static String PROP_TAX_AMOUNT = "taxAmount"; //$NON-NLS-1$
+	public static String PROP_SERVICE_CHARGE_AMOUNT = "serviceChargeAmount"; //$NON-NLS-1$
 	public static String PROP_FRACTIONAL_UNIT = "fractionalUnit"; //$NON-NLS-1$
 	public static String PROP_NAME = "name"; //$NON-NLS-1$
+	public static String PROP_TRANSLATED_NAME = "translatedName"; //$NON-NLS-1$
 	public static String PROP_PRINTER_GROUP = "printerGroup"; //$NON-NLS-1$
 	public static String PROP_STATUS = "status"; //$NON-NLS-1$
 	public static String PROP_PRINTED_TO_KITCHEN = "printedToKitchen"; //$NON-NLS-1$
@@ -51,6 +56,7 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 	public static String PROP_SUBTOTAL_AMOUNT_WITHOUT_MODIFIERS = "subtotalAmountWithoutModifiers"; //$NON-NLS-1$
 	public static String PROP_TOTAL_AMOUNT = "totalAmount"; //$NON-NLS-1$
 
+	public static String PROP_RETURN = "returnitem"; //Diana - 29-07/2018
 
 	// constructors
 	public BaseTicketItem () {
@@ -88,9 +94,27 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 
 	// fields
 		protected java.lang.Integer itemId;
-		protected java.lang.Integer itemCount;
+		protected java.lang.Double itemCount; //Diana
 		protected java.lang.Double itemQuantity;
 		protected java.lang.String name;
+		protected java.lang.String translatedName;
+		/**
+		 * @return the translatedName
+		 */
+		public java.lang.String getTranslatedName() {
+			return translatedName;
+			//return (translatedName==null || translatedName.equals("") ? name : translatedName);
+		}
+
+		/**
+		 * @param translatedName the translatedName to set
+		 */
+		public void setTranslatedName(java.lang.String translatedName) {
+			this.translatedName = translatedName;
+		}
+
+
+
 		protected java.lang.String itemUnitName;
 		protected java.lang.String groupName;
 		protected java.lang.String categoryName;
@@ -101,6 +125,7 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 		protected java.lang.Double discountAmount;
 		protected java.lang.Double taxAmount;
 		protected java.lang.Double taxAmountWithoutModifiers;
+		protected java.lang.Double serviceChargeAmount;
 		protected java.lang.Double totalAmount;
 		protected java.lang.Double totalAmountWithoutModifiers;
 		protected java.lang.Boolean beverage;
@@ -115,6 +140,12 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 		protected java.lang.Boolean stockAmountAdjusted;
 		protected java.lang.Boolean pizzaType;
 		protected java.lang.Integer pizzaSectionModeType;
+		
+		protected java.lang.Boolean isReturn;	//Diana - 29/07/2018
+		protected java.lang.Integer returnItemId;
+		
+		protected java.lang.Double serviceChargeRate; //Diana - 11/08/2018
+		protected java.lang.Double serviceCharge;
 
 	// many to one
 	private com.floreantpos.model.TicketItemModifier sizeModifier;
@@ -171,7 +202,7 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 	/**
 	 * Return the value associated with the column: ITEM_COUNT
 	 */
-	public java.lang.Integer getItemCount () {
+	public java.lang.Double getItemCount () {
 					return itemCount == null ? Integer.valueOf(0) : itemCount;
 			}
 
@@ -179,7 +210,7 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 	 * Set the value related to the column: ITEM_COUNT
 	 * @param itemCount the ITEM_COUNT value
 	 */
-	public void setItemCount (java.lang.Integer itemCount) {
+	public void setItemCount (java.lang.Double itemCount) {
 		this.itemCount = itemCount;
 	}
 
@@ -294,6 +325,11 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 									return taxRate == null ? Double.valueOf(0) : taxRate;
 					}
 
+	public Double getServiceChargeRate() {
+		Restaurant restaurant = Application.getInstance().getRestaurant();
+		return (restaurant.getServiceChargePercentage()==null ? Double.valueOf(0) : restaurant.getServiceChargePercentage());
+
+	}
 	/**
 	 * Set the value related to the column: ITEM_TAX_RATE
 	 * @param taxRate the ITEM_TAX_RATE value
@@ -371,6 +407,14 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 	}
 
 
+
+	public java.lang.Double getServiceChargeAmount() {
+		return serviceChargeAmount;
+	}
+
+	public void setServiceChargeAmount(java.lang.Double serviceChargeAmount) {
+		this.serviceChargeAmount = serviceChargeAmount;
+	}
 
 	/**
 	 * Return the value associated with the column: TAX_AMOUNT_WITHOUT_MODIFIERS
@@ -766,6 +810,38 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 		this.cookingInstructions = cookingInstructions;
 	}
 
+	//Diana - 29-07-2018	
+	public java.lang.Boolean getIsReturn () {
+			return isReturn == null ? Boolean.FALSE : isReturn;
+	}
+
+	public void setIsReturn (java.lang.Boolean isReturn) {
+		this.isReturn = isReturn;
+	}
+	
+	public java.lang.Integer getReturnItemId () {
+			return returnItemId == null ?  Integer.valueOf(0)  : returnItemId;
+	}
+	
+	public void setReturnItemId (java.lang.Integer returnItemId) {
+		this.returnItemId = returnItemId;
+	}
+	
+	/*public java.lang.Double getServiceChargeRate1() {
+		return serviceChargeRate == null ?  Integer.valueOf(0)  : serviceChargeRate;
+	}*/
+
+	public void setServiceChargeRate (java.lang.Double serviceChargeRate) {
+		this.serviceChargeRate = serviceChargeRate;
+	}
+	
+	public java.lang.Double getServiceCharge () {
+		return serviceCharge == null ?  Integer.valueOf(0)  : serviceCharge;
+	}
+
+	public void setServiceCharge (java.lang.Double serviceCharge) {
+		this.serviceCharge = serviceCharge;
+	}
 
 
 

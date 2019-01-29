@@ -47,7 +47,7 @@ import com.floreantpos.ui.views.order.RootView;
 public class OrderInfoDialog extends POSDialog {
 	OrderInfoView view;
 	private boolean reorder = false;
-	private PosButton btnReOrder;
+	//private PosButton btnReOrder; //Diana
 	private PosButton btnTransferUser;
 	private PosButton btnPrint;
 	private PosButton btnPrintDriverCopy;
@@ -65,7 +65,7 @@ public class OrderInfoDialog extends POSDialog {
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.SOUTH);
 
-		btnReOrder = new PosButton("Reorder");
+		/*btnReOrder = new PosButton("Reorder");
 
 		btnReOrder.addActionListener(new ActionListener() {
 
@@ -83,7 +83,7 @@ public class OrderInfoDialog extends POSDialog {
 			}
 		});
 
-		panel.add(btnReOrder);
+		panel.add(btnReOrder);*/
 
 		btnTransferUser = new PosButton();
 		btnTransferUser.setText(Messages.getString("OrderInfoDialog.3")); //$NON-NLS-1$
@@ -155,7 +155,7 @@ public class OrderInfoDialog extends POSDialog {
 
 	public void updateView() {
 		btnTransferUser.setVisible(false);
-		btnReOrder.setVisible(false);
+		//btnReOrder.setVisible(false);
 		btnPrintDriverCopy.setVisible(true);
 		btnPrint.setText("Print (Customer Copy)");
 	}
@@ -168,7 +168,7 @@ public class OrderInfoDialog extends POSDialog {
 		}
 	}
 
-	private void createReOrder(Ticket oldticket) {
+	/*private void createReOrder(Ticket oldticket) {
 		Ticket ticket = new Ticket();
 		ticket.setPriceIncludesTax(oldticket.isPriceIncludesTax());
 		ticket.setOrderType(oldticket.getOrderType());
@@ -257,13 +257,111 @@ public class OrderInfoDialog extends POSDialog {
 
 		reorder = true;
 	}
+*/
+	private void createReOrder(Ticket oldticket) {
+		//Diana - prevent reorder on void/paid - 20/7/2018
+		if(oldticket.isPaid() && oldticket.isClosed()){
+			POSMessageDialog.showMessage(this, Messages.getString("SwitchboardView.14")); //$NON-NLS-1$
+		}
+		else if(oldticket.isVoided()){
+			POSMessageDialog.showMessage(this, Messages.getString("SwitchboardView.11")); //$NON-NLS-1$
+		}
+		else{
+		Ticket ticket = new Ticket();
+		ticket.setPriceIncludesTax(oldticket.isPriceIncludesTax());
+		ticket.setOrderType(oldticket.getOrderType());
+		ticket.setProperties(oldticket.getProperties());
+		ticket.setTerminal(Application.getInstance().getTerminal());
+		ticket.setOwner(Application.getCurrentUser());
+		ticket.setShift(Application.getInstance().getCurrentShift());
+		ticket.setNumberOfGuests(oldticket.getNumberOfGuests());
 
+		Calendar currentTime = Calendar.getInstance();
+		ticket.setCreateDate(currentTime.getTime());
+		ticket.setCreationHour(currentTime.get(Calendar.HOUR_OF_DAY));
+
+		List<TicketItem> newTicketItems = new ArrayList<TicketItem>();
+		for (TicketItem oldTicketItem : oldticket.getTicketItems()) {
+			TicketItem newTicketItem = new TicketItem();
+			newTicketItem.setItemCount(oldTicketItem.getItemCount());
+			newTicketItem.setItemQuantity(oldTicketItem.getItemQuantity());
+			newTicketItem.setItemId(oldTicketItem.getItemId());
+			newTicketItem.setHasModifiers(oldTicketItem.isHasModifiers());
+			newTicketItem.setName(oldTicketItem.getName());
+			newTicketItem.setGroupName(oldTicketItem.getGroupName());
+			newTicketItem.setCategoryName(oldTicketItem.getCategoryName());
+			newTicketItem.setUnitPrice(oldTicketItem.getUnitPrice());
+			newTicketItem.setFractionalUnit(oldTicketItem.isFractionalUnit());
+			newTicketItem.setItemUnitName(oldTicketItem.getItemUnitName());
+
+			List<TicketItemDiscount> discounts = oldTicketItem.getDiscounts();
+			if (discounts != null) {
+				List<TicketItemDiscount> newDiscounts = new ArrayList<TicketItemDiscount>();
+				for (TicketItemDiscount ticketItemDiscount : discounts) {
+					TicketItemDiscount newDiscount = new TicketItemDiscount(ticketItemDiscount);
+					newDiscount.setTicketItem(newTicketItem);
+					newDiscounts.add(newDiscount);
+				}
+				newTicketItem.setDiscounts(newDiscounts);
+			}
+
+			List<TicketItemModifier> ticketItemModifiers = oldTicketItem.getTicketItemModifiers();
+			if (ticketItemModifiers != null) {
+				for (TicketItemModifier ticketItemModifier : ticketItemModifiers) {
+					TicketItemModifier newModifier = new TicketItemModifier();
+					newModifier.setModifierId(ticketItemModifier.getModifierId());
+					newModifier.setMenuItemModifierGroupId(ticketItemModifier.getMenuItemModifierGroupId());
+					newModifier.setItemCount(ticketItemModifier.getItemCount());
+					newModifier.setName(ticketItemModifier.getName());
+					newModifier.setUnitPrice(ticketItemModifier.getUnitPrice());
+					newModifier.setTaxRate(ticketItemModifier.getTaxRate());
+					newModifier.setModifierType(ticketItemModifier.getModifierType());
+					newModifier.setPrintedToKitchen(false);
+					newModifier.setShouldPrintToKitchen(ticketItemModifier.isShouldPrintToKitchen());
+					newModifier.setTicketItem(newTicketItem);
+					newTicketItem.addToticketItemModifiers(newModifier);
+				}
+			}
+			List<TicketItemModifier> addOnsList = oldTicketItem.getAddOns();
+			if (addOnsList != null) {
+				for (TicketItemModifier addOns : oldTicketItem.getAddOns()) {
+					TicketItemModifier newAddOns = new TicketItemModifier();
+					newAddOns.setModifierId(addOns.getModifierId());
+					newAddOns.setMenuItemModifierGroupId(addOns.getMenuItemModifierGroupId());
+					newAddOns.setItemCount(addOns.getItemCount());
+					newAddOns.setName(addOns.getName());
+					newAddOns.setUnitPrice(addOns.getUnitPrice());
+					newAddOns.setTaxRate(addOns.getTaxRate());
+					newAddOns.setModifierType(addOns.getModifierType());
+					newAddOns.setPrintedToKitchen(false);
+					newAddOns.setShouldPrintToKitchen(addOns.isShouldPrintToKitchen());
+					newTicketItem.addToaddOns(newAddOns);
+				}
+			}
+
+			newTicketItem.setTaxRate(oldTicketItem.getTaxRate());
+			newTicketItem.setBeverage(oldTicketItem.isBeverage());
+			newTicketItem.setShouldPrintToKitchen(oldTicketItem.isShouldPrintToKitchen());
+			newTicketItem.setPrinterGroup(oldTicketItem.getPrinterGroup());
+			newTicketItem.setPrintedToKitchen(false);
+
+			newTicketItem.setTicket(ticket);
+			newTicketItems.add(newTicketItem);
+		}
+		ticket.getTicketItems().addAll(newTicketItems);
+
+		OrderView.getInstance().setCurrentTicket(ticket);
+		RootView.getInstance().showView(OrderView.VIEW_NAME);
+
+		reorder = true;
+		}
+	}
 	public boolean isReorder() {
 		return reorder;
 	}
 
 	public void showOnlyPrintButton() {
-		btnReOrder.setVisible(false);
+		//btnReOrder.setVisible(false);
 		btnTransferUser.setVisible(false);
 	}
 }

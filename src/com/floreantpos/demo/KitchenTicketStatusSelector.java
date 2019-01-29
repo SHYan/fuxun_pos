@@ -88,7 +88,7 @@ public class KitchenTicketStatusSelector extends POSDialog implements ActionList
 			KitchenTicketStatus status = KitchenTicketStatus.valueOf(e.getActionCommand());
 			ticketItem.setStatus(status.name());
 
-			int itemCount = ticketItem.getQuantity();
+			double itemCount = ticketItem.getQuantity();
 
 			Ticket ticket = TicketDAO.getInstance().load(kitchenTicket.getTicketId());
 

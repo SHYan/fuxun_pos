@@ -17,6 +17,7 @@
  */
 package com.floreantpos.report;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -29,32 +30,53 @@ import com.floreantpos.util.NumberUtil;
 
 public class TicketDataSource extends AbstractReportDataSource {
 
-	public TicketDataSource() {
-		super(new String[] { "itemName", "itemQty", "itemSubtotal" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	/*public TicketDataSource() {
+		super(new String[] { "itemName", "itemQty", "itemSubtotal", "translatedName"  }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public TicketDataSource(Ticket ticket) {
-		super(new String[] { "itemName", "itemQty", "itemSubtotal" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		super(new String[] { "itemName", "itemQty", "itemSubtotal", "translatedName" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		setTicket(ticket);
+	}
+	*/
+	public TicketDataSource() {
+		super(new String[] { "itemName", "itemQty", "itemSubtotal","isReturn" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	public TicketDataSource(Ticket ticket) {
+		super(new String[] { "itemName", "itemQty", "itemSubtotal","isReturn" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		setTicket(ticket);
 	}
+	public TicketDataSource(Ticket ticket, Boolean useSummary) {
+		super(new String[] { "itemName", "itemQty", "itemSubtotal", "isReturn" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
+		setTicket(ticket, useSummary);
+	}
+	
 	private void setTicket(Ticket ticket) {
+		setTicket(ticket, false);
+	}
+	
+	private void setTicket(Ticket ticket, Boolean useSummary) {
 		ArrayList<ITicketItem> rows = new ArrayList<ITicketItem>();
-
+		//useSummary = false;
 		LinkedHashMap<String, ITicketItem> tableRows = new LinkedHashMap<String, ITicketItem>();
-		TicketItemRowCreator.calculateTicketRows(ticket, tableRows);
+		if(useSummary)
+			TicketItemRowCreator.calculateTicketRows(ticket, tableRows, useSummary);
+		else TicketItemRowCreator.calculateTicketRows(ticket, tableRows);
 
 		Collection<ITicketItem> items = tableRows.values();
 		for (ITicketItem item : items) {
 			if (item instanceof TicketItem && ((TicketItem) item).isTreatAsSeat())
 				continue;
+			//if(!item.getIsReturn()) //Diana - 30-07-2018 - don't show return item on slip
 			rows.add(item);
 		}
 		setRows(rows);
 	}
 
-	public Object getValueAt(int rowIndex, int columnIndex) {
+	/*public Object getValueAt(int rowIndex, int columnIndex) {
 		ITicketItem item = (ITicketItem) rows.get(rowIndex);
 
 		switch (columnIndex) {
@@ -69,8 +91,34 @@ public class TicketDataSource extends AbstractReportDataSource {
 				if (total == null) {
 					return null;
 				}
-
 				return NumberUtil.formatNumber(total);
+				
+			case 3:
+				if(item.getTranslatedName()==null || item.getTranslatedName().equals(""))
+					return item.getTranslatedName();
+				else return "("+item.getTranslatedName()+")";
+		}
+
+		return null;
+	}*/
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		ITicketItem item = (ITicketItem) rows.get(rowIndex);
+
+		switch (columnIndex) {
+			case 0:
+				return item.getNameDisplay();
+
+			case 1:
+				DecimalFormat format = new DecimalFormat("0.##");
+				return format.format(item.getItemCountDisplay()).toString();
+
+			case 2:
+				Double total = item.getSubTotalAmountDisplay();
+				if (total == null) {
+					return null;
+				}
+				return NumberUtil.formatNumber(total);
+			case 3: return item.getIsReturn();	
 		}
 
 		return null;

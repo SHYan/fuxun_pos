@@ -20,16 +20,20 @@ package com.floreantpos.ui.ticket;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.floreantpos.model.ITicketItem;
 import com.floreantpos.model.Ticket;
 import com.floreantpos.model.TicketItem;
 import com.floreantpos.model.TicketItemCookingInstruction;
 import com.floreantpos.model.TicketItemDiscount;
 import com.floreantpos.model.TicketItemModifier;
+import com.floreantpos.report.ReceiptPrintService;
 import com.floreantpos.util.DiscountUtil;
 
 public class TicketItemRowCreator {
-
+	private static Log logger = LogFactory.getLog(TicketItemRowCreator.class);
 	public static void calculateTicketRows(Ticket ticket, Map<String, ITicketItem> tableRows) {
 		calculateTicketRows(ticket, tableRows, true, true, true);
 	}
@@ -37,6 +41,24 @@ public class TicketItemRowCreator {
 	public static void calculateTicketRows(Ticket ticket, Map<String, ITicketItem> tableRows, boolean includeModifiers, boolean includeAddOns,
 			boolean includeCookingInstructions) {
 		calculateTicketRows(ticket, tableRows, true, true, true, true);
+	}
+	
+	public static void calculateTicketRows(Ticket ticket, Map<String, ITicketItem> tableRows, boolean useSummary) {
+		tableRows.clear();
+
+		int rowNum = 0;
+
+		if (ticket == null || ticket.getTicketItems() == null)
+			return;
+
+		List<TicketItem> ticketItems = ticket.getTicketItemsSummary();//ticket.getTicketItems();
+		for (TicketItem ticketItem : ticketItems) {
+			logger.error(ticketItem.getName()+" "+ticketItem.getItemQuantity()+" "+ticketItem.getItemCount());
+			ticketItem.setTableRowNum(rowNum);
+			
+			tableRows.put(String.valueOf(rowNum), ticketItem);
+			rowNum++;
+		}
 	}
 
 	public static void calculateTicketRows(Ticket ticket, Map<String, ITicketItem> tableRows, boolean includeModifiers, boolean includeAddOns,
@@ -52,6 +74,7 @@ public class TicketItemRowCreator {
 		for (TicketItem ticketItem : ticketItems) {
 
 			ticketItem.setTableRowNum(rowNum);
+			if(ticketItem.getReturnItemId() > 0) 	ticketItem.setUnitPrice(ticketItem.getUnitPrice()); //Diana
 			tableRows.put(String.valueOf(rowNum), ticketItem);
 			rowNum++;
 

@@ -90,6 +90,7 @@ public class OrderController implements OrderListener, CategorySelectionListener
 		}
 
 		double itemQuantity = 0;
+		
 		if (menuItem.isFractionalUnit()) {
 			if (TerminalConfig.getScaleActivationValue().equals("cas10")) {
 				itemQuantity = AutomatedWeightInputDialog.takeDoubleInput(menuItem.getName(), 1);
@@ -102,12 +103,26 @@ public class OrderController implements OrderListener, CategorySelectionListener
 			}
 
 			if (itemQuantity == 0) {
-				POSMessageDialog.showError("Unit can not be zero");
+				POSMessageDialog.showError("Unit Quantity can not be zero");
 				return;
 			}
 		}
+		
+		double openPrice = 0; //Set Open Price - Diana 20181126
+		if(TerminalConfig.isAllowOpenPrice() && menuItem.isFractionalUnit()){
+			openPrice = BasicWeightInputDialog.takeDoubleInput("Please enter unit price.", 0);
+			if (openPrice <= -1) {
+				return;
+			}
 
-		TicketItem ticketItem = menuItem.convertToTicketItem(orderView.getTicketView().getTicket().getOrderType(), itemQuantity);
+			/*if (openPrice == 0) {
+				POSMessageDialog.showError("Unit price can not be zero");
+				return;
+			}*/
+		}
+
+		//TicketItem ticketItem = menuItem.convertToTicketItem(orderView.getTicketView().getTicket().getOrderType(), itemQuantity);
+		TicketItem ticketItem = menuItem.convertToTicketItem(orderView.getTicketView().getTicket().getOrderType(), itemQuantity, openPrice);
 
 		if (!orderView.getTicketView().isStockAvailable(menuItem, ticketItem, -1)) {
 			POSMessageDialog.showError("Items are not available in stock");
@@ -240,6 +255,7 @@ public class OrderController implements OrderListener, CategorySelectionListener
 		boolean newTicket = ticket.getId() == null;
 
 		TicketDAO ticketDAO = new TicketDAO();
+
 		ticketDAO.saveOrUpdate(ticket);
 
 		// save the action

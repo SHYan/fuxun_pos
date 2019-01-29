@@ -135,7 +135,7 @@ public class ModifierViewerTable extends JTable {
 	}
 
 	public void increaseItemAmount(TicketItem ticketItem) {
-		int itemCount = ticketItem.getItemCount();
+		double itemCount = ticketItem.getItemCount();
 		ticketItem.setItemCount(++itemCount);
 		repaint();
 	}
@@ -152,22 +152,22 @@ public class ModifierViewerTable extends JTable {
 		Object object = model.get(selectedRow);
 		if (object instanceof TicketItem) {
 			TicketItem ticketItem = (TicketItem) object;
-			int itemCount = ticketItem.getItemCount();
+			double itemCount = ticketItem.getItemCount();
 			ticketItem.setItemCount(++itemCount);
 			repaint();
 
 			return true;
 		}
 		else if (object instanceof TicketItemModifier) {
-//			TicketItemModifier modifier = (TicketItemModifier) object;
-//			int itemCount = modifier.getItemCount();
-//
-//			int maxModifier = modifier.getParent().getMaxQuantity();
-//			if (modifier.getModifierType() == TicketItemModifier.NORMAL_MODIFIER && maxModifier <= maxModifier) {
-//				return false;
-//			}
-//			modifier.setItemCount(++itemCount);
-//			repaint();
+			TicketItemModifier modifier = (TicketItemModifier) object;
+			int itemCount = modifier.getItemCount();
+
+			/*int maxModifier = modifier.getParent().getMaxQuantity();
+			if (modifier.getModifierType() == TicketItemModifier.NORMAL_MODIFIER && maxModifier <= maxModifier) {
+				return false;
+			}*/
+			modifier.setItemCount(++itemCount);
+			repaint();
 
 			return false;
 		}
@@ -186,7 +186,7 @@ public class ModifierViewerTable extends JTable {
 		Object object = model.get(selectedRow);
 		if (object instanceof TicketItem) {
 			TicketItem ticketItem = (TicketItem) object;
-			int itemCount = ticketItem.getItemCount();
+			double itemCount = ticketItem.getItemCount();
 			if (itemCount == 1)
 				return false;
 

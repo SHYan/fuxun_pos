@@ -83,16 +83,16 @@ public class PayOutView extends TransparentPanel {
 		numberSelectionView.setBorder(BorderFactory.createCompoundBorder(numberSelectionView.getBorder(), new EmptyBorder(5, 5, 5, 5)));
 		numberSelectionView.setDecimalAllowed(true);
 
-		Font font1 = new Font("Tahoma", Font.BOLD, PosUIManager.getFontSize(12)); //$NON-NLS-1$
-		Font font2 = new Font("Tahoma", Font.BOLD, PosUIManager.getFontSize(18)); //$NON-NLS-1$
+		//Font font1 = new Font("Tahoma", Font.BOLD, PosUIManager.getFontSize(12)); //$NON-NLS-1$
+		//Font font2 = new Font("Tahoma", Font.BOLD, PosUIManager.getFontSize(18)); //$NON-NLS-1$
 
 		JLabel lblPayoutReason = new JLabel(POSConstants.PAY_OUT_REASON);
 		JLabel lblPayOutReceipient = new JLabel(POSConstants.SELECT_PAY_OUT_RECEPIENT);
 		JLabel lblNote = new JLabel(Messages.getString("PayOutView.5")); //$NON-NLS-1$
 
-		lblPayoutReason.setFont(font1);
-		lblPayOutReceipient.setFont(font1);
-		lblNote.setFont(font1);
+		//lblPayoutReason.setFont(font1);
+		//lblPayOutReceipient.setFont(font1);
+		//lblNote.setFont(font1);
 
 		Dimension size = PosUIManager.getSize(300, 40);
 		cbReason = new JComboBox();
@@ -101,8 +101,8 @@ public class PayOutView extends TransparentPanel {
 		cbRecepient.setPreferredSize(size);
 		tfNote = new JTextArea();
 
-		cbReason.setFont(font2);
-		cbRecepient.setFont(font2);
+		//cbReason.setFont(font2);
+		//cbRecepient.setFont(font2);
 
 		JScrollPane jScrollPane1 = new JScrollPane();
 		tfNote.setColumns(20);

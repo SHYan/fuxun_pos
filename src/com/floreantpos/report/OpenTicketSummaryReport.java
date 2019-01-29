@@ -24,8 +24,10 @@ import java.util.List;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import net.sf.jasperreports.view.JRViewer;
+import com.floreantpos.mybatis.IBatisFactory;
 
 import com.floreantpos.Messages;
 import com.floreantpos.model.Ticket;
@@ -64,7 +66,23 @@ public class OpenTicketSummaryReport extends Report {
 		JasperPrint print = JasperFillManager.fillReport(masterReport, map, new JRTableModelDataSource(reportModel));
 		viewer = new JRViewer(print);
 	}
-
+/*
+	public void refresh() throws Exception {
+		HashMap map = new HashMap();
+		ReportUtil.populateRestaurantProperties(map);
+		map.put("reportTitle", Messages.getString("OpenTicketSummaryReport.0")); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("reportTime", ReportService.formatFullDate(new Date())); //$NON-NLS-1$
+		//map.put("dateRange", Application.formatDate(date1) + " to " + Application.formatDate(date2));
+		map.put("userType", getUserType() == null ? com.floreantpos.POSConstants.ALL : getUserType().getName()); //$NON-NLS-1$
+		map.put("terminalName", getTerminal() == null ? com.floreantpos.POSConstants.ALL : getTerminal().getName()); //$NON-NLS-1$
+		map.put("currency", Messages.getString("SalesReport.8") + CurrencyUtil.getCurrencyName() + " (" + CurrencyUtil.getCurrencySymbol() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		
+		List<Ticket> dataSource = IBatisFactory.selectList("Report.getOpenTicket", null);
+		JasperReport masterReport = ReportUtil.getReport("open_ticket_summary_report");
+		JasperPrint print = JasperFillManager.fillReport(masterReport, map, new JRBeanCollectionDataSource(dataSource));
+		viewer = new JRViewer(print);
+	}
+*/
 	@Override
 	public boolean isDateRangeSupported() {
 		return false;

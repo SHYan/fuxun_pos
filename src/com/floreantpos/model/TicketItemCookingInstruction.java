@@ -123,4 +123,26 @@ public class TicketItemCookingInstruction extends BaseTicketItemCookingInstructi
 	public String getKitchenStatus() {
 		return ""; //$NON-NLS-1$
 	}
+
+	@Override
+	public String getTranslatedName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	//Diana
+	@Override
+	public Boolean getIsReturn() {
+		return false;
+	}
+	
+	@Override
+	public Double getItemCountDisplay() {
+		return 0.0;
+	}
+	
+	@Override
+	public void setUnitPrice(Double price){
+		
+	}
 }

@@ -33,7 +33,6 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
-import javax.swing.plaf.FontUIResource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -46,13 +45,10 @@ import com.floreantpos.POSConstants;
 import com.floreantpos.PosLog;
 import com.floreantpos.bo.ui.BackOfficeWindow;
 import com.floreantpos.config.AppProperties;
-import com.floreantpos.config.CardConfig;
 import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.config.ui.DatabaseConfigurationDialog;
 import com.floreantpos.extension.ExtensionManager;
 import com.floreantpos.extension.FloreantPlugin;
-import com.floreantpos.extension.InginicoPlugin;
-import com.floreantpos.extension.PaymentGatewayPlugin;
 import com.floreantpos.model.DeliveryConfiguration;
 import com.floreantpos.model.OrderType;
 import com.floreantpos.model.PosPrinters;
@@ -67,11 +63,11 @@ import com.floreantpos.model.dao.PrinterConfigurationDAO;
 import com.floreantpos.model.dao.RestaurantDAO;
 import com.floreantpos.model.dao.TerminalDAO;
 import com.floreantpos.model.util.DateUtil;
-import com.floreantpos.posserver.PosServer;
 import com.floreantpos.services.PosWebService;
 import com.floreantpos.swing.PosUIManager;
 import com.floreantpos.ui.dialog.POSMessageDialog;
 import com.floreantpos.ui.dialog.PasswordEntryDialog;
+import com.floreantpos.ui.dialog.RegisterDialog;
 import com.floreantpos.ui.dialog.UpdateDialog;
 import com.floreantpos.ui.views.LoginView;
 import com.floreantpos.ui.views.order.OrderView;
@@ -155,9 +151,29 @@ public class Application {
 		}
 
 		try {
+			/*
+			LicenseKey lkey = new LicenseKey(); //Diana - 2018-09-09
+			
+			if(lkey.licenseValidation() == false){
+				RegisterDialog dialog = new RegisterDialog();
+				dialog.pack();
+				dialog.open();
+			}
+			*/
+			/*
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			Date today = new Date();
+	        Date date = sdf.parse("2019-01-30");
+	        if(today.compareTo(date)>0) return;
+			*/
+			//upload daily sales summary
+			SalesSummaryAction sales_summary = new SalesSummaryAction(); 
+			sales_summary.save_sales_summary();
+		
 			posWindow.setGlassPaneVisible(true);
 			posWindow.updateView();
 
+			//DatabaseUtil.initialize();
 			DatabaseUtil.checkConnection(DatabaseUtil.initialize());
 			DatabaseUtil.updateLegacyDatabase();
 
@@ -177,11 +193,18 @@ public class Application {
 			//if (hasUpdateScheduleToday())
 			//	checkAvailableUpdates();
 			setSystemInitialized(true);
+			
+			
+			
+			/* John Start
 			PaymentGatewayPlugin paymentGateway = CardConfig.getPaymentGateway();
 
 			if (paymentGateway instanceof InginicoPlugin) {
 				new PosServer();
 			}
+			*/
+			
+			
 		} catch (DatabaseConnectionException e) {
 			e.printStackTrace();
 			PosLog.error(getClass(), e);
@@ -686,29 +709,43 @@ public class Application {
 
 	private void initializeFont() {
 		java.util.Enumeration keys = UIManager.getDefaults().keys();
+		/*John s*/
+		String uiFont = TerminalConfig.getUiDefaultFont();
+		int stylePlain = Font.PLAIN;
+		if (StringUtils.isEmpty(uiFont)) {
+			Font sourceFont = UIManager.getFont("Label.font"); //$NON-NLS-1$
+			uiFont = sourceFont.getName();
+			stylePlain = sourceFont.getStyle();
+		}
+		Font font = new Font(uiFont, stylePlain, PosUIManager.getDefaultFontSize());
+		Font fontBold = new Font(uiFont, Font.BOLD, PosUIManager.getDefaultFontSize());
+		/*John e*/
+		
 		while (keys.hasMoreElements()) {
 
 			Object key = keys.nextElement();
 			Object value = UIManager.get(key);
 
 			if (value != null && value instanceof javax.swing.plaf.FontUIResource) {
+				/*John s*/
+				/*
 				javax.swing.plaf.FontUIResource f = (FontUIResource) value;
 				String fontName = f.getFontName();
-				//fontName = "Noto Sans";
-
 				Font font = new Font(fontName, f.getStyle(), PosUIManager.getDefaultFontSize());
-				UIManager.put(key, new javax.swing.plaf.FontUIResource(font));
-
-				/*	Font fontBold = new Font(f.getFontName(), Font.BOLD, PosUIManager.getDefaultFontSize());
-				
+				*/
+				/*John e*/
+				//UIManager.put(key, new javax.swing.plaf.FontUIResource(font));
 				if (key.equals("TitledBorder.font")) {
 					UIManager.put(key, new javax.swing.plaf.FontUIResource(fontBold));
-				}
-				else {
+				}else {
 					UIManager.put(key, new javax.swing.plaf.FontUIResource(font));
-				}*/
+				}
 			}
 		}
+		UIManager.put("JScrollPane", new javax.swing.plaf.FontUIResource(font));
+		UIManager.put("JComboBox", new javax.swing.plaf.FontUIResource(font));
+		UIManager.put("ComboBoxModel", new javax.swing.plaf.FontUIResource(font));
+		
 	}
 
 	private void initLengthUnit() {

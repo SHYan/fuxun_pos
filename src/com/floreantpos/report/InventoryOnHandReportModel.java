@@ -10,7 +10,7 @@ import com.floreantpos.swing.ListTableModel;
 public class InventoryOnHandReportModel extends ListTableModel {
 	SimpleDateFormat dateFormat2 = new SimpleDateFormat("MMM-dd-yyyy hh:mm a"); //$NON-NLS-1$
 
-	DecimalFormat decimalFormat = new DecimalFormat("0.00"); //$NON-NLS-1$
+	DecimalFormat decimalFormat = new DecimalFormat("###,###"); //$NON-NLS-1$
 
 	public InventoryOnHandReportModel() {
 		super(new String[] { "itemgroup", "items", "barcode", "onHand", "cost", "onhandvalue" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$

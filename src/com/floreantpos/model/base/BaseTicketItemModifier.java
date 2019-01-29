@@ -78,6 +78,9 @@ public abstract class BaseTicketItemModifier  implements Comparable, Serializabl
 		protected java.lang.String status;
 		protected java.lang.Boolean printedToKitchen;
 
+		protected java.lang.Double serviceChargeRate; //Diana - 11/08/2018
+		protected java.lang.Double serviceCharge;
+
 	// many to one
 	private com.floreantpos.model.TicketItem ticketItem;
 
@@ -416,7 +419,22 @@ public abstract class BaseTicketItemModifier  implements Comparable, Serializabl
 		this.ticketItem = ticketItem;
 	}
 
+	//Diana - 11/08/2018   - 423
+		public java.lang.Double getServiceChargeRate () {
+			return serviceChargeRate == null ?  Integer.valueOf(0)  : serviceChargeRate;
+		}
 
+		public void setServiceChargeRate (java.lang.Double serviceChargeRate) {
+			this.serviceChargeRate = serviceChargeRate;
+		}
+		
+		public java.lang.Double getServiceCharge () {
+			return serviceCharge == null ?  Integer.valueOf(0)  : serviceCharge;
+		}
+
+		public void setServiceCharge (java.lang.Double serviceCharge) {
+			this.serviceCharge = serviceCharge;
+		}
 
 
 

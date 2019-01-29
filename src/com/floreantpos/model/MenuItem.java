@@ -151,9 +151,11 @@ public class MenuItem extends BaseMenuItem {
 	}
 
 	public double getPrice(Shift currentShift) {
-		List<MenuItemShift> shifts = getShifts();
+		
 		double price = super.getPrice();
-
+		return price;
+		/* no price base on shift
+		List<MenuItemShift> shifts = getShifts();
 		if (currentShift == null) {
 			return price;
 		}
@@ -177,6 +179,7 @@ public class MenuItem extends BaseMenuItem {
 			//			}
 		}
 		return price;
+		*/
 	}
 
 	@Override
@@ -189,10 +192,11 @@ public class MenuItem extends BaseMenuItem {
 	}
 
 	public TicketItem convertToTicketItem() {
-		return convertToTicketItem(null, 0);
+		//return convertToTicketItem(null, 0);
+		return convertToTicketItem(null, 0, 0); //Set Open Price - Diana 20181126
 	}
 
-	public TicketItem convertToTicketItem(OrderType orderType, double itemQuantity) {
+	public TicketItem convertToTicketItem(OrderType orderType, double itemQuantity, double openPrice) {
 		TicketItem ticketItem = new TicketItem();
 
 		ticketItem.setItemId(this.getId());
@@ -200,29 +204,37 @@ public class MenuItem extends BaseMenuItem {
 
 		ticketItem.setPizzaType(isPizzaType());
 		ticketItem.setFractionalUnit(this.isFractionalUnit());
-
+		//System.out.print(itemQuantity);
 		if (this.isFractionalUnit()) {
 			ticketItem.setItemQuantity(itemQuantity);
+			ticketItem.setItemCount( itemQuantity);
 			ticketItem.setItemUnitName(this.getUnitName());
 		}
 		else {
-			ticketItem.setItemCount(1);
+			ticketItem.setItemCount(1.0);
+			ticketItem.setItemQuantity(1.0);
 		}
 
 		ticketItem.setName(this.getDisplayName());
 		ticketItem.setGroupName(this.getParent().getDisplayName());
 		ticketItem.setCategoryName(this.getParent().getParent().getDisplayName());
 
-		ticketItem.setUnitPrice(getPriceByOrderType(orderType));
+		//Set Open Price - Diana 20181126
+		if(TerminalConfig.isAllowOpenPrice() && this.isFractionalUnit()){ 
+			ticketItem.setUnitPrice(openPrice);
+		}
+		else{
+			ticketItem.setUnitPrice(getPriceByOrderType(orderType));
+		}
 
 		//ticketItem.setTaxRate(this.getTax() == null ? 0 : this.getTax().getRate());
-
+//System.out.print("tax rate "+calculateTaxRate());
 		ticketItem.setTaxRate(calculateTaxRate());
 
 		ticketItem.setHasModifiers(hasModifiers());
 		if (this.getParent().getParent().isBeverage()) {
 			ticketItem.setBeverage(true);
-			ticketItem.setShouldPrintToKitchen(false);
+			ticketItem.setShouldPrintToKitchen(true);
 		}
 		else {
 			ticketItem.setBeverage(false);
@@ -536,4 +548,5 @@ public class MenuItem extends BaseMenuItem {
 		}
 		return menuItem;
 	}
+	
 }

@@ -154,13 +154,21 @@ public class LoginView extends ViewPanel {
 			panel3.add(btnDriverView);
 			btnDriverView.setVisible(false);
 		}
-		centerPanel.add(panel3, "cell 0 2, wrap, w " + width + "px, h " + height + "px, grow");
+		
 
 		panel4.add(btnClockOUt, "grow"); //$NON-NLS-1$
-		panel4.add(btnConfigureDatabase, "grow"); //$NON-NLS-1$
+		//panel4.add(btnConfigureDatabase, "grow"); //$NON-NLS-1$
 		panel4.add(btnShutdown, "grow"); //$NON-NLS-1$
-
-		centerPanel.add(panel4, "cell 0 3, wrap, w " + width + "px, h " + height + "px, grow");
+		/* John Start */
+		List<com.floreantpos.model.OrderType> orderTypes = Application.getInstance().getOrderTypes();
+		if(orderTypes.size()>3) {
+			centerPanel.add(panel3, "cell 0 2, wrap, w " + width + "px, h " + height + "px, grow");
+			centerPanel.add(panel4, "cell 0 3, wrap, w " + width + "px, h " + height + "px, grow");
+		}else {
+			centerPanel.add(panel3, "cell 0 1, wrap, w " + width + "px, h " + height + "px, grow");
+			centerPanel.add(panel4, "cell 0 2, wrap, w " + width + "px, h " + height + "px, grow");
+		}
+		/* John End */
 
 		if (TerminalConfig.isFullscreenMode()) {
 			if (btnConfigureDatabase != null) {
@@ -201,10 +209,11 @@ public class LoginView extends ViewPanel {
 			}
 			++buttonCount;
 		}
-
+		
 		if (buttonCount > 3) {
 			centerPanel.add(panel2, "cell 0 1, wrap,w " + width + "px, h " + height + "px, grow");
 		}
+		
 		btnSwitchBoard.setVisible(true);
 		btnKitchenDisplay.setVisible(true);
 		btnBackOffice.setVisible(true);

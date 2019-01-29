@@ -55,6 +55,7 @@ import com.floreantpos.model.InventoryVendor;
 import com.floreantpos.model.InventoryWarehouse;
 import com.floreantpos.model.KitchenTicket;
 import com.floreantpos.model.KitchenTicketItem;
+import com.floreantpos.model.License;
 import com.floreantpos.model.MenuCategory;
 import com.floreantpos.model.MenuGroup;
 import com.floreantpos.model.MenuItem;
@@ -78,6 +79,7 @@ import com.floreantpos.model.PurchaseOrder;
 import com.floreantpos.model.Recepie;
 import com.floreantpos.model.RecepieItem;
 import com.floreantpos.model.Restaurant;
+import com.floreantpos.model.SalesSummary;
 import com.floreantpos.model.Shift;
 import com.floreantpos.model.ShopFloor;
 import com.floreantpos.model.ShopFloorTemplate;
@@ -193,6 +195,8 @@ public abstract class _RootDAO extends com.floreantpos.model.dao._BaseRootDAO {
 		configuration.addClass(ModifierMultiplierPrice.class);
 		configuration.addClass(TaxGroup.class);
 		configuration.addClass(GuestCheckPrint.class);
+		configuration.addClass(License.class);
+		configuration.addClass(SalesSummary.class);
 
 		configureInventoryClasses(configuration);
 
@@ -207,7 +211,8 @@ public abstract class _RootDAO extends com.floreantpos.model.dao._BaseRootDAO {
 		configuration.setProperty("hibernate.hbm2ddl.auto", "update"); //$NON-NLS-1$ //$NON-NLS-2$
 		configuration.setProperty("hibernate.connection.autocommit", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		configuration.setProperty("hibernate.max_fetch_depth", "3"); //$NON-NLS-1$ //$NON-NLS-2$
-		configuration.setProperty("hibernate.show_sql", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		//John
+		configuration.setProperty("hibernate.show_sql", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		configuration.setProperty("hibernate.connection.isolation", String.valueOf(Connection.TRANSACTION_READ_COMMITTED)); //$NON-NLS-1$
 
 		configureC3p0ConnectionPool(configuration);

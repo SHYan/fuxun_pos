@@ -304,12 +304,12 @@ public class SetUpWindow extends JFrame implements ActionListener {
 		databaseCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Database selectedDb = (Database) databaseCombo.getSelectedItem();
-
+				/* John Start
 				if (selectedDb == Database.DERBY_SINGLE) {
 					setFieldsVisible(false);
 					return;
 				}
-
+				*/
 				setFieldsVisible(true);
 
 				String databasePort = AppConfig.getDatabasePort();
@@ -337,13 +337,15 @@ public class SetUpWindow extends JFrame implements ActionListener {
 		tfDatabaseName.setText(AppConfig.getDatabaseName());
 		tfUserName.setText(AppConfig.getDatabaseUser());
 		tfPassword.setText(AppConfig.getDatabasePassword());
-
+		/* John Start
 		if (selectedDb == Database.DERBY_SINGLE) {
 			setFieldsVisible(false);
 		}
 		else {
 			setFieldsVisible(true);
 		}
+		*/
+		setFieldsVisible(true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

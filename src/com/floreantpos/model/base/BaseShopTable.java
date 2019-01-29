@@ -48,7 +48,7 @@ public abstract class BaseShopTable  implements Comparable, Serializable {
 	// primary key
 	private java.lang.Integer id;
 
-	 long version;
+	 Long version;
 
 	// fields
 		protected java.lang.String name;
@@ -92,7 +92,7 @@ public abstract class BaseShopTable  implements Comparable, Serializable {
 	/**
 	 * Return the value associated with the column: VERSION_NO
 	 */
-	public long getVersion () {
+	public Long getVersion () {
 					return version;
 			}
 
@@ -100,7 +100,7 @@ public abstract class BaseShopTable  implements Comparable, Serializable {
 	 * Set the value related to the column: VERSION_NO
 	 * @param version the VERSION_NO value
 	 */
-	public void setVersion (long version) {
+	public void setVersion (Long version) {
 		this.version = version;
 	}
 
@@ -111,6 +111,7 @@ public abstract class BaseShopTable  implements Comparable, Serializable {
 	 * Return the value associated with the column: NAME
 	 */
 	public java.lang.String getName () {
+		if(name==null) return getDescription();
 					return name;
 			}
 
@@ -136,7 +137,11 @@ public abstract class BaseShopTable  implements Comparable, Serializable {
 	 * @param description the DESCRIPTION value
 	 */
 	public void setDescription (java.lang.String description) {
-		this.description = description;
+		if(description==null || description.isEmpty() || description.trim().equals(""))
+			this.description = String.valueOf(this.id);
+		else
+			this.description = description;
+		//this.description = description;
 	}
 
 

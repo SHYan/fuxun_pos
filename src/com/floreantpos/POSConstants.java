@@ -43,7 +43,7 @@ public class POSConstants {
 	public static final String EDIT_TICKET_BUTTON_TEXT = Messages.getString("EDIT_TICKET_BUTTON_TEXT"); //$NON-NLS-1$
 	public static final String GROUP_SETTLE_BUTTON_TEXT = Messages.getString("GROUP_SETTLE_BUTTON_TEXT"); //$NON-NLS-1$
 	public static final String MANAGER_BUTTON_TEXT = Messages.getString("MANAGER_BUTTON_TEXT"); //$NON-NLS-1$
-	public static final String SETTLE_CARD_TRANSACTIONS = Messages.getString("SETTLE_CARD_TRANSACTIONS_TEXT"); //$NON-NLS-1$
+	public static final String AUTHORIZE_BUTTON_TEXT = Messages.getString("AUTHORIZE_BUTTON_TEXT"); //$NON-NLS-1$
 	public static final String KITCHEN_DISPLAY_BUTTON_TEXT = Messages.getString("KITCHEN_DISPLAY_BUTTON_TEXT"); //$NON-NLS-1$
 	public static final String PAYOUT_BUTTON_TEXT = Messages.getString("PAYOUT_BUTTON_TEXT"); //$NON-NLS-1$
 	public static final String ORDER_INFO_BUTTON_TEXT = Messages.getString("ORDER_INFO_BUTTON_TEXT"); //$NON-NLS-1$
@@ -51,6 +51,9 @@ public class POSConstants {
 	public static final String REORDER_TICKET_BUTTON_TEXT = Messages.getString("REORDER_TICKET_BUTTON_TEXT"); //$NON-NLS-1$
 	public static final String SETTLE_TICKET_BUTTON_TEXT = Messages.getString("SETTLE_TICKET_BUTTON_TEXT"); //$NON-NLS-1$
 	public static final String SPLIT_TICKET_BUTTON_TEXT = Messages.getString("SPLIT_TICKET_BUTTON_TEXT"); //$NON-NLS-1$
+	//Diana - 2018-08-03 for merge ticket
+	public static final String MERGE_TICKET_BUTTON_TEXT = Messages.getString("MERGE_TICKET_BUTTON_TEXT"); //$NON-NLS-1$
+		
 	public static final String VOID_TICKET_BUTTON_TEXT = Messages.getString("VOID_TICKET_BUTTON_TEXT"); //$NON-NLS-1$
 	public static final String REFUND_BUTTON_TEXT = Messages.getString("REFUND_BUTTON_TEXT"); //$NON-NLS-1$
 	public static final String ASSIGN_DRIVER_BUTTON_TEXT = Messages.getString("ASSIGN_DRIVER_BUTTON_TEXT"); //$NON-NLS-1$
@@ -163,6 +166,9 @@ public class POSConstants {
 	public static final String MENU_MODIFIERS = Messages.getString("PosMessage.75"); //$NON-NLS-1$
 	public static final String CLOSED = Messages.getString("PosMessage.76"); //$NON-NLS-1$
 	public static final String SHUTDOWN = Messages.getString("PosMessage.77"); //$NON-NLS-1$
+	//Diana
+	public static final String RESTART = Messages.getString("PosMessage.999"); //$NON-NLS-1$
+	
 	public static final String LOGIN = Messages.getString("PosMessage.78"); //$NON-NLS-1$
 	public static final String TERMINAL_SETUP = Messages.getString("PosMessage.TERMINAL_SETUP"); //$NON-NLS-1$
 	public static final String GO = Messages.getString("PosMessage.79"); //$NON-NLS-1$
@@ -491,4 +497,22 @@ public class POSConstants {
 	public static final String RECEIPT_REPORT_PAIDAMOUNT_LABEL = Messages.getString("RECEIPT_REPORT_PAIDAMOUNT_LABEL"); //$NON-NLS-1$
 	public static final String RECEIPT_REPORT_DUEAMOUNT_LABEL = Messages.getString("RECEIPT_REPORT_DUEAMOUNT_LABEL"); //$NON-NLS-1$
 	public static final String RECEIPT_REPORT_CHANGEAMOUNT_LABEL = Messages.getString("RECEIPT_REPORT_CHANGEAMOUNT_LABEL"); //$NON-NLS-1$
+	
+	public static final String REPORT_YEAR_REPORT = Messages.getString("REPORT_YEAR_REPORT"); //$NON-NLS-1$
+	public static final String REPORT_DAILY_SALES_REPORT = Messages.getString("REPORT_DAILY_SALES_REPORT"); //$NON-NLS-1$
+	public static final String REPORT_ORDER_STATUS_REPORT = Messages.getString("REPORT_ORDER_STATUS_REPORT"); //$NON-NLS-1$
+	public static final String REPORT_Product_SALES_REPORT = Messages.getString("REPORT_Product_SALES_REPORT"); //$NON-NLS-1$
+	//John
+	public static final String REPORT_STOCK_REPORT = Messages.getString("REPORT_STOCK_REPORT"); //$NON-NLS-1$
+	public static final String REPORT_STOCK_ADJUST_REPORT = Messages.getString("REPORT_STOCK_ADJUST_REPORT"); //$NON-NLS-1$
+	//Diana
+	public static final String REPORT_SALES_SUMMARY_REPORT = Messages.getString("REPORT_SALES_SUMMARY_REPORT"); //$NON-NLS-1$
+	public static final String REPORT_PAYOUT_REPORT = Messages.getString("REPORT_PAYOUT_REPORT"); //$NON-NLS-1$
+	public static final String REPORT_PROFIT_LOSS_REPORT = Messages.getString("REPORT_PROFIT_LOSS_REPORT"); //$NON-NLS-1$
+
+	public static final String REPORT_TEMPLATE = Messages.getString("REPORT_TEMPLATE"); //$NON-NLS-1$
+	//Diana
+	public static final String INVENTORY = "Inventory";  
+	
+	
 }

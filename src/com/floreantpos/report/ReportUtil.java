@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.util.JRLoader;
@@ -33,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.floreantpos.Messages;
 import com.floreantpos.PosLog;
+import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.model.Restaurant;
 import com.floreantpos.model.dao.RestaurantDAO;
 
@@ -48,18 +51,23 @@ public class ReportUtil {
 		RestaurantDAO dao = new RestaurantDAO();
 		Restaurant restaurant = dao.get(Integer.valueOf(1));
 		map.put("restaurantName", restaurant.getName()); //$NON-NLS-1$
+		map.put("branchName", restaurant.getName());
 		map.put("addressLine1", restaurant.getAddressLine1()); //$NON-NLS-1$
 		map.put("addressLine2", restaurant.getAddressLine2()); //$NON-NLS-1$
 		map.put("addressLine3", restaurant.getAddressLine3()); //$NON-NLS-1$
 		map.put("phone", restaurant.getTelephone()); //$NON-NLS-1$
 		map.put("reportHeader", reportHeader); //$NON-NLS-1$
+		String uiFont = TerminalConfig.getUiDefaultFont();
+		map.put("uiFont", uiFont);
 	}
 	
 	public static JasperReport getReport(String reportName) {
+		
 		InputStream resource = null;
 
 		try {
 			resource = ReceiptPrintService.class.getResourceAsStream(USER_REPORT_DIR + reportName + ".jasper"); //$NON-NLS-1$
+			
 			if (resource == null) {
 				return compileReport(reportName);
 			}
@@ -67,6 +75,7 @@ public class ReportUtil {
 				return (JasperReport) JRLoader.loadObject(resource);
 			}
 		} catch (Exception e) {
+			logger.info(Messages.getString("ReportUtil.8") + reportName + " from user directory, loading default report"); //$NON-NLS-1$ //$NON-NLS-2$
 			return getDefaultReport(reportName);
 			
 		} finally {

@@ -14,7 +14,7 @@ public class DiscountUtil {
 		TicketItem ticketItem = ticketItemDiscount.getTicketItem();
 		//		Ticket ticket = ticketItem.getTicket();
 
-		int itemCount = ticketItem.getItemCount(); //ticket.countItem(ticketItem);
+		double itemCount = ticketItem.getItemCount(); //ticket.countItem(ticketItem);
 		double subtotalAmount = ticketItem.getSubtotalAmount();
 		double amountToBeDiscounted = subtotalAmount / itemCount;
 		if (ticketItemDiscount.getMinimumQuantity() > 0) {
@@ -22,10 +22,11 @@ public class DiscountUtil {
 			
 			switch (ticketItemDiscount.getType()) {
 				case Discount.DISCOUNT_TYPE_AMOUNT:
-					return Math.floor(itemCount / minQuantity) * ticketItemDiscount.getValue();
+					//return Math.floor(itemCount / minQuantity) * ticketItemDiscount.getValue();
+					return (itemCount / minQuantity) * ticketItemDiscount.getValue(); //Diana - remove floor
 
 				case Discount.DISCOUNT_TYPE_PERCENTAGE:
-					return Math.floor(itemCount / minQuantity) * (amountToBeDiscounted * ticketItemDiscount.getValue() / 100);
+					return (itemCount / minQuantity) * (amountToBeDiscounted * ticketItemDiscount.getValue() / 100);
 			}
 		}
 		switch (ticketItemDiscount.getType()) {

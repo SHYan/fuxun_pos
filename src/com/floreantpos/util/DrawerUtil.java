@@ -87,6 +87,7 @@ public class DrawerUtil {
 		try {
 			serialPort.closePort();
 		} catch (SerialPortException ex) {
+			logger.error(ex);
 		}
 	}
 
@@ -333,6 +334,7 @@ public class DrawerUtil {
 		try {
 			serialPort.writeByte((byte) text);
 		} catch (SerialPortException ex) {
+			logger.error(ex);
 		}
 	}
 
@@ -365,6 +367,7 @@ public class DrawerUtil {
 
 			serialPort.closePort();//Close serial port
 		} catch (SerialPortException ex) {
+			logger.error(ex);
 		}
 	}
 
@@ -379,6 +382,7 @@ public class DrawerUtil {
 
 			serialPort.closePort();//Close serial port
 		} catch (SerialPortException ex) {
+			logger.error(ex);
 		}
 	}
 
@@ -389,6 +393,7 @@ public class DrawerUtil {
 			print((char) 13); //added line feed
 			print(message);
 		} catch (Exception ex) {
+			logger.error(ex);
 		} finally {
 			try {
 				serialPort.closePort();

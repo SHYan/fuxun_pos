@@ -28,11 +28,13 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import com.floreantpos.main.Application;
 import com.floreantpos.model.ITicketItem;
 import com.floreantpos.model.Ticket;
 import com.floreantpos.model.TicketItem;
 import com.floreantpos.model.TicketItemModifier;
 import com.floreantpos.swing.PosUIManager;
+import com.floreantpos.ui.dialog.POSMessageDialog;
 import com.floreantpos.ui.views.order.actions.TicketEditListener;
 
 public class TicketViewerTable extends JTable {
@@ -166,12 +168,12 @@ public class TicketViewerTable extends JTable {
 	}
 
 	public void increaseItemAmount(TicketItem ticketItem) {
-		int itemCount = ticketItem.getItemCount();
+		double itemCount = ticketItem.getItemCount();
 		ticketItem.setItemCount(++itemCount);
 		repaint();
 	}
 
-	public boolean increaseFractionalUnit(double selectedQuantity) {
+	/*public boolean increaseFractionalUnit(double selectedQuantity) {
 		int selectedRow = getSelectedRow();
 		if (selectedRow < 0) {
 			return false;
@@ -187,9 +189,34 @@ public class TicketViewerTable extends JTable {
 			return true;
 		}
 		return false;
+	}*/
+	public boolean increaseFractionalUnit(double selectedQuantity) {
+		int selectedRow = getSelectedRow();
+		if (selectedRow < 0) {
+			return false;
+		}
+		else if (selectedRow >= model.getItemCount()) {
+			return false;
+		}
+
+		Object object = model.get(selectedRow);
+		if (object instanceof TicketItem) {
+			TicketItem ticketItem = (TicketItem) object;
+			//if(ticketItem.getId() == null || ticketItem.getId() == 0){ //Diana - 24-07-2018 - prevent to incerease qty for stored order
+			//if((ticketItem.getId() == null || ticketItem.getId() == 0) && (ticketItem.getReturnItemId() == 0 || ticketItem.getReturnItemId() == null)){
+			if(!ticketItem.isPrintedToKitchen() ){
+				ticketItem.setItemQuantity(selectedQuantity);
+				return true;
+			}
+			else{
+				POSMessageDialog.showError(Application.getPosWindow(), "You cannot increase Item in Stored Order! Please Select new one");
+			}
+		}
+		return false;
 	}
 
-	public boolean increaseItemAmount() {
+
+	/*public boolean increaseItemAmount() {
 		int selectedRow = getSelectedRow();
 		if (selectedRow < 0) {
 			return false;
@@ -212,8 +239,50 @@ public class TicketViewerTable extends JTable {
 		}
 		return false;
 	}
+*/
 
-	public boolean decreaseItemAmount() {
+	public boolean increaseItemAmount() {
+		int selectedRow = getSelectedRow();
+		if (selectedRow < 0) {
+			return false;
+		}
+		else if (selectedRow >= model.getItemCount()) {
+			return false;
+		}
+
+		ITicketItem iTicketItem = (ITicketItem) model.get(selectedRow);
+		if (iTicketItem.isPrintedToKitchen()) {
+			return false;
+		}
+
+		if (iTicketItem instanceof TicketItem) {
+			TicketItem ticketItem = (TicketItem) iTicketItem;
+			//Diana - 24-07-2018 - prevent to incerease qty for stored order
+			//if((ticketItem.getId() == null || ticketItem.getId() == 0) && (ticketItem.getReturnItemId() == 0 || ticketItem.getReturnItemId() == null)){
+			if(!ticketItem.isPrintedToKitchen()){	
+				double itemCount = ticketItem.getItemCount();
+				ticketItem.setItemCount(++itemCount);
+				fireTicketItemUpdated(getTicket(), ticketItem);
+				//Diana -- increase condiment count as well
+				if(ticketItem.isHasModifiers()){
+					if(ticketItem.getTicketItemModifiers().size() > 0)
+					{	double modifier_count = itemCount;
+						for (int i = 0; i < ticketItem.getTicketItemModifiers().size(); i++){
+							ticketItem.getTicketItemModifiers().get(i).setItemCount((int)modifier_count);
+						}
+					}
+				}
+				return true;
+			}
+			else{
+				POSMessageDialog.showError(Application.getPosWindow(), "You cannot increase Item in Stored Order! Please Select new one");
+			}
+			return false;
+		}
+		return false;
+	}
+	
+	/*public boolean decreaseItemAmount() {
 		int selectedRow = getSelectedRow();
 		if (selectedRow < 0) {
 			return false;
@@ -238,6 +307,53 @@ public class TicketViewerTable extends JTable {
 			ticketItem.setItemCount(--itemCount);
 			fireTicketItemUpdated(getTicket(), ticketItem);
 			return true;
+		}
+		return false;
+	}*/
+	public boolean decreaseItemAmount() {
+		int selectedRow = getSelectedRow();
+		if (selectedRow < 0) {
+			return false;
+		}
+		else if (selectedRow >= model.getItemCount()) {
+			return false;
+		}
+
+		ITicketItem iTicketItem = (ITicketItem) model.get(selectedRow);
+		
+		if (iTicketItem.isPrintedToKitchen()) {
+			return false;
+		}
+		if (iTicketItem instanceof TicketItem) {
+			TicketItem ticketItem = (TicketItem) iTicketItem;
+			//if((ticketItem.getId() == null || ticketItem.getId() == 0) && (ticketItem.getReturnItemId() == 0 || ticketItem.getReturnItemId() == null)){
+			if(!ticketItem.isPrintedToKitchen()){
+				double itemCount = ticketItem.getItemCount();
+				if (itemCount == 1) {
+					model.delete(selectedRow);
+					fireTicketItemUpdated(getTicket(), ticketItem);
+					return true;
+				}
+
+				ticketItem.setItemCount(--itemCount);
+				fireTicketItemUpdated(getTicket(), ticketItem);
+				
+				//Diana -- decrease condiment count as well
+				if(ticketItem.isHasModifiers()){
+					if(ticketItem.getTicketItemModifiers().size() > 0)
+					{	double modifier_count = itemCount;
+						for (int i = 0; i < ticketItem.getTicketItemModifiers().size(); i++){
+							ticketItem.getTicketItemModifiers().get(i).setItemCount((int)modifier_count);
+						}
+					}
+				}
+				return true;
+			}
+			else{
+				//addTicketItem(ticketItem);
+					POSMessageDialog.showError(Application.getPosWindow(), "You cannot decrease Item in Stored Order!");
+			}
+			return false;
 		}
 		return false;
 	}

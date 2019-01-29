@@ -56,11 +56,11 @@ public class KitchenTicket extends BaseKitchenTicket {
 
 	public OrderType getType() {
 		String type = getTicketType();
-
-		/*if (StringUtils.isEmpty(type)) {
+/*
+		if (StringUtils.isEmpty(type)) {
 			return OrderType.DINE_IN;
-		}*/
-
+		}
+*/
 		return OrderTypeDAO.getInstance().findByName(type);
 	}
 
@@ -241,7 +241,7 @@ public class KitchenTicket extends BaseKitchenTicket {
 						kitchenTicket.setTableNumbers(new ArrayList<Integer>(ticket.getTableNumbers()));
 					}
 
-					kitchenTicket.setServerName(ticket.getOwner().getFirstName());
+					kitchenTicket.setServerName(ticket.getOwner().getFullName());
 					kitchenTicket.setStatus(KitchenTicketStatus.WAITING.name());
 
 					if (StringUtils.isNotEmpty(ticket.getProperty(Ticket.CUSTOMER_NAME))) {
@@ -363,7 +363,7 @@ public class KitchenTicket extends BaseKitchenTicket {
 					item.setSortOrder(ticketItem.getMenuItem().getParent().getSortOrder());
 				}
 				//item.setFractionalQuantity(itemModifier.getItemCount().doubleValue());
-				item.setQuantity(itemModifier.getItemCount());
+				item.setQuantity(itemModifier.getItemCount()*1.0);
 				item.setStatus(KitchenTicketStatus.WAITING.name());
 				kitchenTicket.addToticketItems(item);
 
@@ -396,7 +396,7 @@ public class KitchenTicket extends BaseKitchenTicket {
 					item.setSortOrder(ticketItem.getMenuItem().getParent().getSortOrder());
 				}
 				//item.setFractionalQuantity(ticketItemModifier.getItemCount().doubleValue());
-				item.setQuantity(ticketItemModifier.getItemCount());
+				item.setQuantity(ticketItemModifier.getItemCount()*1.0);
 				item.setStatus(KitchenTicketStatus.WAITING.name());
 				kitchenTicket.addToticketItems(item);
 

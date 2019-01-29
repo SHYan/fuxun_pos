@@ -28,14 +28,20 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 
+import com.floreantpos.Messages;
 import com.floreantpos.POSConstants;
 import com.floreantpos.PosException;
+import com.floreantpos.bo.ui.BOMessageDialog;
 import com.floreantpos.model.Discount;
+import com.floreantpos.model.MenuCategory;
 import com.floreantpos.model.MenuItem;
 import com.floreantpos.model.Ticket;
 import com.floreantpos.model.TicketItem;
@@ -44,6 +50,7 @@ import com.floreantpos.swing.POSToggleButton;
 import com.floreantpos.swing.PosScrollPane;
 import com.floreantpos.swing.PosUIManager;
 import com.floreantpos.swing.ScrollableFlowPanel;
+import com.floreantpos.ui.model.MenuCategoryForm;
 import com.floreantpos.util.POSUtil;
 
 /**
@@ -53,6 +60,7 @@ import com.floreantpos.util.POSUtil;
 public class TicketItemDiscountSelectionDialog extends OkCancelOptionDialog {
 
 	private ScrollableFlowPanel buttonsPanel;
+	//private ScrollableFlowPanel chkPanel;
 	private Ticket ticket;
 	private Discount discount;
 
@@ -70,8 +78,9 @@ public class TicketItemDiscountSelectionDialog extends OkCancelOptionDialog {
 		setOkButtonText(POSConstants.SAVE_BUTTON_TEXT);
 
 		buttonsPanel = new ScrollableFlowPanel(FlowLayout.LEADING);
-
+		//chkPanel = new ScrollableFlowPanel(FlowLayout.RIGHT);
 		PosScrollPane scrollPane = new PosScrollPane(buttonsPanel, PosScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, PosScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		
 		scrollPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), scrollPane.getBorder()));
 
 		getContentPanel().add(scrollPane, BorderLayout.CENTER);
@@ -79,7 +88,7 @@ public class TicketItemDiscountSelectionDialog extends OkCancelOptionDialog {
 		setSize(600, 500);
 	}
 
-	private void rendererTicketItems() {
+	/*private void rendererTicketItems() {
 		buttonsPanel.getContentPane().removeAll();
 
 		List<TicketItem> ticketItems = ticket.getTicketItems();
@@ -98,6 +107,64 @@ public class TicketItemDiscountSelectionDialog extends OkCancelOptionDialog {
 					}
 				}
 			}
+			buttonsPanel.repaint();
+			buttonsPanel.revalidate();
+
+		} catch (PosException e) {
+			POSMessageDialog.showError(TicketItemDiscountSelectionDialog.this, e.getLocalizedMessage(), e);
+		}
+	}*/
+	private void rendererTicketItems() {
+		buttonsPanel.getContentPane().removeAll();
+
+		final List<TicketItem> ticketItems = ticket.getTicketItems();
+		try {
+			Dimension size = PosUIManager.getSize(115, 80);
+			
+			/*JCheckBox chkAll = new JCheckBox("All"); //$NON-NLS-1$
+			chkAll.setPreferredSize(size);
+			
+			buttonsPanel.add(chkAll);
+			
+			chkAll.addItemListener(new ItemListener(){
+				public void itemStateChanged(ItemEvent e) {
+					try {
+						if(e.getStateChange() == ItemEvent.SELECTED){
+							for (TicketItem ticketItem : ticketItems) {
+								addedTicketItems.add(ticketItem);
+							}
+						}
+						else{
+							for (TicketItem ticketItem : ticketItems) {
+								addedTicketItems.remove(ticketItem);
+							}
+						}
+
+					} catch (Exception x) {
+						BOMessageDialog.showError(POSConstants.ERROR_MESSAGE, x);
+					}
+				}
+
+			});*/
+			
+			for (TicketItem ticketItem : ticketItems) {
+				if(!ticketItem.getIsReturn()){ //Diana - 31-07-2018 - not show return item
+					Integer itemId = Integer.parseInt(ticketItem.getItemId().toString());
+					MenuItem menuItem = MenuItemDAO.getInstance().get(itemId);
+	
+					List<MenuItem> menuItems = discount.getMenuItems();
+					if (menuItem != null) {
+						if (discount.isApplyToAll() || menuItems.contains(menuItem)) {
+							TicketItemButton ticketItemButton = new TicketItemButton(ticketItem);
+							ticketItemButton.setPreferredSize(size);
+							buttonsPanel.add(ticketItemButton);
+						}
+					}
+				}
+			}
+			//JCheckBox cbDisableStockCount = new JCheckBox(Messages.getString("MenuItemForm.18")); //$NON-NLS-1$
+			//chkPanel.add(cbDisableStockCount);
+			//buttonsPanel.add(chkPanel);
 			buttonsPanel.repaint();
 			buttonsPanel.revalidate();
 

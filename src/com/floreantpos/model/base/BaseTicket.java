@@ -1,6 +1,15 @@
 package com.floreantpos.model.base;
 
 import java.lang.Comparable;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.floreantpos.model.ShopTable;
+import com.floreantpos.model.dao.ShopTableDAO;
+
 import java.io.Serializable;
 
 
@@ -14,12 +23,15 @@ import java.io.Serializable;
  */
 
 public abstract class BaseTicket  implements Comparable, Serializable {
+	
+	private static Log logger = LogFactory.getLog(BaseTicket.class);
 
 	public static String REF = "Ticket"; //$NON-NLS-1$
 	public static String PROP_ADVANCE_AMOUNT = "advanceAmount"; //$NON-NLS-1$
 	public static String PROP_NUMBER_OF_GUESTS = "numberOfGuests"; //$NON-NLS-1$
 	public static String PROP_RE_OPENED = "reOpened"; //$NON-NLS-1$
 	public static String PROP_OWNER = "owner"; //$NON-NLS-1$
+	public static String PROP_OWNER_NAME = "ownerName"; //$NON-NLS-1$
 	public static String PROP_SUBTOTAL_AMOUNT = "subtotalAmount"; //$NON-NLS-1$
 	public static String PROP_DUE_AMOUNT = "dueAmount"; //$NON-NLS-1$
 	public static String PROP_DELIVERY_ADDRESS = "deliveryAddress"; //$NON-NLS-1$
@@ -37,6 +49,7 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	public static String PROP_ADJUSTMENT_AMOUNT = "adjustmentAmount"; //$NON-NLS-1$
 	public static String PROP_TICKET_TYPE = "ticketType"; //$NON-NLS-1$
 	public static String PROP_VOIDED_BY = "voidedBy"; //$NON-NLS-1$
+	public static String PROP_VOID_BY_USER_NAME = "voidedByName";
 	public static String PROP_VOIDED = "voided"; //$NON-NLS-1$
 	public static String PROP_REFUNDED = "refunded"; //$NON-NLS-1$
 	public static String PROP_STATUS = "status"; //$NON-NLS-1$
@@ -45,6 +58,7 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	public static String PROP_WASTED = "wasted"; //$NON-NLS-1$
 	public static String PROP_ACTIVE_DATE = "activeDate"; //$NON-NLS-1$
 	public static String PROP_TOTAL_AMOUNT = "totalAmount"; //$NON-NLS-1$
+	public static String PROP_ITEM_QTY = "itemQty"; //$NON-NLS-1$
 	public static String PROP_CUSTOMER_ID = "customerId"; //$NON-NLS-1$
 	public static String PROP_TERMINAL = "terminal"; //$NON-NLS-1$
 	public static String PROP_DISCOUNT_AMOUNT = "discountAmount"; //$NON-NLS-1$
@@ -57,6 +71,8 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	public static String PROP_CLOSING_DATE = "closingDate"; //$NON-NLS-1$
 	public static String PROP_ID = "id"; //$NON-NLS-1$
 
+	//Diana - 2018-08-03 for merge ticket 
+	public static String PROP_MERGE_ID = "mergeId";	
 
 	// constructors
 	public BaseTicket () {
@@ -80,7 +96,7 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	// primary key
 	private java.lang.Integer id;
 
-	 long version;
+	 Long version;
 
 	// fields
 		protected java.lang.String globalId;
@@ -96,6 +112,7 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 		protected java.lang.Boolean refunded;
 		protected java.lang.Boolean closed;
 		protected java.lang.Boolean drawerResetted;
+		protected java.lang.Double itemQty;
 		protected java.lang.Double subtotalAmount;
 		protected java.lang.Double discountAmount;
 		protected java.lang.Double taxAmount;
@@ -116,13 +133,20 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 		protected java.lang.Boolean customerWillPickup;
 		protected java.lang.String extraDeliveryInfo;
 		protected java.lang.String ticketType;
+		
+		
+		//Diana - 2018-08-03 for merge ticket 
+		protected java.lang.Integer mergeId;
+		protected java.lang.String discountRate, serviceChargeRate, taxRate;
 
 	// many to one
 	private com.floreantpos.model.Shift shift;
 	private com.floreantpos.model.User owner;
+	private String ownerName;
 	private com.floreantpos.model.User assignedDriver;
 	private com.floreantpos.model.Gratuity gratuity;
 	private com.floreantpos.model.User voidedBy;
+	private String voidedByName;
 	private com.floreantpos.model.Terminal terminal;
 
 	// collections
@@ -131,8 +155,24 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	private java.util.List<com.floreantpos.model.TicketDiscount> discounts;
 	private java.util.Set<com.floreantpos.model.PosTransaction> transactions;
 	private java.util.List<Integer> tableNumbers;
+	private java.util.List<String> tableNames;
+	
 
 
+
+	/**
+	 * @return the itemQty
+	 */
+	public java.lang.Double getItemQty() {
+		return itemQty;
+	}
+
+	/**
+	 * @param itemQty the itemQty to set
+	 */
+	public void setItemQty(java.lang.Double itemQty) {
+		this.itemQty = itemQty;
+	}
 
 	/**
 	 * Return the unique identifier of this class
@@ -153,12 +193,62 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 		this.hashCode = Integer.MIN_VALUE;
 	}
 
+	//Diana - 2018-08-03 for merge ticket 
+	public java.lang.Integer getMergeId () {
+		return mergeId == null ?  Integer.valueOf(0)  : mergeId;
+	}
+	public void setMergeId (java.lang.Integer mergeId) {
+		this.mergeId = mergeId;
+	}
 
+
+
+	/**
+	 * @return the discountRate
+	 */
+	public java.lang.String getDiscountRate() {
+		return discountRate;
+	}
+
+	/**
+	 * @param discountRate the discountRate to set
+	 */
+	public void setDiscountRate(java.lang.String discountRate) {
+		this.discountRate = discountRate;
+	}
+
+	/**
+	 * @return the serviceChargeRate
+	 */
+	public java.lang.String getServiceChargeRate() {
+		return serviceChargeRate;
+	}
+
+	/**
+	 * @param serviceChargeRate the serviceChargeRate to set
+	 */
+	public void setServiceChargeRate(java.lang.String serviceChargeRate) {
+		this.serviceChargeRate = serviceChargeRate;
+	}
+
+	/**
+	 * @return the taxRate
+	 */
+	public java.lang.String getTaxRate() {
+		return taxRate;
+	}
+
+	/**
+	 * @param taxRate the taxRate to set
+	 */
+	public void setTaxRate(java.lang.String taxRate) {
+		this.taxRate = taxRate;
+	}
 
 	/**
 	 * Return the value associated with the column: VERSION_NO
 	 */
-	public long getVersion () {
+	public Long getVersion () {
 					return version;
 			}
 
@@ -166,7 +256,7 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	 * Set the value related to the column: VERSION_NO
 	 * @param version the VERSION_NO value
 	 */
-	public void setVersion (long version) {
+	public void setVersion (Long version) {
 		this.version = version;
 	}
 
@@ -435,6 +525,8 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 									return taxAmount == null ? Double.valueOf(0) : taxAmount;
 					}
 
+	
+
 	/**
 	 * Set the value related to the column: TOTAL_TAX
 	 * @param taxAmount the TOTAL_TAX value
@@ -442,7 +534,6 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	public void setTaxAmount (java.lang.Double taxAmount) {
 		this.taxAmount = taxAmount;
 	}
-
 
 
 	/**
@@ -754,16 +845,28 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	/**
 	 * Return the value associated with the column: OWNER_ID
 	 */
+	/*
 	public com.floreantpos.model.User getOwner () {
 					return owner;
 			}
-
+*/
+	public com.floreantpos.model.User getOwner () {
+		return owner;
+	}
+	public void setOwner (com.floreantpos.model.User owner) {
+		this.owner = owner;
+		setOwnerName(owner.getFullName());
+	}
+	
+	public String getOwnerName () {
+		return ownerName;
+}
 	/**
 	 * Set the value related to the column: OWNER_ID
 	 * @param owner the OWNER_ID value
 	 */
-	public void setOwner (com.floreantpos.model.User owner) {
-		this.owner = owner;
+	public void setOwnerName (String owner) {
+		this.ownerName = owner;
 	}
 
 
@@ -815,6 +918,8 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	 */
 	public void setVoidedBy (com.floreantpos.model.User voidedBy) {
 		this.voidedBy = voidedBy;
+		if(voidedBy!=null)
+			setVoidedByName(voidedBy.getFullName());
 	}
 
 
@@ -968,6 +1073,33 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	public String toString () {
 		return super.toString();
 	}
+
+	public String getVoidedByName() {
+		return voidedByName;
+	}
+
+	public void setVoidedByName(String voidedByName) {
+		this.voidedByName = voidedByName;
+	}
+
+	public java.util.List<String> getTableNames() {
+		
+		if(this.tableNumbers != null && this.tableNames==null) {
+			tableNames = new ArrayList<String>();
+			ShopTableDAO st = new ShopTableDAO();
+			List<ShopTable> tables = st.getByNumbers(getTableNumbers());
+			for (ShopTable shopTable : tables) {
+				tableNames.add(shopTable.getDescOrNum());
+			}
+		}
+		
+		return tableNames;
+	}
+
+	public void setTableNames(java.util.List<String> tableNames) {
+		this.tableNames = tableNames;
+	}
+
 
 
 }

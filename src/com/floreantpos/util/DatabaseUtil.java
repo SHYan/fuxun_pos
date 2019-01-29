@@ -143,7 +143,7 @@ public class DatabaseUtil {
 			boolean exportSampleData) {
 		try {
 			Configuration configuration = _RootDAO.getNewConfiguration(null);
-
+			
 			configuration = configuration.setProperty("hibernate.dialect", hibernateDialect);
 			configuration = configuration.setProperty("hibernate.connection.driver_class", hibernateConnectionDriverClass);
 
@@ -165,11 +165,12 @@ public class DatabaseUtil {
 			restaurant.setTelephone("+0123456789");
 			RestaurantDAO.getInstance().saveOrUpdate(restaurant);
 
+			
 			Tax tax = new Tax();
-			tax.setName("US");
-			tax.setRate(Double.valueOf(6));
+			tax.setName("GovTax");
+			tax.setRate(Double.valueOf(5));
 			TaxDAO.getInstance().saveOrUpdate(tax);
-
+			
 			Shift shift = new Shift();
 			shift.setName(com.floreantpos.POSConstants.GENERAL);
 			java.util.Date shiftStartTime = ShiftUtil.buildShiftStartTime(0, 0, 0, 11, 59, 1);

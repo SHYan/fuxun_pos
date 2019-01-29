@@ -27,6 +27,9 @@ import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
 import java.util.Locale;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.floreantpos.extension.ExtensionManager;
 import com.floreantpos.extension.FloorLayoutPlugin;
 import com.floreantpos.model.OrderType;
@@ -39,7 +42,8 @@ import com.floreantpos.ui.views.order.ViewPanel;
  * @author MShahriar
  */
 public class TableMapView extends ViewPanel {
-
+	static Log logger = LogFactory.getLog(TableMapView.class);
+	
 	public final static String VIEW_NAME = "TABLE_MAP"; //$NON-NLS-1$
 
 	private TableSelector tableSelector = null;
@@ -48,6 +52,9 @@ public class TableMapView extends ViewPanel {
 	private static TableMapView instance;
 
 	private TableMapView() {
+		logger.debug("TableMapView : TAbleMapView()");
+		//logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
+		
 		initComponents();
 
 		applyComponentOrientation(ComponentOrientation.getOrientation(Locale.getDefault()));
@@ -66,6 +73,7 @@ public class TableMapView extends ViewPanel {
 		}
 		tableSelector.setCreateNewTicket(true);
 		tableSelector.updateView(false);
+		//tableSelector.updateView(true);
 		add(tableSelector, BorderLayout.CENTER);
 	}
 
@@ -74,6 +82,8 @@ public class TableMapView extends ViewPanel {
 	}
 
 	public static TableMapView getInstance() {
+		logger.debug("TableMapView : TAbleMapView : getInstance()");
+		//logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
 		if (instance == null) {
 			instance = new TableMapView();
 		}
@@ -82,6 +92,8 @@ public class TableMapView extends ViewPanel {
 	}
 
 	public static TableMapView getInstance(OrderType orderType) {
+		logger.debug("TableMapView : TAbleMapView : getInstance("+orderType.getName());
+		//logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
 		TableMapView instance2 = getInstance();
 		instance2.tableSelector.setOrderType(orderType);
 		instance2.orderType = orderType;

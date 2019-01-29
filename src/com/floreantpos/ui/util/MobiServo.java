@@ -38,7 +38,7 @@ public class MobiServo {
 		BufferedWriter bw = null;
 		FileWriter fw = null;
 		String fileName = System.getProperty("user.dir")+"/mobiTmp.txt";
-		logger.debug(fileName+" is file name");
+		
 		try {
 			String content = "This is the content to write into file\n";
 			fw = new FileWriter(fileName);
@@ -90,11 +90,6 @@ public class MobiServo {
 		//ShopTable sp = ShopTableDAO.getInstance().getByNumber(shopTable.getTableNumber());
 		//System.out.println(shopTable.getDescOrNum()+"-- is desc :"+sp.getDescOrNum());
 		
-		ShopTableStatus shopTableStatus = selectedTables.getShopTableStatus();
-		shopTableStatus.setTableTicket(ticket.getId(), ticket.getOwner().getId(), ticket.getOwnerName());
-		selectedTables.setShopTableStatus(shopTableStatus);
-		
-		
 		
 		MenuItem menuItem = MenuItemDAO.getInstance().get(4);
 		MenuItemDAO dao = new MenuItemDAO();
@@ -128,6 +123,14 @@ public class MobiServo {
 		ticket.calculatePrice();
 		
 		TicketDAO.getInstance().saveOrUpdate(ticket);
+		
+		ShopTableStatus shopTableStatus = selectedTables.getShopTableStatus();
+		shopTableStatus.setTableTicket(ticket.getId(), ticket.getOwner().getId(), ticket.getOwnerName());
+		logger.debug("Table status is ------- "+shopTableStatus.getTicketId());
+		selectedTables.setShopTableStatus(shopTableStatus);
+		
+		
+		
 		ActionHistoryDAO actionHistoryDAO = ActionHistoryDAO.getInstance();
 		User user = Application.getCurrentUser();
 		ShopTableDAO.getInstance().occupyTables(ticket);
@@ -143,9 +146,9 @@ public class MobiServo {
 		
 		if(DefaultTableSelectionView.getInstance()!=null) {
 			DefaultTableSelectionView dtv= DefaultTableSelectionView.getInstance();
+			dtv.updateView(false);
 			dtv.setOrderType(ticket.getOrderType());
 			dtv.redererTables();
-			logger.debug("Table Selected view is not null");
 		}
 		else logger.debug("Table Selected view is null");
 	}

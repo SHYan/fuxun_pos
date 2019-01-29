@@ -154,7 +154,7 @@ public class MiscTicketItemDialog extends OkCancelOptionDialog {
 		setCanceled(false);
 
 		ticketItem = new TicketItem();
-		ticketItem.setItemCount(1);
+		ticketItem.setItemCount(1.0);
 		ticketItem.setUnitPrice(amount);
 		ticketItem.setName(itemName);
 		ticketItem.setCategoryName(com.floreantpos.POSConstants.MISC_BUTTON_TEXT);

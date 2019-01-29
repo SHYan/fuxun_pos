@@ -59,7 +59,7 @@ public class DejavooProxyServer implements HttpHandler {
 	private final String INVOICE_NUM = "/TranRequest/invoice_num";
 	private Map<String, DejavooTerminal> map = new HashMap<>();
 
-	private DecimalFormat numberFormat = new DecimalFormat("0.00");
+	private DecimalFormat numberFormat = new DecimalFormat("###,###");
 
 	public DejavooProxyServer() throws Exception {
 		Application application = Application.getInstance();
@@ -155,7 +155,7 @@ public class DejavooProxyServer implements HttpHandler {
 		stringBuilder.append(String.format("<InvoiceList title=\"%s\" count=\"%s\">", "invoices", ticketList.size()));
 		for (Ticket ticket : ticketList) {
 			String invoice = "<Invoice id=\"%s\" name=\"%s\" amount=\"%s\" type=\"%s\"/>";
-			String name = ticket.getCustomer() == null ? ticket.getOwner().getFirstName() : ticket.getCustomer().getName();
+			String name = ticket.getCustomer() == null ? ticket.getOwner().getFullName() : ticket.getCustomer().getName();
 			String invoiceFormat = String.format(invoice, ticket.getId(), name, numberFormat.format(ticket.getDueAmount() * 100),
 					ticket.isClosed() ? "closed" : "open");
 			stringBuilder.append(invoiceFormat);
@@ -181,7 +181,7 @@ public class DejavooProxyServer implements HttpHandler {
 		builder.append("<request>");
 		builder.append("<RegisterId>" + registerId + "</RegisterId>");
 		builder.append("<AuthKey>" + authKey + "</AuthKey>");
-		builder.append(String.format("<InvoiceData id=\"%s\" name=\"%s\">", ticket.getId(), ticket.getOwner().getFirstName()));
+		builder.append(String.format("<InvoiceData id=\"%s\" name=\"%s\">", ticket.getId(), ticket.getOwner()));
 		builder.append("<AmountDue>" + numberFormat.format(ticket.getDueAmount() * 100) + "</AmountDue>");
 		builder.append("<TotalAmount>" + numberFormat.format(ticket.getTotalAmount() * 100) + "</TotalAmount>");
 		builder.append("<TaxAmount>" + numberFormat.format(ticket.getTaxAmount() * 100) + "</TaxAmount>");

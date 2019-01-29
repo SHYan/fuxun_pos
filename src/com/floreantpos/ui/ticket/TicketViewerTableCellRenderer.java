@@ -35,7 +35,7 @@ public class TicketViewerTableCellRenderer extends DefaultTableCellRenderer {
 		super();
 	}
 
-	@Override
+	/*@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		Component rendererComponent = null;
 
@@ -63,6 +63,43 @@ public class TicketViewerTableCellRenderer extends DefaultTableCellRenderer {
 			ITicketItem ticketItem = (ITicketItem) object;
 			if (ticketItem.isPrintedToKitchen()) {
 				rendererComponent.setBackground(Color.YELLOW);
+			}
+		}
+
+		return rendererComponent;
+	}*/
+	@Override
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		Component rendererComponent = null;
+
+		TicketViewerTableModel model = (TicketViewerTableModel) table.getModel();
+		Object object = model.get(row);
+		if (column == 1) {
+			rendererComponent = multiLineTableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		}
+		else {
+			rendererComponent = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
+			if (column == 0) {
+				setHorizontalAlignment(SwingConstants.CENTER);
+			}
+			else
+				setHorizontalAlignment(SwingConstants.RIGHT);
+		}
+
+		if (!inTicketScreen || isSelected) {
+			return rendererComponent;
+		}
+
+		rendererComponent.setBackground(table.getBackground());
+
+		if (object instanceof ITicketItem) {
+			ITicketItem ticketItem = (ITicketItem) object;
+			if (ticketItem.isPrintedToKitchen() && ticketItem.getItemCountDisplay() > 0) { //Diana - 2018-08-05 prevent highliht on return item
+			//if (ticketItem.isPrintedToKitchen()) {
+				rendererComponent.setBackground(Color.YELLOW);
+			}
+			if (ticketItem.getItemCountDisplay() < 0) { //Diana - 2018-08-05 prevent highliht on return item
+				rendererComponent.setBackground(Color.RED);
 			}
 		}
 

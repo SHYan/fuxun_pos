@@ -30,6 +30,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,7 +43,10 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.StaleStateException;
+
 import net.miginfocom.swing.MigLayout;
 
 import com.floreantpos.IconFactory;
@@ -76,13 +80,16 @@ import com.floreantpos.util.CurrencyUtil;
 import com.floreantpos.util.DrawerUtil;
 import com.floreantpos.util.NumberUtil;
 import com.floreantpos.util.POSUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * 
  * @author MShahriar
  */
 public class TicketView extends JPanel {
-
+	Log logger = LogFactory.getLog(TicketView.class);
+	
 	private java.util.Vector<OrderListener> orderListeners = new java.util.Vector<OrderListener>();
 	private Ticket ticket;
 	private com.floreantpos.swing.PosButton btnDecreaseAmount;
@@ -279,9 +286,9 @@ public class TicketView extends JPanel {
 		btnTotal = new PosButton(POSConstants.TOTAL.toUpperCase());
 		btnTotal.setFont(btnTotal.getFont().deriveFont(Font.BOLD));
 
-//		if (!Application.getInstance().getTerminal().isHasCashDrawer()) {
-//			btnTotal.setEnabled(false);
-//		}
+		if (!Application.getInstance().getTerminal().isHasCashDrawer()) {
+			btnTotal.setEnabled(false);
+		}
 
 		btnTotal.addActionListener(new ActionListener() {
 			@Override
@@ -453,10 +460,10 @@ public class TicketView extends JPanel {
 			if (!POSUtil.checkDrawerAssignment()) {
 				return;
 			}
+			
 			updateModel();
-
 			OrderController.saveOrder(ticket);
-
+			//POSMessageDialog.showError(POSUtil.getFocusedWindow(), ticket.getId().toString());
 			firePayOrderSelected();
 		} catch (PosException e) {
 			POSMessageDialog.showError(POSUtil.getFocusedWindow(), e.getMessage().toString());
@@ -745,8 +752,8 @@ public class TicketView extends JPanel {
 						btnEdit.setEnabled(!ticketItem.isPrintedToKitchen());
 					}
 					else if (ticketItem.isHasModifiers()) {
-						btnIncreaseAmount.setEnabled(false);
-						btnDecreaseAmount.setEnabled(false);
+						//btnIncreaseAmount.setEnabled(false);
+						//btnDecreaseAmount.setEnabled(false);
 						btnEdit.setEnabled(true);
 					}
 					else if (ticketItem.isFractionalUnit()) {
@@ -876,6 +883,8 @@ public class TicketView extends JPanel {
 
 	public boolean isStockAvailable(MenuItem menuItem, TicketItem selectedTicketItem, double selectedItemQuantity) {
 
+		if(menuItem == null) return true; //Diana -21/7/2018 - increase qty for MISC ITEM
+		
 		if (!menuItem.isDisableWhenStockAmountIsZero()) {
 			return true;
 		}
@@ -909,7 +918,7 @@ public class TicketView extends JPanel {
 
 				totalItemQuantity -= selectedTicketItem.getItemQuantity();
 
-				totalItemQuantity += selectedItemQuantity;
+				totalItemQuantity = selectedItemQuantity;
 			}
 			else {
 				totalItemQuantity += selectedTicketItem.getItemQuantity();

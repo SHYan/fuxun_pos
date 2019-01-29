@@ -374,7 +374,7 @@ public class KitchenTicketView extends JPanel {
 				for (KitchenTicketItem kitchenTicketItem : kitchenTicket.getTicketItems()) {
 					kitchenTicketItem.setStatus(status.name());
 //Question: Do we actually need status in original ticket item?
-					int itemCount = kitchenTicketItem.getQuantity();
+					double itemCount = kitchenTicketItem.getQuantity();
 
 					for (TicketItem item : parentTicket.getTicketItems()) {
 						if (kitchenTicketItem.getMenuItemCode() != null && kitchenTicketItem.getMenuItemCode().equals(item.getItemCode())) {

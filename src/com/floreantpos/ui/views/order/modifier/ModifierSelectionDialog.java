@@ -288,8 +288,7 @@ public class ModifierSelectionDialog extends POSDialog implements ModifierGroupS
 
 			for (Iterator iterator = menuItemModiferGroups.iterator(); iterator.hasNext();) {
 				MenuItemModifierGroup ticketItemModifierGroup = (MenuItemModifierGroup) iterator.next();
-				boolean hasModifiers = !ticketItemModifierGroup.getModifierGroup().getModifiers().isEmpty();
-				if (!ticketItem.requiredModifiersAdded(ticketItemModifierGroup) && hasModifiers) {
+				if (!ticketItem.requiredModifiersAdded(ticketItemModifierGroup)) {
 					modifierGroupSelected(ticketItemModifierGroup.getModifierGroup());
 					POSMessageDialog.showMessage(POSUtil.getFocusedWindow(), "Please select minimum quantity of each group!");
 					return;

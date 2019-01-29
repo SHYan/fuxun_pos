@@ -17,7 +17,14 @@
  */
 package com.floreantpos.model.dao;
 
+import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+
+import com.floreantpos.PosException;
+import com.floreantpos.model.InventoryWarehouse;
 
 public class InventoryWarehouseDAO extends BaseInventoryWarehouseDAO {
 
@@ -25,6 +32,48 @@ public class InventoryWarehouseDAO extends BaseInventoryWarehouseDAO {
 	 * Default constructor.  Can be used in place of getInstance()
 	 */
 	public InventoryWarehouseDAO () {}
+	
+	public boolean exists(String warehouseName) throws PosException {
+		Session session = null;
+		
+		try {
+			session = createNewSession();
+			Criteria criteria = session.createCriteria(getReferenceClass());
+			criteria.add(Restrictions.eq(InventoryWarehouse.PROP_NAME, warehouseName));
+			List list = criteria.list();
+			if (list != null && list.size() > 0) {
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			throw new PosException("An error occured while trying to check Shift duplicacy", e); //$NON-NLS-1$
+		} finally {
+			if(session != null) {
+				try {
+					session.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+	}
+	
+	public void refresh(InventoryWarehouse warehouse) throws PosException {
+		Session session = null;
+		
+		try {
+			session = createNewSession();
+			session.refresh(warehouse);
+		} catch (Exception e) {
+			throw new PosException("An error occured while refreshing Shift state.", e); //$NON-NLS-1$
+		} finally {
+			if(session != null) {
+				try {
+					session.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+	}
 
 
 }

@@ -138,11 +138,19 @@ public class SettleTicketDialog extends POSDialog implements PaymentListener, Ti
 		else {
 			tfTax.setText(NumberUtil.formatNumber(ticket.getTaxAmount()));
 		}
+		/*
 		if (ticket.getGratuity() != null) {
 			tfGratuity.setText(NumberUtil.formatNumber(ticket.getGratuity().getAmount()));
 		}
 		else {
 			tfGratuity.setText("0.00"); //$NON-NLS-1$
+		}
+		*/
+		if (ticket.getServiceCharge() != null) {
+			tfGratuity.setText(NumberUtil.formatNumber(ticket.getServiceCharge()));
+		}
+		else {
+			tfGratuity.setText("0"); //$NON-NLS-1$
 		}
 		tfTotal.setText(NumberUtil.formatNumber(ticket.getTotalAmount()));
 	}
@@ -296,6 +304,15 @@ public class SettleTicketDialog extends POSDialog implements PaymentListener, Ti
 		tfDeliveryCharge.setHorizontalAlignment(SwingConstants.TRAILING);
 		tfDeliveryCharge.setEditable(false);
 
+
+		JLabel lblGratuity = new javax.swing.JLabel();
+		lblGratuity.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+		//lblGratuity.setText(Messages.getString("SettleTicketDialog.5") + ":" + " " + CurrencyUtil.getCurrencySymbol()); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		lblGratuity.setText(Messages.getString("RECEIPT_REPORT_SERVICE_CHARGE_LABEL") + ":" + " " + CurrencyUtil.getCurrencySymbol()); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		tfGratuity = new javax.swing.JTextField(10);
+		tfGratuity.setEditable(false);
+		tfGratuity.setHorizontalAlignment(SwingConstants.TRAILING);
+		
 		JLabel lblTax = new javax.swing.JLabel();
 		lblTax.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 		lblTax.setText(com.floreantpos.POSConstants.TAX + ":" + " " + CurrencyUtil.getCurrencySymbol()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -305,13 +322,6 @@ public class SettleTicketDialog extends POSDialog implements PaymentListener, Ti
 		tfTax.setEditable(false);
 		tfTax.setHorizontalAlignment(SwingConstants.TRAILING);
 
-		JLabel lblGratuity = new javax.swing.JLabel();
-		lblGratuity.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-		lblGratuity.setText(Messages.getString("SettleTicketDialog.5") + ":" + " " + CurrencyUtil.getCurrencySymbol()); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-
-		tfGratuity = new javax.swing.JTextField(10);
-		tfGratuity.setEditable(false);
-		tfGratuity.setHorizontalAlignment(SwingConstants.TRAILING);
 
 		JLabel lblTotal = new javax.swing.JLabel();
 		lblTotal.setFont(lblTotal.getFont().deriveFont(Font.BOLD, PosUIManager.getFontSize(18)));
@@ -329,14 +339,15 @@ public class SettleTicketDialog extends POSDialog implements PaymentListener, Ti
 		ticketAmountPanel.add(tfSubtotal, "growx,aligny center"); //$NON-NLS-1$
 		ticketAmountPanel.add(lblDiscount, "newline,growx,aligny center"); //$NON-NLS-1$ //$NON-NLS-2$
 		ticketAmountPanel.add(tfDiscount, "growx,aligny center"); //$NON-NLS-1$
+		ticketAmountPanel.add(lblGratuity, "newline,growx,aligny center"); //$NON-NLS-1$
+		ticketAmountPanel.add(tfGratuity, "growx,aligny center"); //$NON-NLS-1$
 		ticketAmountPanel.add(lblTax, "newline,growx,aligny center"); //$NON-NLS-1$
 		ticketAmountPanel.add(tfTax, "growx,aligny center"); //$NON-NLS-1$
 		if (ticket.getOrderType().isDelivery() && !ticket.isCustomerWillPickup()) {
 			ticketAmountPanel.add(lblDeliveryCharge, "newline,growx,aligny center"); //$NON-NLS-1$
 			ticketAmountPanel.add(tfDeliveryCharge, "growx,aligny center"); //$NON-NLS-1$
 		}
-		ticketAmountPanel.add(lblGratuity, "newline,growx,aligny center"); //$NON-NLS-1$
-		ticketAmountPanel.add(tfGratuity, "growx,aligny center"); //$NON-NLS-1$
+		
 		ticketAmountPanel.add(lblTotal, "newline,growx,aligny center"); //$NON-NLS-1$
 		ticketAmountPanel.add(tfTotal, "growx,aligny center"); //$NON-NLS-1$
 
@@ -429,7 +440,10 @@ public class SettleTicketDialog extends POSDialog implements PaymentListener, Ti
 	}
 
 	private void payUsingPreAuthorizedBartab(PosTransaction bartabTransaction) throws Exception {
-		if (ticket.getGratuityAmount() <= 0) {
+
+		boolean addTipsLater = ticket.getOrderType().isAllowToAddTipsLater();
+		double gratuityAmount = ticket.getGratuityAmount();
+		if (addTipsLater && gratuityAmount <= 0) {
 			ReceiptPrintService.printTicket(ticket, true);
 		}
 		else {

@@ -25,6 +25,9 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -161,7 +164,7 @@ public class TableSelectionView extends JPanel implements ActionListener {
 		checkTables();
 
 		List<ShopTable> tables = ShopTableDAO.getInstance().findAll();
-
+		
 		for (ShopTable shopTable : tables) {
 			ShopTableButton tableButton = new ShopTableButton(shopTable);
 			tableButton.setPreferredSize(new Dimension(157, 138));
@@ -201,7 +204,7 @@ public class TableSelectionView extends JPanel implements ActionListener {
 
 		ShopTableButton button = (ShopTableButton) e.getSource();
 		int tableNumber = button.getId();
-
+		
 		ShopTable shopTable = ShopTableDAO.getInstance().getByNumber(tableNumber);
 
 		if (shopTable == null) {

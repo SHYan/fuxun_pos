@@ -140,6 +140,7 @@ public class NewBarTabAction extends AbstractAction implements CardInputListener
 			for (ShopTable shopTable : selectedTables) {
 				shopTable.setServing(true);
 				ticket.addTable(shopTable.getTableNumber());
+				ticket.addTableName(shopTable.getDescOrNum());
 			}
 		}
 		else {
@@ -154,6 +155,7 @@ public class NewBarTabAction extends AbstractAction implements CardInputListener
 		ticket.setOrderType(orderType);
 		ticket.setTerminal(application.getTerminal());
 		ticket.setOwner(Application.getCurrentUser());
+		ticket.setOwnerName(Application.getCurrentUser().getFullName());
 		ticket.setShift(application.getCurrentShift());
 
 		Calendar currentTime = Calendar.getInstance();

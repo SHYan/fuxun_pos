@@ -67,11 +67,14 @@ public class OrderInfoView extends JPanel {
 			Ticket ticket = (Ticket) tickets.get(i);
 
 			TicketPrintProperties printProperties = new TicketPrintProperties("*** ORDER " + ticket.getId() + " ***", false, true, true); //$NON-NLS-1$ //$NON-NLS-2$
-			HashMap map = ReceiptPrintService.populateTicketProperties(ticket, printProperties, null);
+			HashMap map = ReceiptPrintService.populateTicketProperties(ticket, printProperties, null); 
 			map.put(JRParameter.IS_IGNORE_PAGINATION, true);
+			//ReceiptPrintService.printToKitchen(ticket);
 			JasperPrint jasperPrint = ReceiptPrintService.createPrint(ticket, map, null);
 			TicketReceiptView receiptView = new TicketReceiptView(jasperPrint);
-			reportPanel.add(receiptView.getReportPanel());
+			reportPanel.add(receiptView.getReportPanel()); 
+			
+			//ReceiptPrintService.printToKitchen(ticket);
 		}
 	}
 

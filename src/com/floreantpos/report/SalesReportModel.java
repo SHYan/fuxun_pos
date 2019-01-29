@@ -23,7 +23,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 public class SalesReportModel extends AbstractTableModel {
-	private static DecimalFormat formatter = new DecimalFormat("#,##0.00"); //$NON-NLS-1$
+	private static DecimalFormat formatter = new DecimalFormat("###,###"); //$NON-NLS-1$
 
 	private String[] columnNames = { "Id", "Name", "Price", "QTY", "Total", "Dis", "Tax", "Tax Total", "Gross Total" };//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ 
 	private List<ReportItem> items;

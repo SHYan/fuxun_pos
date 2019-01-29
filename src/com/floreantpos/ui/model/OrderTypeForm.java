@@ -76,6 +76,9 @@ public class OrderTypeForm extends BeanEditor implements ItemListener {
 	private JCheckBox chkShowUnitPriceInTicketGrid;
 	private JCheckBox chkRetailOrder;
 	private JCheckBox chkAllowToAddTipsLater;
+	
+	//private JCheckBox chkNoServiceCharge;
+	//private JCheckBox chkNoTax;
 
 	OrderType orderType;
 	JList<String> list;
@@ -137,6 +140,9 @@ public class OrderTypeForm extends BeanEditor implements ItemListener {
 		chkShowUnitPriceInTicketGrid = new JCheckBox("Show unit price in ticket grid");
 		chkRetailOrder = new JCheckBox("Retail");
 		chkAllowToAddTipsLater = new JCheckBox("Allow to add tips later");
+		
+		//chkNoServiceCharge = new JCheckBox("No Service Charge");
+		//chkNoTax = new JCheckBox("No Tax");
 
 		generalPanel.setLayout(new MigLayout("", "[87px][327px,grow]", "[19px][][19px][][][21px][15px]")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		generalPanel.add(jLabel1, "cell 0 0,alignx left,aligny center"); //$NON-NLS-1$
@@ -165,6 +171,9 @@ public class OrderTypeForm extends BeanEditor implements ItemListener {
 		//generalPanel.add(chkShowUnitPriceInTicketGrid, "cell 1 19,alignx left,aligny top"); //$NON-NLS-1$
 		generalPanel.add(chkRetailOrder, "cell 1 20,alignx left,aligny top");
 		generalPanel.add(chkAllowToAddTipsLater, "cell 1 21,alignx left,aligny top");
+		
+		//generalPanel.add(chkNoServiceCharge, "cell 1 21,alignx left,aligny top");
+		//generalPanel.add(chkNoTax, "cell 1 21,alignx left,aligny top");
 
 		add(new JScrollPane(generalPanel));
 	}
@@ -203,7 +212,9 @@ public class OrderTypeForm extends BeanEditor implements ItemListener {
 			chkShowStockCountOnButton.setSelected(orderType.isShowStockCountOnButton());
 			chkShowUnitPriceInTicketGrid.setSelected(orderType.isShowUnitPriceInTicketGrid());
 			chkRetailOrder.setSelected(ordersType.isRetailOrder());
-			chkAllowToAddTipsLater.setSelected(ordersType.isAllowToAddTipsLater());
+			chkAllowToAddTipsLater.setSelected(Boolean.parseBoolean(ordersType.getProperty(OrderType.ALLOW_TO_ADD_TIPS_LATER)));
+			//chkNoServiceCharge.setSelected(ordersType.isNoServicecharge());
+			//chkNoTax.setSelected(ordersType.isNoTax());
 		}
 	}
 
@@ -242,7 +253,8 @@ public class OrderTypeForm extends BeanEditor implements ItemListener {
 		ordersType.setBarTab(chkBarTab.isSelected());
 		ordersType.setRetailOrder(chkRetailOrder.isSelected());
 		ordersType.addProperty(OrderType.ALLOW_TO_ADD_TIPS_LATER, String.valueOf(chkAllowToAddTipsLater.isSelected()));
-
+	//	ordersType.setNoServicecharge(chkNoServiceCharge.isSelected());
+		//ordersType.setNoTax(chkNoTax.isSelected());
 		return true;
 	}
 

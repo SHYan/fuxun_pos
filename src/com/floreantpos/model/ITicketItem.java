@@ -28,6 +28,7 @@ public interface ITicketItem {
 	Boolean isPrintedToKitchen();
 	
 	String getNameDisplay();
+	String getTranslatedName();
 
 	Double getUnitPriceDisplay();
 
@@ -45,4 +46,11 @@ public interface ITicketItem {
 	Double getDiscountAmount();
 	
 	String getKitchenStatus();
+	
+	//Diana 
+	Boolean getIsReturn();
+	
+	Double getItemCountDisplay();
+	
+	void setUnitPrice(Double price);
 }

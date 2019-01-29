@@ -176,7 +176,7 @@ public class TodoTicketViewerTableModel extends AbstractTableModel {
 			boolean exists = false;
 			for (TicketItem item : ticketItems) {
 				if (item.getName().equals(ticketItem.getName())) {
-					int itemCount = item.getItemCount();
+					double itemCount = item.getItemCount();
 					itemCount += ticketItem.getItemCount();
 					item.setItemCount(itemCount);
 					exists = true;

@@ -148,7 +148,7 @@ public class TicketItemModifier extends BaseTicketItemModifier implements ITicke
 		if (isInfoOnly()) {
 			return getName().trim();
 		}
-		int itemCount = getItemCount();
+		double itemCount = getItemCount() * 1.0;
 		if (getTicketItem().isPizzaType()) {
 			itemCount = itemCount / getTicketItem().getItemCount();
 		}
@@ -268,4 +268,19 @@ public class TicketItemModifier extends BaseTicketItemModifier implements ITicke
 		return super.getStatus();
 	}
 
+	@Override
+	public String getTranslatedName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	//Diana
+	@Override
+	public Boolean getIsReturn() {
+		return true;
+	}
+	
+	@Override
+	public Double getItemCountDisplay() {
+		return 0.0;
+	}
 }

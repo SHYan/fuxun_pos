@@ -65,7 +65,9 @@ public abstract class BaseKitchenTicket  implements Comparable, Serializable {
 	// collections
 	private java.util.List<Integer> tableNumbers;
 	private java.util.List<com.floreantpos.model.KitchenTicketItem> ticketItems;
-
+	
+	private java.util.List<String> tableNames;
+	
 
 
 	/**
@@ -313,6 +315,14 @@ public abstract class BaseKitchenTicket  implements Comparable, Serializable {
 
 	public String toString () {
 		return super.toString();
+	}
+
+	public java.util.List<String> getTableNames() {
+		return tableNames;
+	}
+
+	public void setTableNames(java.util.List<String> tableNames) {
+		this.tableNames = tableNames;
 	}
 
 

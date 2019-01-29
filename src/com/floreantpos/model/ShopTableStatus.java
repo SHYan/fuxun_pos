@@ -108,7 +108,7 @@ public class ShopTableStatus extends BaseShopTableStatus {
 			ShopTableTicket shopTableTicket = new ShopTableTicket();
 			shopTableTicket.setTicketId(ticket.getId());
 			shopTableTicket.setUserId(ticket.getOwner().getAutoId());
-			shopTableTicket.setUserName(ticket.getOwner().getFirstName());
+			shopTableTicket.setUserName(ticket.getOwner().getFullName());
 			shopTableTickets.add(shopTableTicket);
 		}
 	}

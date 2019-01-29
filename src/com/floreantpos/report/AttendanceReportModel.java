@@ -25,7 +25,7 @@ import com.floreantpos.swing.ListTableModel;
 public class AttendanceReportModel extends ListTableModel {
 	SimpleDateFormat dateFormat2 = new SimpleDateFormat("MMMdd  HH:mm"); //$NON-NLS-1$
 
-	DecimalFormat decimalFormat = new DecimalFormat("0.00"); //$NON-NLS-1$
+	DecimalFormat decimalFormat = new DecimalFormat("###,###"); //$NON-NLS-1$
 
 	public AttendanceReportModel() {
 		super(new String[] { "employeeId", "employeeName", "clockIn", "clockOut", "workTime" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 

@@ -48,7 +48,8 @@ public class ShopTableDAO extends BaseShopTableDAO {
 
 	@Override
 	public Order getDefaultOrder() {
-		return Order.asc(ShopTable.PROP_ID);
+		
+		return Order.asc(ShopTable.PROP_DESCRIPTION);
 	}
 
 	public int getNextTableNumber() {
@@ -247,6 +248,7 @@ public class ShopTableDAO extends BaseShopTableDAO {
 
 			releaseTables(ticket);
 			ticket.setTableNumbers(null);
+			ticket.setTableNames(null);
 			TicketDAO.getInstance().saveOrUpdate(ticket);
 			tx.commit();
 		} catch (Exception e) {
@@ -308,6 +310,7 @@ public class ShopTableDAO extends BaseShopTableDAO {
 				ShopTable table = new ShopTable();
 				table.setId(i + 1);
 				table.setCapacity(4);
+				table.setDescription(String.valueOf(i+1)); //john
 				super.save(table, session);
 			}
 

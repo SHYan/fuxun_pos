@@ -44,7 +44,6 @@ import javax.swing.UIManager;
 
 import com.floreantpos.POSConstants;
 import com.floreantpos.PosException;
-import com.floreantpos.model.MenuItemModifierGroup;
 import com.floreantpos.model.MenuModifier;
 import com.floreantpos.model.ModifierGroup;
 import com.floreantpos.model.Multiplier;
@@ -178,13 +177,8 @@ public class ModifierView extends SelectionView {
 
 	private void renderTitle() {
 		String displayName = modifierGroup.getDisplayName();
-		MenuItemModifierGroup menuItemModifierGroup = modifierGroup.getMenuItemModifierGroup();
-		if (menuItemModifierGroup == null) {
-			setTitle(displayName);
-			return;
-		}
-		int minQuantity = menuItemModifierGroup.getMinQuantity();
-		maxQuantity = menuItemModifierGroup.getMaxQuantity();
+		int minQuantity = modifierGroup.getMenuItemModifierGroup().getMinQuantity();
+		maxQuantity = modifierGroup.getMenuItemModifierGroup().getMaxQuantity();
 		setTitle(displayName + ", Min: " + minQuantity + ", Max: " + maxQuantity);
 	}
 

@@ -41,6 +41,7 @@ import com.floreantpos.model.Ticket;
 import com.floreantpos.model.TicketItem;
 import com.floreantpos.model.TicketItemDiscount;
 import com.floreantpos.model.TicketItemModifier;
+import com.floreantpos.ui.dialog.POSMessageDialog;
 import com.floreantpos.util.NumberUtil;
 
 /**
@@ -439,13 +440,17 @@ public class TicketForSplitView extends com.floreantpos.swing.TransparentPanel i
 		updateView();
 	}
 	public void transferTicketItem(TicketItem ticketItem, TicketForSplitView toTicketView) {
-		transferTicketItem(ticketItem, toTicketView, false);
+	//	transferTicketItem(ticketItem, toTicketView, false);
+		if(ticketItem.getIsReturn()) //Diana - 10-08-2018 - prevent split ticket which is already selected
+			POSMessageDialog.showError(Application.getPosWindow(), "This item is already selected!!!");
+		else
+			transferTicketItem(ticketItem, toTicketView, false);
 	}
 	public void transferTicketItem(TicketItem ticketItem, TicketForSplitView toTicketView,boolean fullTicketItem) {
 		TicketItem newTicketItem = new TicketItem();
 		
 		if (!fullTicketItem)
-			newTicketItem.setItemCount(1);
+			newTicketItem.setItemCount(1.0);
 		else
 			newTicketItem.setItemCount(ticketItem.getItemCount());
 
@@ -521,7 +526,7 @@ public class TicketForSplitView extends com.floreantpos.swing.TransparentPanel i
 		newTicketItem.setPrinterGroup(ticketItem.getPrinterGroup());
 		newTicketItem.setPrintedToKitchen(ticketItem.isPrintedToKitchen());
 
-		int itemCount = ticketItem.getItemCount();
+		double itemCount = ticketItem.getItemCount();
 
 		toTicketView.ticketViewerTable.addTicketItem(newTicketItem);
 		if (itemCount > 1 && !fullTicketItem && !ticketItem.isHasModifiers()) {

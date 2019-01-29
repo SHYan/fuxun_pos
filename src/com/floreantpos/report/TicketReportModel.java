@@ -27,7 +27,7 @@ import com.floreantpos.model.Ticket;
 import com.floreantpos.util.NumberUtil;
 
 public class TicketReportModel extends AbstractTableModel {
-	private static DecimalFormat formatter = new DecimalFormat("#,##0.00"); //$NON-NLS-1$
+	private static DecimalFormat formatter = new DecimalFormat("###,###"); //$NON-NLS-1$
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy"); //$NON-NLS-1$
 	
 	private String[] columnNames = {"id", "date", "tableNum", "status", "total"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$

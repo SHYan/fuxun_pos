@@ -29,7 +29,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{title}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{title}+"----"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -44,7 +44,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="0" width="216" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{data}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{data}+"--------------"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

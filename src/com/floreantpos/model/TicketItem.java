@@ -29,6 +29,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
+
+import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.main.Application;
 import com.floreantpos.model.base.BaseTicketItem;
 import com.floreantpos.model.dao.MenuItemDAO;
@@ -38,6 +43,7 @@ import com.floreantpos.util.NumberUtil;
 
 public class TicketItem extends BaseTicketItem implements ITicketItem {
 	private static final long serialVersionUID = 1L;
+	Log logger = LogFactory.getLog(TicketItem.class);
 
 	public enum PIZZA_SECTION_MODE {
 		FULL(1), HALF(2), QUARTER(3);
@@ -397,7 +403,14 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 
 	public void calculatePrice() {
 		priceIncludesTax = Application.getInstance().isPriceIncludesTax();
-
+		boolean isParcel = false;
+		if(getTicket().getTableNumbers()!=null && getTicket().getTableNames()!=null) {
+			if(getTicket().getTableNames().toString().toUpperCase().contains("PC")) isParcel=true;
+		}
+		String type = getTicket().getTicketType();
+		if(type!=null && !type.equals("DINE IN")) isParcel=true;
+		
+		
 		if (getSizeModifier() != null) {
 			getSizeModifier().calculatePrice();
 		}
@@ -416,12 +429,62 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 
 		setSubtotalAmount(NumberUtil.roundToTwoDigit(calculateSubtotal(true)));
 		setSubtotalAmountWithoutModifiers(NumberUtil.roundToTwoDigit(calculateSubtotal(false)));
+		
 		setDiscountAmount(NumberUtil.roundToTwoDigit(calculateDiscount()));
-		setTaxAmount(NumberUtil.roundToTwoDigit(calculateTax(true)));
-		setTaxAmountWithoutModifiers(NumberUtil.roundToTwoDigit(calculateTax(false)));
+		setServiceChargeAmount(NumberUtil.roundToTwoDigit(calculateServiceCharge(getDiscountAmount(), isParcel)));
+		setTaxAmount(calculateTax(true, isParcel)); //setTaxAmount(NumberUtil.roundToTwoDigit(calculateTax(true)));
+		
+		setTaxAmountWithoutModifiers(calculateTax(false, isParcel)); //setTaxAmountWithoutModifiers(NumberUtil.roundToTwoDigit(calculateTax(false)));
+		
+		
 		setTotalAmount(NumberUtil.roundToTwoDigit(calculateTotal(true)));
 		setTotalAmountWithoutModifiers(NumberUtil.roundToTwoDigit(calculateTotal(false)));
 	}
+	
+	//Diana - new function
+		public void calculatePriceforReturn() {
+			priceIncludesTax = Application.getInstance().isPriceIncludesTax();
+			boolean isParcel = false;
+			if(getTicket().getTableNumbers()!=null && getTicket().getTableNames()!=null) {
+				if(getTicket().getTableNames().toString().toUpperCase().contains("PC")) isParcel=true;
+			}
+			String type = getTicket().getTicketType();
+			if(type!=null && !type.equals("DINE IN")) isParcel=true;
+			
+			
+			if (getSizeModifier() != null) {
+				getSizeModifier().calculatePrice();
+			}
+			
+			List<TicketItemModifier> ticketItemModifiers = getTicketItemModifiers();
+			if (ticketItemModifiers != null) {
+				for (TicketItemModifier modifier : ticketItemModifiers) {
+					modifier.calculatePrice();
+				}
+			}
+			List<TicketItemModifier> addOns = getAddOns();
+			
+			if (addOns != null) {
+				for (TicketItemModifier ticketItemModifier : addOns) {
+					ticketItemModifier.calculatePrice();
+				}
+			}
+			
+			setSubtotalAmount((-1)*NumberUtil.roundToTwoDigit(calculateSubtotal(true)));
+			setSubtotalAmountWithoutModifiers((-1)*NumberUtil.roundToTwoDigit(calculateSubtotal(false)));
+			
+			setDiscountAmount((-1)*NumberUtil.roundToTwoDigit(calculateDiscount()));
+			setServiceChargeAmount(NumberUtil.roundToTwoDigit(calculateServiceCharge(getDiscountAmount(), isParcel)));
+			
+			setTaxAmount(NumberUtil.roundToTwoDigit(calculateTax(true, isParcel)));
+			setTaxAmountWithoutModifiers(NumberUtil.roundToTwoDigit(calculateTax(false, isParcel)));
+			
+			
+			
+			setTotalAmount(NumberUtil.roundToTwoDigit(calculateTotal(true)));
+			setTotalAmountWithoutModifiers(NumberUtil.roundToTwoDigit(calculateTotal(false)));
+			
+		}
 
 	public boolean isMergable(TicketItem otherItem, boolean merge) {
 		if (this.isFractionalUnit() || this.getItemId() == 0 || (this.getCookingInstructions() != null && this.getCookingInstructions().size() > 0)) {
@@ -636,18 +699,48 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 		return 0;
 	}
 
-	private double calculateTax(boolean includeModifierTax) {
+	private double calculateServiceCharge(double discount, boolean isParcel) {
+		if(getTicket()== null) return 0.0;
+		if(isParcel && TerminalConfig.isPcNoSc()) return 0.0;
+		
+		
+		Restaurant restaurant = Application.getInstance().getRestaurant();
+		double serviceChargePercentage = restaurant.getServiceChargePercentage();
+		if(serviceChargePercentage < 0.0) return 0.0;
+		
+		double serviceCharge = 0.0;
+
+		if (TerminalConfig.isScIncludeDis()) {
+			//serviceCharge = (getSubtotalAmount() - getDiscountAmount()) * (serviceChargePercentage / 100.0);
+			serviceCharge = (getSubtotalAmount() - discount) * (serviceChargePercentage / 100.0);
+		}else {
+			serviceCharge = (getSubtotalAmount()) * (serviceChargePercentage / 100.0);
+		}
+
+		return serviceCharge;
+		
+	}
+	
+	private double calculateTax(boolean includeModifierTax, boolean isParcel) {
 		double subtotal = 0;
-
+		if(isParcel && TerminalConfig.isPcNoTax()) return 0.0;
+		
 		subtotal = getSubtotalAmountWithoutModifiers();
-
-		double discount = getDiscountAmount();
-
+		
+		//john
+		/*Restaurant restaurant = Application.getInstance().getRestaurant();
+		double serviceChargePercentage = restaurant.getServiceChargePercentage();
+		subtotal = subtotal * (1+serviceChargePercentage/100.0);
+		*/
+		double discount = TerminalConfig.isScIncludeDis() ? getDiscountAmount() : 0;
 		subtotal = subtotal - discount;
-
+		double service_charge = TerminalConfig.isTaxIncludeSc() ? getServiceChargeAmount() : 0.0;
+		subtotal = subtotal + service_charge;
+		
+		
 		double taxRate = getTaxRate();
 		double tax = 0;
-
+		
 		if (taxRate > 0) {
 			if (priceIncludesTax) {
 				tax = subtotal - (subtotal / (1 + (taxRate / 100.0)));
@@ -656,7 +749,7 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 				tax = subtotal * (taxRate / 100.0);
 			}
 		}
-
+		
 		if (includeModifierTax) {
 			//			List<TicketItemModifierGroup> ticketItemModifierGroups = getTicketItemModifierGroups();
 			//			if (ticketItemModifierGroups != null) {
@@ -685,6 +778,22 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 	private double calculateTotal(boolean includeModifiers) {
 		double total = 0;
 
+		/*if (includeModifiers) {
+			if (priceIncludesTax) {
+				total = getSubtotalAmount() - getDiscountAmount() + getServiceChargeAmount();
+			}
+			else {
+				total = getSubtotalAmount() - getDiscountAmount() + getTaxAmount() + getServiceChargeAmount();
+			}
+		}
+		else {
+			if (priceIncludesTax) {
+				total = getSubtotalAmountWithoutModifiers() - getDiscountAmount() + getServiceChargeAmount();
+			}
+			else {
+				total = getSubtotalAmountWithoutModifiers() - getDiscountAmount() + getTaxAmountWithoutModifiers() + getServiceChargeAmount();
+			}
+		}*/
 		if (includeModifiers) {
 			if (priceIncludesTax) {
 				total = getSubtotalAmount() - getDiscountAmount();
@@ -702,7 +811,8 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 			}
 		}
 
-		return total;
+
+		return total+getServiceChargeAmount();//-calculateDiscount();
 	}
 
 	@Override
@@ -732,13 +842,21 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 			if (itemQuantity % 1 == 0) {
 				return String.valueOf((int) itemQuantity) + getItemUnitName();
 			}
-			itemQuantity = NumberUtil.roundToTwoDigit(itemQuantity);
+			//itemQuantity = NumberUtil.roundToTwoDigit(itemQuantity);
 			return itemQuantity + getItemUnitName();
 		}
 
 		return String.valueOf(getItemCount());
 	}
-
+	
+	//Diana - implement interface
+	@Override
+	public Double getItemCountDisplay() {
+		if (isTreatAsSeat())
+			return 0.0; //$NON-NLS-1$
+		return Double.valueOf(getItemCount()*1.0);
+	}
+	
 	@Override
 	public Double getTaxAmountWithoutModifiersDisplay() {
 		return getTaxAmountWithoutModifiers();

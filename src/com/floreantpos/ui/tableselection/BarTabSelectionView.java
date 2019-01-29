@@ -35,9 +35,13 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.floreantpos.main.Application;
 import com.floreantpos.model.OrderType;
 import com.floreantpos.model.Ticket;
+import com.floreantpos.model.dao.OrderTypeDAO;
 import com.floreantpos.model.dao.TicketDAO;
 import com.floreantpos.swing.BarTabButton;
 import com.floreantpos.swing.PosUIManager;
@@ -49,7 +53,8 @@ import com.floreantpos.util.CurrencyUtil;
 import com.jidesoft.swing.JideScrollPane;
 
 public class BarTabSelectionView extends JPanel {
-
+	Log logger = LogFactory.getLog(BarTabSelectionView.class);
+	
 	private Map<Ticket, BarTabButton> tableButtonMap = new HashMap<Ticket, BarTabButton>();
 	private ScrollableFlowPanel buttonsPanel;
 	private OrderType orderType;
@@ -59,6 +64,7 @@ public class BarTabSelectionView extends JPanel {
 	}
 
 	private void init() {
+		//logger.debug("BarTabSelectionView : init : "+Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
 		setLayout(new BorderLayout(10,10));
 
 		buttonsPanel = new ScrollableFlowPanel(FlowLayout.CENTER);
@@ -75,7 +81,9 @@ public class BarTabSelectionView extends JPanel {
 	}
 
 	private void rendererBarTickets() {
+		if(orderType==null) return;
 		List<Ticket> openTickets = TicketDAO.getInstance().findOpenTicketsByOrderType(orderType);
+		logger.debug("---------open ticket is : "+openTickets.size());
 		for (Ticket ticket : openTickets) {
 			BarTabButton barTabButton = new BarTabButton(ticket);
 			barTabButton.setPreferredSize(PosUIManager.getSize(180, 160));
@@ -139,6 +147,9 @@ public class BarTabSelectionView extends JPanel {
 	}
 
 	public void updateView(OrderType orderType) {
+		//logger.debug("BarTabSelectionView: updateView : "+Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
+		logger.debug("BarTabSelectionView: updateView : "+orderType);
+		if(orderType==null) orderType = OrderTypeDAO.instance.get(1);
 		this.orderType = orderType;
 		buttonsPanel.getContentPane().removeAll();
 		tableButtonMap.clear();

@@ -121,8 +121,8 @@ public class TransactionListView extends JPanel {
 	private class TransactionListTableModel extends ListTableModel<PosTransaction> {
 		public TransactionListTableModel() {
 			super(
-					//Breadfruit Edit
-					new String[] { Messages.getString("TransactionListView.0"), Messages.getString("TransactionListView.10"),
+			//Breadfruit Edit
+					new String[] { Messages.getString("TransactionListView.0"),
 							Messages.getString("TransactionListView.1"),
 							//Messages.getString("TransactionListView.8"), 
 							Messages.getString("TransactionListView.8"), Messages.getString("TransactionListView.2"), "CARD NO.", "AUTH CODE",
@@ -137,27 +137,34 @@ public class TransactionListView extends JPanel {
 			switch (columnIndex) {
 				case 0:
 					return transaction.getCardTransactionId();
+
 				case 1:
-					return transaction.getProperty("BatchNum");
-				case 2:
 					return transaction.getTicket().getId();
-				case 3:
+				case 2:
 					return transaction.getTransactionTime();
-				case 4:
+
+				case 3:
 					return ticket.getOwner().getFirstName();
-				case 5:
+
+				case 4:
 					return "****" + transaction.getCardNumber();
-				case 6:
+
+				case 5:
 					return transaction.getCardAuthCode();
-				case 7:
+
+				case 6:
 					return transaction.getTipsAmount();
-				case 8:
+				case 7:
 					return transaction.getTipsExceedAmount();
-				case 9:
+
+				case 8:
 					return transaction.getAmount() - transaction.getTipsAmount();
-				case 10:
+
+				case 9:
 					return transaction.getAmount();
+
 			}
+
 			return null;
 		}
 	}

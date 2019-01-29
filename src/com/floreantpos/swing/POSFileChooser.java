@@ -20,7 +20,7 @@ public class POSFileChooser extends JFileChooser {
 	FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif");
 
 	public POSFileChooser() {
-		setDialogTitle("FloreantPOS");
+		setDialogTitle("FUXUNPOS");
 		setAcceptAllFileFilterUsed(false);
 		setFileFilter(filter);
 		setAccessory(new ImagePreview(this));

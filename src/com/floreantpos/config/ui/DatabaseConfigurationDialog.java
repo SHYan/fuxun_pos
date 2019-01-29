@@ -156,12 +156,12 @@ public class DatabaseConfigurationDialog extends POSDialog implements ActionList
 		databaseCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Database selectedDb = (Database) databaseCombo.getSelectedItem();
-
+				/* John Start
 				if (selectedDb == Database.DERBY_SINGLE) {
 					setFieldsVisible(false);
 					return;
 				}
-
+				*/
 				setFieldsVisible(true);
 
 				String databasePort = AppConfig.getDatabasePort();
@@ -189,13 +189,15 @@ public class DatabaseConfigurationDialog extends POSDialog implements ActionList
 		tfDatabaseName.setText(AppConfig.getDatabaseName());
 		tfUserName.setText(AppConfig.getDatabaseUser());
 		tfPassword.setText(AppConfig.getDatabasePassword());
-
+		/* John Start
 		if (selectedDb == Database.DERBY_SINGLE) {
 			setFieldsVisible(false);
 		}
 		else {
 			setFieldsVisible(true);
 		}
+		*/
+		setFieldsVisible(true);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -263,15 +265,16 @@ public class DatabaseConfigurationDialog extends POSDialog implements ActionList
 				if (i != JOptionPane.YES_OPTION) {
 					return;
 				}
-
-				i = JOptionPane.showConfirmDialog(this,
+				//Diana - Not ask to generate sample data
+				/*i = JOptionPane.showConfirmDialog(this,
 						Messages.getString("DatabaseConfigurationDialog.4"), Messages.getString("DatabaseConfigurationDialog.5"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 				boolean generateSampleData = false;
 				if (i == JOptionPane.YES_OPTION)
-					generateSampleData = true;
-
+					generateSampleData = true;*/
+				boolean generateSampleData = false;
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
+				//String createDbConnectString = selectedDb.getCreateDbConnectString(databaseURL, databasePort, databaseName+"?createDatabaseIfNotExist=true"); mysql - autocreate db
 				String createDbConnectString = selectedDb.getCreateDbConnectString(databaseURL, databasePort, databaseName);
 
 				boolean databaseCreated = DatabaseUtil.createDatabase(createDbConnectString, hibernateDialect, driverClass, user, pass, generateSampleData);
