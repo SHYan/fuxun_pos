@@ -1084,7 +1084,7 @@ public class ReceiptPrintService {
 	}
 
 	public static void printToKitchen(Ticket ticket) {
-		logger.debug("ReceiptPrintService : printToKitchen()");
+		//logger.debug("ReceiptPrintService : printToKitchen()");
 		Session session = null;
 		Transaction transaction = null;
 		try {

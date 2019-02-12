@@ -83,7 +83,7 @@ public class BarTabSelectionView extends JPanel {
 	private void rendererBarTickets() {
 		if(orderType==null) return;
 		List<Ticket> openTickets = TicketDAO.getInstance().findOpenTicketsByOrderType(orderType);
-		logger.debug("---------open ticket is : "+openTickets.size());
+		//logger.debug("---------open ticket is : "+openTickets.size());
 		for (Ticket ticket : openTickets) {
 			BarTabButton barTabButton = new BarTabButton(ticket);
 			barTabButton.setPreferredSize(PosUIManager.getSize(180, 160));
@@ -148,7 +148,7 @@ public class BarTabSelectionView extends JPanel {
 
 	public void updateView(OrderType orderType) {
 		//logger.debug("BarTabSelectionView: updateView : "+Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
-		logger.debug("BarTabSelectionView: updateView : "+orderType);
+		//logger.debug("BarTabSelectionView: updateView : "+orderType);
 		if(orderType==null) orderType = OrderTypeDAO.instance.get(1);
 		this.orderType = orderType;
 		buttonsPanel.getContentPane().removeAll();

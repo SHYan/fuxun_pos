@@ -533,7 +533,7 @@ public class TicketForSplitView extends com.floreantpos.swing.TransparentPanel i
 			ticketItem.setItemCount(--itemCount);
 		}
 		else {
-			ticketViewerTable.delete(ticketItem.getTableRowNum());
+			ticketViewerTable.delete(ticketItem.getTableRowNum(), true);
 		}
 		repaint();
 		toTicketView.repaint();
@@ -568,7 +568,7 @@ public class TicketForSplitView extends com.floreantpos.swing.TransparentPanel i
 		newTicketItem.setPrintedToKitchen(ticketItem.isPrintedToKitchen());
 
 		toTicketView.ticketViewerTable.addAllTicketItem(newTicketItem);
-		ticketViewerTable.delete(ticketItem.getTableRowNum());
+		ticketViewerTable.delete(ticketItem.getTableRowNum(), true);
 		repaint();
 		toTicketView.repaint();
 		updateView();

@@ -422,15 +422,65 @@ public class TicketViewerTableModel extends AbstractTableModel {
 		return object;
 	}
 */
+	public Object delete(int index, boolean delete) {
+		if (index < 0 || index >= tableRows.size())
+			return null;
+
+		Object object = tableRows.get(String.valueOf(index));
+
+		if (object instanceof TicketItem) {
+			TicketItem ticketItem = (TicketItem) object;
+			int rowNum = ticketItem.getTableRowNum();
+
+			List<TicketItem> ticketItems = ticket.getTicketItems();
+			for (Iterator iter = ticketItems.iterator(); iter.hasNext();) {
+				TicketItem item = (TicketItem) iter.next();
+				if (item.getTableRowNum() == rowNum) {
+					iter.remove();
+
+					if (item.isPrintedToKitchen() || item.isInventoryHandled()) {
+						ticket.addDeletedItems(item);
+					}
+
+					break;
+				}
+			}
+		}else if (object instanceof TicketItemModifier) {
+
+		}
+		else if (object instanceof TicketItemCookingInstruction) {
+			TicketItemCookingInstruction cookingInstruction = (TicketItemCookingInstruction) object;
+			int tableRowNum = cookingInstruction.getTableRowNum();
+
+			TicketItem ticketItem = null;
+			while (tableRowNum > 0) {
+				Object object2 = tableRows.get(String.valueOf(--tableRowNum));
+				if (object2 instanceof TicketItem) {
+					ticketItem = (TicketItem) object2;
+					break;
+				}
+			}
+
+			if (ticketItem != null) {
+				ticketItem.removeCookingInstruction(cookingInstruction);
+			}
+		}
+
+		calculateRows();
+		fireTableDataChanged();
+		return object;
+	}
+	
 	public Object delete(int index) {
 		if (index < 0 || index >= tableRows.size())
 			return null;
 
 		Object object = tableRows.get(String.valueOf(index));
+
 		if (object instanceof TicketItem) {
 			TicketItem ticketItem = (TicketItem) object; //Diana - 24-07-2018 - prevent to delete stored order item
 			//if(ticketItem.getId() == null || ticketItem.getId() == 0){
-			if(!ticketItem.isPrintedToKitchen() || ticketItem.getId() == null || ticketItem.getId() == 0){
+			if(!ticketItem.isPrintedToKitchen() || ticketItem.getId() == null || ticketItem.getId() == 0){ //-
 				int rowNum = ticketItem.getTableRowNum();
 				List<TicketItem> ticketItems = ticket.getTicketItems();
 				for (Iterator iter = ticketItems.iterator(); iter.hasNext();) {

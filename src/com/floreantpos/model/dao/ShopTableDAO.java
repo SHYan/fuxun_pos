@@ -48,8 +48,7 @@ public class ShopTableDAO extends BaseShopTableDAO {
 
 	@Override
 	public Order getDefaultOrder() {
-		
-		return Order.asc(ShopTable.PROP_DESCRIPTION);
+		return Order.asc(ShopTable.PROP_DESCRIPTION);//ShopTable.PROP_ID);
 	}
 
 	public int getNextTableNumber() {

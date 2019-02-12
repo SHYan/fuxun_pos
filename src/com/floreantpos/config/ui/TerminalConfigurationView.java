@@ -94,6 +94,7 @@ public class TerminalConfigurationView extends ConfigurationView {
 	private JCheckBox pc_no_tax = new JCheckBox("Parcel No Tax");
 	private JCheckBox sc_include_dis = new JCheckBox("*SC Include Discount");
 	private JCheckBox tax_include_sc = new JCheckBox("*Tax Include SC");
+	private JCheckBox use_mobi = new JCheckBox("**Using Tablets");
 
 	private JComboBox<String> cbFonts = new JComboBox<String>();
 	private JComboBox<String> cbDefaultView;
@@ -165,7 +166,8 @@ public class TerminalConfigurationView extends ConfigurationView {
 		contentPanel.add(cbFullscreenMode, "span 2"); //$NON-NLS-1$
 		
 		contentPanel.add(cbUseSettlementPrompt, "newline, span"); //$NON-NLS-1$
-		contentPanel.add(cbShowBarCodeOnReceipt, "newline,span"); //$NON-NLS-1$
+		contentPanel.add(cbShowBarCodeOnReceipt, "newline"); //$NON-NLS-1$
+		contentPanel.add(use_mobi, "span 2"); //$NON-NLS-1$
 		contentPanel.add(cbGroupKitchenReceiptItems, "newline,span"); //$NON-NLS-1$
 		contentPanel.add(chkEnabledMultiCurrency, "newline,span"); //$NON-NLS-1$
 		contentPanel.add(chkAllowToDelPrintedItem, "newline,span"); //$NON-NLS-1$
@@ -308,6 +310,7 @@ public class TerminalConfigurationView extends ConfigurationView {
 		TerminalConfig.setAutoLogoffTime(tfLogoffTime.getInteger() <= 0 ? 10 : tfLogoffTime.getInteger());
 		TerminalConfig.setUseSettlementPrompt(cbUseSettlementPrompt.isSelected());
 		TerminalConfig.setShowBarcodeOnReceipt(cbShowBarCodeOnReceipt.isSelected());
+		TerminalConfig.setUseMobi(use_mobi.isSelected());
 		TerminalConfig.setGroupKitchenReceiptItems(cbGroupKitchenReceiptItems.isSelected());
 		TerminalConfig.setEnabledMultiCurrency(chkEnabledMultiCurrency.isSelected());
 		TerminalConfig.setAllowToDeletePrintedTicketItem(chkAllowToDelPrintedItem.isSelected());
@@ -362,7 +365,7 @@ public class TerminalConfigurationView extends ConfigurationView {
 		tax_include_sc.setSelected(TerminalConfig.isTaxIncludeSc());
 		pc_no_sc.setSelected(TerminalConfig.isPcNoSc());
 		pc_no_tax.setSelected(TerminalConfig.isPcNoTax());
-		
+		use_mobi.setSelected(TerminalConfig.isUseMobi());
 		cbFullscreenMode.setSelected(TerminalConfig.isFullscreenMode());
 		cbShowDbConfiguration.setSelected(TerminalConfig.isShowDbConfigureButton());
 		cbUseSettlementPrompt.setSelected(TerminalConfig.isUseSettlementPrompt());

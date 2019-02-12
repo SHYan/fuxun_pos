@@ -127,9 +127,14 @@ public class ShopTableButton extends PosButton {
 			userName = "";
 		}
 		setText("<html><center><b>" + shopTable.getDescOrNum() + "<small>" + userName + ticketIdAsString + "</small></center></b></html>"); //$NON-NLS-1$
+		/*
+		logger.debug(shopTable.getUserId());
+		logger.debug(shopTable.getUserId().intValue());
+		logger.debug(Application.getCurrentUser().getAutoId().intValue());
 		if (shopTable.getUserId() != null && shopTable.getUserId().intValue() != Application.getCurrentUser().getAutoId().intValue()) {
 			setBackground(new Color(139, 0, 139));
 		}
+		*/
 	}
 
 	public void setUser(User user) {

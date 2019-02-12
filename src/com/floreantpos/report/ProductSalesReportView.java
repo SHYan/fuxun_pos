@@ -31,10 +31,14 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JSpinner;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jdesktop.swingx.JXDatePicker;
 
 import net.miginfocom.swing.MigLayout;
@@ -54,12 +58,17 @@ import com.floreantpos.ui.dialog.POSMessageDialog;
 import com.floreantpos.ui.util.UiUtil;
 
 public class ProductSalesReportView extends JPanel {
+	Log logger = LogFactory.getLog(ProductSalesReportView.class);
+	
 	private SimpleDateFormat fullDateFormatter = new SimpleDateFormat("yyyy MMM dd, hh:mm a"); //$NON-NLS-1$
 	private SimpleDateFormat timeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
 
 	
 	private JXDatePicker dpEndDate;
 	private JXDatePicker dpStartDate;
+	
+	private JSpinner dpStartTime;//
+	private JSpinner dpEndTime;//
 	
 	private JLabel lblFromDate;
 	private JLabel lblToDate;
@@ -75,14 +84,20 @@ public class ProductSalesReportView extends JPanel {
 		
 		lblFromDate = new JLabel(com.floreantpos.POSConstants.START_DATE + ":");
 		dpStartDate = UiUtil.getCurrentMonthStart();
+		
 
 		lblToDate = new JLabel(com.floreantpos.POSConstants.END_DATE + ":");
 		dpEndDate = UiUtil.getCurrentMonthEnd();
 		
+		dpStartTime = UiUtil.getTimeSpinner("start");//
+		dpEndTime = UiUtil.getTimeSpinner("end");//
+		
 		topPanel.add(lblFromDate);
 		topPanel.add(dpStartDate);
+		topPanel.add(dpStartTime);//
 		topPanel.add(lblToDate);
-		topPanel.add(dpEndDate, "wrap");
+		topPanel.add(dpEndDate);
+		topPanel.add(dpEndTime, "wrap");//
 		
 		topPanel.add(new JLabel("Category :"));
 		List<String> cateList = IBatisFactory.selectList("Report.getCategory_List", null);
@@ -126,10 +141,25 @@ public class ProductSalesReportView extends JPanel {
 	
 	private void viewReport() throws Exception {
 		
-		Date fromDate = dpStartDate.getDate();
+		Object svalue = dpStartTime.getValue();
+		Object evalue = dpEndTime.getValue();
+        Date date = (Date) svalue;
+        
+        SimpleDateFormat hourF = new SimpleDateFormat("HH");
+        SimpleDateFormat minuteF = new SimpleDateFormat("mm");
+        
+        int sh = Integer.parseInt(hourF.format(date));
+        int sm = Integer.parseInt(minuteF.format(date));
+        
+        date = (Date) evalue;
+        int eh = Integer.parseInt(hourF.format(date));
+        int em = Integer.parseInt(minuteF.format(date));
+        
+        Date fromDate = dpStartDate.getDate();
 		Date toDate = dpEndDate.getDate();
-		fromDate = DateUtil.startOfDay(fromDate);
-		toDate = DateUtil.endOfDay(toDate);
+		fromDate = DateUtil.startOfDay(fromDate, sh, sm );
+		toDate = DateUtil.endOfDay(toDate, eh, em);
+		
 		
 		HashMap map = new HashMap();
 		ReportUtil.populateRestaurantProperties(map);

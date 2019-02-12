@@ -292,12 +292,6 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 		btnCancel.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 
-				/* John Test */
-				
-				MobiServo ms = new MobiServo();
-				ms.newTicket();
-				/*
-				
 				if (ticketView.isCancelable()) {
 					ticketView.doCancelOrder();
 					return;
@@ -310,7 +304,7 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 
 				ticketView.doCancelOrder();
 				ticketView.setAllowToLogOut(true);
-				*/
+				
 			}
 		});
 

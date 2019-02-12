@@ -359,7 +359,7 @@ public class Ticket extends BaseTicket {
 		double serviceChargeAmount = calculateServiceCharge(discountAmount, isParcel);
 
 		double taxAmount = calculateTax(discountAmount, isParcel);
-		if (ticketDiscountAmount > 0) {
+		if (ticketDiscountAmount > 0 && taxAmount > 0) {
 			//double discountTax = taxAmount * (ticketDiscountAmount / subtotalAmount);
 			double discountTax = ticketDiscountAmount * (ticketDiscountAmount / subtotalAmount);
 			taxAmount = taxAmount - discountTax;  //for recalculate tax - Diana 20181118

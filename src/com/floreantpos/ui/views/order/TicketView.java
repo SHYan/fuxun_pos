@@ -383,11 +383,15 @@ public class TicketView extends JPanel {
 	}
 
 	public synchronized void doFinishOrder() {// GEN-FIRST:event_doFinishOrder
+		//logger.debug("TicketView : doFinishOrder()");
+//		logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
 		sendTicketToKitchen();
 		closeView(false);
 	}// GEN-LAST:event_doFinishOrder
 
 	public synchronized void sendTicketToKitchen() {// GEN-FIRST:event_doFinishOrder
+		//logger.debug("TicketView : doFinishOrder()");
+		//logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
 		saveTicketIfNeeded();
 		if (ticket.getOrderType().isShouldPrintToKitchen()) {
 			if (ticket.needsKitchenPrint()) {

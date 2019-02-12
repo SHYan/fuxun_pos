@@ -25,6 +25,17 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 public class DateUtil {
+	
+	public static Date startOfDay(Date date, int hour, int minute) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, hour);
+		cal.set(Calendar.MINUTE, minute);
+		cal.set(Calendar.SECOND, 0);
+
+		return new Date(cal.getTimeInMillis());
+	}
+
 	public static Date startOfDay(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -35,6 +46,16 @@ public class DateUtil {
 		return new Date(cal.getTimeInMillis());
 	}
 
+	public static Date endOfDay(Date date, int hour, int minute) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, hour);
+		cal.set(Calendar.MINUTE, minute);
+		cal.set(Calendar.SECOND, 59);
+
+		return new Date(cal.getTimeInMillis());
+	}
+	
 	public static Date endOfDay(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);

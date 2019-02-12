@@ -229,7 +229,7 @@ public class CategoryView extends SelectionView implements ActionListener {
 		}
 		buttonMap.clear();
 
-		logger.debug(Messages.getString("CategoryView.4")); //$NON-NLS-1$
+		//logger.debug(Messages.getString("CategoryView.4")); //$NON-NLS-1$
 
 	}
 

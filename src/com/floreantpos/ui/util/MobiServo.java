@@ -126,7 +126,7 @@ public class MobiServo {
 		
 		ShopTableStatus shopTableStatus = selectedTables.getShopTableStatus();
 		shopTableStatus.setTableTicket(ticket.getId(), ticket.getOwner().getId(), ticket.getOwnerName());
-		logger.debug("Table status is ------- "+shopTableStatus.getTicketId());
+		//logger.debug("Table status is ------- "+shopTableStatus.getTicketId());
 		selectedTables.setShopTableStatus(shopTableStatus);
 		
 		

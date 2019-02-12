@@ -18,8 +18,10 @@
 package com.floreantpos.mobi;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -56,42 +59,55 @@ import com.floreantpos.ui.views.order.OrderController;
 public class MobiSchedule {
 	static Log logger = LogFactory.getLog(MobiSchedule.class);
 	
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd yyyy, hh:mm:ss aaa"); //$NON-NLS-1$
-
+	/*============mobi=================*/
+	public static int refreshDuration = 5000;
+	public static String dirPath = "C:\\mobi_tmp\\";
+	
 	public static boolean runningFlag = false;
 	public static Timer clockTimer = new Timer();
-	public static String dirPath = System.getProperty("user.dir")+"/mobi_tmp/";
-
+	
 	public static void parseJson(File jsonFile) {
 		if(jsonFile==null) return;
 		
-		JSONParser parser = new JSONParser();
-        try {
+		try {
         	Application application = Application.getInstance();
-        	Ticket ticket = new Ticket();
-        	ticket.setPriceIncludesTax(application.isPriceIncludesTax());
-    		OrderTypeDAO od = new OrderTypeDAO();
-    		ticket.setOrderType(od.get(1));
-    		ticket.setTicketType("DINE IN");
-    		Calendar currentTime = Calendar.getInstance();
-    		ticket.setCreateDate(currentTime.getTime());
-    		ticket.setCreationHour(currentTime.get(Calendar.HOUR_OF_DAY));
-    		ticket.setTerminal(application.getTerminal());
-    		ticket.setShift(application.getCurrentShift());
-    		
-    		
-    		String modifierStr;
-        	JSONObject item, jsonObj = (JSONObject) parser.parse(new FileReader(jsonFile));
-        	logger.debug(jsonObj.toString());
+        	String modifierStr;
+            InputStream is = new FileInputStream(jsonFile);
+            String jsonStr = IOUtils.toString(is, "UTF-8");
+            JSONObject item, jsonObj = new JSONObject(jsonStr);//(JSONObject) parser.parse(new FileReader(jsonFile));
         	jsonObj = jsonObj.getJSONObject("value");
-            
-    		ticket.setNumberOfGuests((Integer)jsonObj.get("no_of_customers"));
-    		ticket.setOwnerName((String)jsonObj.get("waiter"));
-    		
-    		ShopTable selectedTables = ShopTableDAO.getInstance().getByNumber((Integer)jsonObj.get("table_no"));
-    		selectedTables.setServing(true);
-    		ticket.addTable(selectedTables.getTableNumber());
-    		ticket.addTableName(selectedTables.getDescOrNum());
+
+        	Ticket ticket;
+        	Integer oldTicket = null;
+        	if(jsonObj.has("ticketId") && jsonObj.get("ticketId")!=null)
+        	oldTicket = Integer.valueOf(jsonObj.get("ticketId").toString());
+        	
+        	ShopTable selectedTables = null;
+        	
+        	if(oldTicket!=null && oldTicket!=0) {
+        		ticket = TicketDAO.getInstance().get(oldTicket);
+        		logger.debug(" old ticket "+ticket.getTicketItems().size());
+        	} else {
+        		ticket = new Ticket();
+            	ticket.setPriceIncludesTax(application.isPriceIncludesTax());
+        		OrderTypeDAO od = new OrderTypeDAO();
+        		ticket.setOrderType(od.get(1));
+        		ticket.setTicketType("DINE IN");
+        		Calendar currentTime = Calendar.getInstance();
+        		ticket.setCreateDate(currentTime.getTime());
+        		ticket.setCreationHour(currentTime.get(Calendar.HOUR_OF_DAY));
+        		ticket.setTerminal(application.getTerminal());
+        		ticket.setShift(application.getCurrentShift());
+        		ticket.setOwner(Application.getCurrentUser());
+        		ticket.setOwnerName(Application.getCurrentUser().getFullName());
+        		ticket.setNumberOfGuests((Integer)jsonObj.get("no_of_customers"));
+        		
+        		selectedTables = ShopTableDAO.getInstance().getByNumber(Integer.parseInt(jsonObj.get("table_no").toString()));
+        		selectedTables.setServing(true);
+        		ticket.addTable(selectedTables.getTableNumber());
+        		ticket.addTableName(selectedTables.getDescOrNum());
+        			
+        	}
     		
             JSONArray itemArray = jsonObj.getJSONArray("Items");
             MenuItem menuItem;
@@ -99,17 +115,21 @@ public class MobiSchedule {
             
             TicketItem ticketItem;
             List<TicketItem> ticketItemList = new ArrayList<TicketItem>();
+            if(oldTicket != null && oldTicket>0) {
+            	ticketItemList.addAll(ticket.getTicketItems());
+            }
             
             if(itemArray==null) return;
             for(int i=0; i<itemArray.length(); i++) {
             	item = itemArray.getJSONObject(i);
             	
-            	menuItem = MenuItemDAO.getInstance().get((Integer)item.get("Product_No"));
+            	menuItem = MenuItemDAO.getInstance().get(Integer.parseInt(item.get("Product_No").toString()));
         		MenuItemDAO dao = new MenuItemDAO();
         		menuItem = dao.initialize(menuItem);
-            	
-        		ticketItem = menuItem.convertToTicketItem(ticket.getOrderType(), (Double)item.get("Qty"), menuItem.getPrice(null));
-        		
+            	//logger.debug(item.get("Qty").toString()+" is Qty");
+        		ticketItem = menuItem.convertToTicketItem(ticket.getOrderType(), Double.parseDouble(item.get("Qty").toString()), menuItem.getPrice(null));
+        		//logger.debug("Ticket item qty is : "+ticketItem.getItemQuantity());
+        		//ticketItem.setItemQuantity(Double.parseDouble(item.get("Qty").toString()));
         		modifierStr = item.getString("Condiment");
             	if(modifierStr!=null && !modifierStr.equals("")) {
             		String[] modifierObjList = modifierStr.split(",", -1);
@@ -127,18 +147,22 @@ public class MobiSchedule {
         		ticketItemList.add(ticketItem);
         		
             }
+            
             ticket.setTicketItems(ticketItemList);
             ticket.calculatePrice();
     		
     		TicketDAO.getInstance().saveOrUpdate(ticket);
     		
-    		ShopTableStatus shopTableStatus = selectedTables.getShopTableStatus();
-    		shopTableStatus.setTableTicket(ticket.getId(), ticket.getOwner().getId(), ticket.getOwnerName());
-    		selectedTables.setShopTableStatus(shopTableStatus);
+    		if(oldTicket == null || oldTicket==0) {
+	    		ShopTableStatus shopTableStatus = selectedTables.getShopTableStatus();
+	    		shopTableStatus.setTableTicket(ticket.getId(), ticket.getOwner().getId(), ticket.getOwnerName());
+	    		selectedTables.setShopTableStatus(shopTableStatus);
+	    		ShopTableDAO.getInstance().occupyTables(ticket);
+    		}
     		
     		ActionHistoryDAO actionHistoryDAO = ActionHistoryDAO.getInstance();
     		User user = Application.getCurrentUser();
-    		ShopTableDAO.getInstance().occupyTables(ticket);
+    		
     		actionHistoryDAO.saveHistory(user, ActionHistory.NEW_CHECK, POSConstants.RECEIPT_REPORT_TICKET_NO_LABEL + ":" + ticket.getId()); //$NON-NLS-1$
     		
     		if (ticket.getOrderType().isShouldPrintToKitchen()) {
@@ -148,11 +172,15 @@ public class MobiSchedule {
     			}
     		}
     		OrderController.saveOrder(ticket);
-    		jsonFile.deleteOnExit();
+    		
+    		is.close();
+    		if(!jsonFile.delete()) jsonFile.renameTo(new File(jsonFile.getAbsoluteFile()+".bp"));
+    		if(jsonFile.exists()) jsonFile.renameTo(new File(jsonFile.getAbsoluteFile()+".bp"));
+    		
             
         }catch(Exception e) {
         	e.printStackTrace();
-        	logger.debug(jsonFile.getAbsolutePath());
+        	//logger.debug(jsonFile.getAbsolutePath());
         	jsonFile.renameTo(new File(jsonFile.getAbsoluteFile()+".bp"));
         }
 	}
@@ -165,7 +193,7 @@ public class MobiSchedule {
 			        return name.toLowerCase().endsWith(".json");
 			    }
 			});
-	
+			if(files==null) return;
 			for(File file : files){
 			    if(file.isFile()){
 			        parseJson(file);
@@ -187,7 +215,7 @@ public class MobiSchedule {
 				  checkMobiUpload();
 				  runningFlag = false;
 			  }
-			}, 3*60*1000, 30*1000);
+			}, 60000, refreshDuration);
 	}
 
 }

@@ -139,4 +139,8 @@
 		group by  date(transaction_time)
 		order by date(transaction_time)
     </select>
+    
+    <select id="get_last_ticket_modify" parameterType="Map" resultType="java.lang.Long">
+    	SELECT extract(epoch FROM MAX(active_date::timestamp(0))) FROM ticket
+    </select>
 </mapper>

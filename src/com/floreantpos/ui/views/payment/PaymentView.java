@@ -366,7 +366,8 @@ public class PaymentView extends JPanel {
 		btnExactAmount.setFocusable(false);
 
 		btnNoSale.setAction(nextButtonAction);
-		btnNoSale.setText("NO SALE");
+		//btnNoSale.setText("NO SALE");
+		btnNoSale.setText((TerminalConfig.isPrintReceipt()) ? "Not Print Receipt" : "Print Receipt");
 		btnNoSale.setActionCommand("noSale");
 		btnNoSale.setFocusable(false);
 
@@ -656,7 +657,10 @@ public class PaymentView extends JPanel {
 					txtTenderedAmount.setText(String.valueOf(format.format(amount)));
 				}
 				else if (command.equals("noSale")) {
-					DrawerUtil.kickDrawer();
+					
+					//DrawerUtil.kickDrawer();
+					btnNoSale.setText((TerminalConfig.isPrintReceipt()) ? "Print Receipt" : "Not Print Receipt");
+					TerminalConfig.setPrintReceipt((TerminalConfig.isPrintReceipt() ?  false : true));
 				}
 				else {
 					if (clearPreviousAmount) {

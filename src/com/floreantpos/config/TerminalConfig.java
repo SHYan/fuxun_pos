@@ -110,6 +110,8 @@ public class TerminalConfig {
 	private static final String PC_NO_SC = "pc_no_sc";
 	private static final String PC_NO_TAX = "pc_no_tax";
 	
+	private static final String USE_MOBI = "use_mobi";
+	private static final String LAST_MOBI_UPLOAD = "last_mobi_upload";
 	
 	
 	private static PropertiesConfiguration config = AppConfig.getConfig();
@@ -620,5 +622,21 @@ public class TerminalConfig {
 	
 	public static void setPcNoTax(boolean selected) {
 		config.setProperty(PC_NO_TAX, selected);
+	}
+
+	public static Boolean isUseMobi() {
+		return config.getBoolean(USE_MOBI, false);
+	}
+	
+	public static void setUseMobi(boolean selected) {
+		config.setProperty(USE_MOBI, selected);
+	}
+
+	public static Long getLastMobiUpload() {
+		return config.getLong(LAST_MOBI_UPLOAD, 0);
+	}
+	
+	public static void setLastMobiUpload(Long uploadTime) {
+		config.setProperty(LAST_MOBI_UPLOAD, uploadTime);
 	}
 }

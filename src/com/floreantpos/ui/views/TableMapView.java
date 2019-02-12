@@ -52,7 +52,7 @@ public class TableMapView extends ViewPanel {
 	private static TableMapView instance;
 
 	private TableMapView() {
-		logger.debug("TableMapView : TAbleMapView()");
+		//logger.debug("TableMapView : TAbleMapView()");
 		//logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
 		
 		initComponents();
@@ -82,7 +82,7 @@ public class TableMapView extends ViewPanel {
 	}
 
 	public static TableMapView getInstance() {
-		logger.debug("TableMapView : TAbleMapView : getInstance()");
+		//logger.debug("TableMapView : TAbleMapView : getInstance()");
 		//logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
 		if (instance == null) {
 			instance = new TableMapView();
@@ -92,7 +92,7 @@ public class TableMapView extends ViewPanel {
 	}
 
 	public static TableMapView getInstance(OrderType orderType) {
-		logger.debug("TableMapView : TAbleMapView : getInstance("+orderType.getName());
+		//logger.debug("TableMapView : TAbleMapView : getInstance("+orderType.getName());
 		//logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
 		TableMapView instance2 = getInstance();
 		instance2.tableSelector.setOrderType(orderType);

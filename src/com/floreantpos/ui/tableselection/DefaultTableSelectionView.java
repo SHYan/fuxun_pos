@@ -57,6 +57,7 @@ import com.floreantpos.POSConstants;
 import com.floreantpos.PosLog;
 import com.floreantpos.actions.NewBarTabAction;
 import com.floreantpos.bo.ui.explorer.QuickMaintenanceExplorer;
+import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.extension.OrderServiceFactory;
 import com.floreantpos.main.Application;
 import com.floreantpos.model.OrderType;
@@ -66,6 +67,7 @@ import com.floreantpos.model.Ticket;
 import com.floreantpos.model.dao.ShopTableDAO;
 import com.floreantpos.model.dao.ShopTableStatusDAO;
 import com.floreantpos.model.dao.TicketDAO;
+import com.floreantpos.mybatis.IBatisFactory;
 import com.floreantpos.swing.POSToggleButton;
 import com.floreantpos.swing.PosButton;
 import com.floreantpos.swing.PosUIManager;
@@ -84,6 +86,9 @@ import com.jidesoft.swing.JideScrollPane;
 
 public class DefaultTableSelectionView extends TableSelector implements ActionListener {
 	Log logger = LogFactory.getLog(DefaultTableSelectionView.class);
+	
+	/*============mobi=================*/
+	public static int refreshDuration = 30000;
 	
 	private DefaultListModel<ShopTableButton> addedTableListModel = new DefaultListModel<ShopTableButton>();
 	private DefaultListModel<ShopTableButton> removeTableListModel = new DefaultListModel<ShopTableButton>();
@@ -110,11 +115,13 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 	List<ShopTable> tables = new ArrayList<>();
 	
 	private DefaultTableSelectionView() {
+		//logger.debug("DefaultTableSelectorView : ()");
+		//logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
 		init();
 	}
 
 	private void init() {
-		logger.debug("DefaultTableSelectionView : init");
+		//logger.debug("DefaultTableSelectionView : init");
 		setLayout(new BorderLayout(10, 10));
 		buttonsPanel = new ScrollableFlowPanel(FlowLayout.CENTER);
 		TitledBorder titledBorder1 = BorderFactory.createTitledBorder(null, POSConstants.TABLES, TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION);
@@ -136,7 +143,8 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 		add(tabbedPane, java.awt.BorderLayout.CENTER);
 		createButtonActionPanel();
 		
-		startTimer();
+		if(TerminalConfig.isUseMobi())
+			startTimer();
 		
 	}
 
@@ -145,15 +153,25 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 			tableClockTimer = new Timer();
 			timerAlive = true;
 		}
+		try {
 	    tableClockTimer.scheduleAtFixedRate(new TimerTask() {
 			  @Override
 			  public void run() {
 				  if(tableRefreshFlag) return;
-				  tableRefreshFlag = true;
-				  redererTables();
-				  tableRefreshFlag = false;
+				  Long ticketTime = (Long)IBatisFactory.selectOneSQL("Report.get_last_ticket_modify", null);
+				  if(ticketTime==null) ticketTime = (long) 0;
+				  if((TerminalConfig.getLastMobiUpload()+10) < ticketTime) {
+					  tableRefreshFlag = true;
+					  redererTables();
+					  tableRefreshFlag = false;
+					  TerminalConfig.setLastMobiUpload(ticketTime);
+				  }
 			  }
-			}, 60*1000, 30*1000);
+			}, 60000, refreshDuration);
+		}catch(Exception e) {
+			tableClockTimer = new Timer();
+			timerAlive = true;
+		}
 	}
 	
 	private void createButtonActionPanel() {
@@ -233,11 +251,16 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 	}
 	
 	public void getTablesList() {
-		
-		
+		if(tables!=null && tables.size()>0) tables.clear();
 		tables.addAll(ShopTableDAO.getInstance().findAll());
-		
-		Collections.sort(tables,new Comparator<ShopTable>(){
+		/*
+		for(ShopTable t : tables) {
+			if(t.getShopTableStatus()!=null) {
+				logger.debug(t.getDescOrNum()+" is table id; "+t.getShopTableStatus().getTicketIdAsString()+" is ticket Id");
+			}
+		}*/
+		/*
+		Collections.sort(tables, new Comparator<ShopTable>(){
 			@Override
 			public int compare(ShopTable o1, ShopTable o2)
 		    {
@@ -261,7 +284,7 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 			        return num1.compareTo(num2);	
 		        }
 		    }
-		});
+		});*/
 		
 	}
 
@@ -271,18 +294,25 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 	}
 	
 	public synchronized void redererTables() {
-
-		if(!RootView.getInstance().getCurrentView().getViewName().equals("TABLE_MAP")) {
-			pause();
-			return;
-		}
+		logger.debug("DefaultTableSelectorView : redererTables()");
+		//logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
+		
+		//if(!RootView.getInstance().getCurrentView().getViewName().equals("TABLE_MAP")) {
+		/*
+		if(RootView.getInstance().getCurrentView()!=null && RootView.getInstance().getCurrentView().getViewName()!=null) {
+			if(!RootView.getInstance().getCurrentView().getViewName().equals("TABLE_MAP")) {
+				pause();
+				return;
+			}
+		}*/
 		
 		clearSelection();
 		buttonsPanel.getContentPane().removeAll();
 
 		checkTables();
 
-		if(tables==null || tables.size()==0) getTablesList();
+		//if(tables==null || tables.size()==0) 
+			getTablesList();
 		
 		if (RootView.getInstance().isMaintenanceMode()) {
 			tables.add(new ShopTable(null, 0, 0, null));

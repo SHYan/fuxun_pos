@@ -211,8 +211,13 @@ public class MenuItem extends BaseMenuItem {
 			ticketItem.setItemUnitName(this.getUnitName());
 		}
 		else {
-			ticketItem.setItemCount(1.0);
-			ticketItem.setItemQuantity(1.0);
+			if(itemQuantity>0) {
+				ticketItem.setItemQuantity(itemQuantity);
+				ticketItem.setItemCount( itemQuantity);
+			}else {
+				ticketItem.setItemCount(1.0);
+				ticketItem.setItemQuantity(1.0);
+			}
 		}
 
 		ticketItem.setName(this.getDisplayName());

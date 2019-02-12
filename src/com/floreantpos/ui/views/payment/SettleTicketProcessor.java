@@ -100,12 +100,13 @@ public class SettleTicketProcessor implements CardInputListener {
 
 		OrderController.saveOrder(ticket);
 
+		/*
 		if (ticket.getDueAmount() == 0 && ticket.getOrderType().isCloseOnPaid()) {
 			ticket.setClosed(true);
 			doInformListenerPaymentDone();
 			return;
-		}
-
+		}*/
+		
 		cardName = paymentType.getDisplayString();
 		PosTransaction transaction = null;
 

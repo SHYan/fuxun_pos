@@ -49,6 +49,7 @@ import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.config.ui.DatabaseConfigurationDialog;
 import com.floreantpos.extension.ExtensionManager;
 import com.floreantpos.extension.FloreantPlugin;
+import com.floreantpos.mobi.MobiSchedule;
 import com.floreantpos.model.DeliveryConfiguration;
 import com.floreantpos.model.OrderType;
 import com.floreantpos.model.PosPrinters;
@@ -203,6 +204,8 @@ public class Application {
 				new PosServer();
 			}
 			*/
+			if(TerminalConfig.isUseMobi())
+				MobiSchedule.startMobiTimer();
 			
 			
 		} catch (DatabaseConnectionException e) {

@@ -36,7 +36,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.LogFactory;
 
 import com.floreantpos.IconFactory;
@@ -119,7 +121,16 @@ public class LoginView extends ViewPanel {
 		lblRestaurantName = new JLabel(Application.getInstance().getRestaurant().getName());
 		lblRestaurantName.setPreferredSize(new Dimension(1000, 100));
 		lblRestaurantName.setForeground(Color.BLACK);
-		lblRestaurantName.setFont(new Font("Dialog", Font.BOLD, PosUIManager.getFontSize(28)));
+		
+		String uiFont = TerminalConfig.getUiDefaultFont();
+		if (StringUtils.isEmpty(uiFont)) {
+			Font sourceFont = UIManager.getFont("Label.font"); //$NON-NLS-1$
+			uiFont = sourceFont.getName();
+		}
+		
+		
+		//lblRestaurantName.setFont(new Font("Dialog", Font.BOLD, PosUIManager.getFontSize(28)));
+		lblRestaurantName.setFont(new Font(uiFont, Font.BOLD, PosUIManager.getFontSize(24)));
 		lblRestaurantName.setHorizontalAlignment(SwingConstants.CENTER);
 
 		mainPanel = new JPanel(new BorderLayout());

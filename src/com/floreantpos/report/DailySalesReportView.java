@@ -32,6 +32,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JSpinner;
 import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.swingx.JXDatePicker;
@@ -59,6 +60,9 @@ public class DailySalesReportView extends JPanel {
 	private JXDatePicker dpEndDate;
 	private JXDatePicker dpStartDate;
 	
+	private JSpinner dpStartTime;
+	private JSpinner dpEndTime;
+	
 	private JLabel lblFromDate;
 	private JLabel lblToDate;
 	
@@ -77,10 +81,15 @@ public class DailySalesReportView extends JPanel {
 		lblToDate = new JLabel(com.floreantpos.POSConstants.END_DATE + ":");
 		dpEndDate = UiUtil.getCurrentMonthEnd();
 		
+		dpStartTime = UiUtil.getTimeSpinner("start");
+		dpEndTime = UiUtil.getTimeSpinner("end");
+		
 		topPanel.add(lblFromDate);
 		topPanel.add(dpStartDate);
+		topPanel.add(dpStartTime);
 		topPanel.add(lblToDate);
-		topPanel.add(dpEndDate, "wrap");
+		topPanel.add(dpEndDate);
+		topPanel.add(dpEndTime, "wrap");
 		
 		topPanel.add(new JLabel("Report Template :"));
 		cbPrintType = new JComboBox();
@@ -116,8 +125,24 @@ public class DailySalesReportView extends JPanel {
 		
 		Date fromDate = dpStartDate.getDate();
 		Date toDate = dpEndDate.getDate();
-		fromDate = DateUtil.startOfDay(fromDate);
-		toDate = DateUtil.endOfDay(toDate);
+		
+		Object svalue = dpStartTime.getValue();
+		Object evalue = dpEndTime.getValue();
+		
+		
+		SimpleDateFormat hourF = new SimpleDateFormat("HH");
+        SimpleDateFormat minuteF = new SimpleDateFormat("mm");
+        Date date = (Date) svalue;
+        int sh = Integer.parseInt(hourF.format(date));
+        int sm = Integer.parseInt(minuteF.format(date));
+        
+        date = (Date) evalue;
+        int eh = Integer.parseInt(hourF.format(date));
+        int em = Integer.parseInt(minuteF.format(date));
+        
+        fromDate = DateUtil.startOfDay(fromDate, sh, sm );
+		toDate = DateUtil.endOfDay(toDate, eh, em);
+		
 		
 		HashMap map = new HashMap();
 		ReportUtil.populateRestaurantProperties(map);

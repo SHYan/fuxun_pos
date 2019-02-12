@@ -264,7 +264,7 @@ public class TicketViewerTable extends JTable {
 				ticketItem.setItemCount(++itemCount);
 				fireTicketItemUpdated(getTicket(), ticketItem);
 				//Diana -- increase condiment count as well
-				if(ticketItem.isHasModifiers()){
+				if(ticketItem.isHasModifiers() && ticketItem.getTicketItemModifiers()!=null){
 					if(ticketItem.getTicketItemModifiers().size() > 0)
 					{	double modifier_count = itemCount;
 						for (int i = 0; i < ticketItem.getTicketItemModifiers().size(); i++){
@@ -339,7 +339,7 @@ public class TicketViewerTable extends JTable {
 				fireTicketItemUpdated(getTicket(), ticketItem);
 				
 				//Diana -- decrease condiment count as well
-				if(ticketItem.isHasModifiers()){
+				if(ticketItem.isHasModifiers() && ticketItem.getTicketItemModifiers()!=null){
 					if(ticketItem.getTicketItemModifiers().size() > 0)
 					{	double modifier_count = itemCount;
 						for (int i = 0; i < ticketItem.getTicketItemModifiers().size(); i++){
@@ -395,6 +395,10 @@ public class TicketViewerTable extends JTable {
 
 	public void delete(int index) {
 		model.delete(index);
+	}
+	
+	public void delete(int index, boolean force) {
+		model.delete(index, force);
 	}
 
 	public ITicketItem get(int index) {

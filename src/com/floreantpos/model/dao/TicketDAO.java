@@ -109,7 +109,7 @@ public class TicketDAO extends BaseTicketDAO {
 
 	@Override
 	public void saveOrUpdate(Ticket ticket, Session session) {
-		logger.debug("TicketDAO ： saveOrUpdate() ");
+		//logger.debug("TicketDAO ： saveOrUpdate() ");
 
 		//TODO: INVENTORY PLUGIN SUPPORT
 		adjustInventoryItems(session, ticket);
@@ -293,7 +293,7 @@ public class TicketDAO extends BaseTicketDAO {
 	}
 
 	public List<Ticket> findOpenTicketsByOrderType(OrderType orderType) {
-		logger.debug("TicketDAO : findOpenTicketsByOrderType : ");
+		//logger.debug("TicketDAO : findOpenTicketsByOrderType : ");
 		Session session = null;
 
 		try {

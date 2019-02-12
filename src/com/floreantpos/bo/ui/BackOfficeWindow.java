@@ -51,6 +51,7 @@ import com.floreantpos.bo.actions.DataExportAction;
 import com.floreantpos.bo.actions.DataImportAction;
 import com.floreantpos.bo.actions.DrawerPullReportExplorerAction;
 import com.floreantpos.bo.actions.GroupExplorerAction;
+import com.floreantpos.bo.actions.HourlyLaborReportAction;
 import com.floreantpos.bo.actions.InventoryTransactonListAction;
 import com.floreantpos.bo.actions.ItemExplorerAction;
 import com.floreantpos.bo.actions.LanguageSelectionAction;
@@ -203,7 +204,8 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		reportMenu.add(new ProductSalesReportAction());
 		//reportMenu.add(new SalesReportAction());
 		//reportMenu.add(new OpenTicketSummaryReportAction());
-		/*reportMenu.add(new HourlyLaborReportAction());
+		reportMenu.add(new HourlyLaborReportAction());
+		/*
 		reportMenu.add(new PayrollReportAction());
 		reportMenu.add(new EmployeeAttendanceAction());
 		reportMenu.add(new KeyStatisticsSalesReportAction());
@@ -223,6 +225,8 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		reportMenu.add(new PayoutReportAction());
 		reportMenu.add(new ProfitLossReportAction());
 		reportMenu.add(new SaleSummaryAction());
+		reportMenu.add(new TicketExplorerAction());
+		reportMenu.add(new AttendanceHistoryAction());
 		menuBar.add(reportMenu);
 	}
 
@@ -245,8 +249,7 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		explorerMenu.add(new TaxExplorerAction());
 		explorerMenu.add(new CustomPaymentBrowserAction());
 		explorerMenu.add(new DrawerPullReportExplorerAction());
-		explorerMenu.add(new TicketExplorerAction());
-		explorerMenu.add(new AttendanceHistoryAction());
+		
 		//explorerMenu.add(new PizzaExplorerAction());
 		//explorerMenu.add(subMenuPizza);
 
