@@ -53,7 +53,8 @@ public class KitchenTicket extends BaseKitchenTicket {
 
 	private String customerName;
 	private Printer printer;
-
+	private String waiter;
+	
 	public OrderType getType() {
 		String type = getTicketType();
 /*
@@ -247,7 +248,8 @@ public class KitchenTicket extends BaseKitchenTicket {
 					if (StringUtils.isNotEmpty(ticket.getProperty(Ticket.CUSTOMER_NAME))) {
 						kitchenTicket.setCustomerName(ticket.getProperty(Ticket.CUSTOMER_NAME));
 					}
-
+					kitchenTicket.setWaiter(ticket.getExtraDeliveryInfo());
+					
 					KitchenTicketDAO.getInstance().saveOrUpdate(kitchenTicket);
 
 					kitchenTicket.setPrinter(printer);
@@ -415,5 +417,13 @@ public class KitchenTicket extends BaseKitchenTicket {
 
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
+	}
+
+	public String getWaiter() {
+		return waiter;
+	}
+
+	public void setWaiter(String waiter) {
+		this.waiter = waiter;
 	}
 }

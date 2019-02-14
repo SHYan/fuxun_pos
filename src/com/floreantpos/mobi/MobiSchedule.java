@@ -53,6 +53,7 @@ import com.floreantpos.model.dao.MenuModifierDAO;
 import com.floreantpos.model.dao.OrderTypeDAO;
 import com.floreantpos.model.dao.ShopTableDAO;
 import com.floreantpos.model.dao.TicketDAO;
+import com.floreantpos.model.dao.UserDAO;
 import com.floreantpos.report.ReceiptPrintService;
 import com.floreantpos.ui.views.order.OrderController;
 
@@ -98,8 +99,14 @@ public class MobiSchedule {
         		ticket.setCreationHour(currentTime.get(Calendar.HOUR_OF_DAY));
         		ticket.setTerminal(application.getTerminal());
         		ticket.setShift(application.getCurrentShift());
-        		ticket.setOwner(Application.getCurrentUser());
-        		ticket.setOwnerName(Application.getCurrentUser().getFullName());
+        		if(Application.getCurrentUser()!=null) {
+	        		ticket.setOwner(Application.getCurrentUser());
+	        		ticket.setOwnerName(Application.getCurrentUser().getFullName());
+        		}else {
+        			User user = UserDAO.getInstance().findUser(999);
+        			ticket.setOwner(user);
+	        		ticket.setOwnerName(user.getFullName());
+        		}
         		ticket.setNumberOfGuests((Integer)jsonObj.get("no_of_customers"));
         		
         		selectedTables = ShopTableDAO.getInstance().getByNumber(Integer.parseInt(jsonObj.get("table_no").toString()));
@@ -127,7 +134,8 @@ public class MobiSchedule {
         		MenuItemDAO dao = new MenuItemDAO();
         		menuItem = dao.initialize(menuItem);
             	//logger.debug(item.get("Qty").toString()+" is Qty");
-        		ticketItem = menuItem.convertToTicketItem(ticket.getOrderType(), Double.parseDouble(item.get("Qty").toString()), menuItem.getPrice(null));
+        		double itemQty = Double.parseDouble(item.get("Qty").toString());
+        		ticketItem = menuItem.convertToTicketItem(ticket.getOrderType(), itemQty, menuItem.getPrice(null));
         		//logger.debug("Ticket item qty is : "+ticketItem.getItemQuantity());
         		//ticketItem.setItemQuantity(Double.parseDouble(item.get("Qty").toString()));
         		modifierStr = item.getString("Condiment");
@@ -136,7 +144,7 @@ public class MobiSchedule {
             		for(int j=0; j<modifierObjList.length; j++) {
             			String[] modifierObj = modifierObjList[j].split("\\|", -1);
             			menuModifier = MenuModifierDAO.getInstance().get(Integer.parseInt(modifierObj[0]));
-                		ticketItem.addTicketItemModifier(menuModifier, TicketItemModifier.NORMAL_MODIFIER, ticket.getOrderType(), null);
+                		ticketItem.addTicketItemModifier(menuModifier, TicketItemModifier.NORMAL_MODIFIER, ticket.getOrderType(), null, (int) itemQty * (int) Double.parseDouble(modifierObj[3]));
                 		ticketItem.setHasModifiers(true);
                 		//[0]id[1]name[2]Price[3]number
             		}
@@ -147,6 +155,8 @@ public class MobiSchedule {
         		ticketItemList.add(ticketItem);
         		
             }
+            String waiter = jsonObj.getString("waiter");
+            ticket.setExtraDeliveryInfo(waiter);
             
             ticket.setTicketItems(ticketItemList);
             ticket.calculatePrice();
@@ -171,6 +181,7 @@ public class MobiSchedule {
     				TicketDAO.getInstance().refresh(ticket);
     			}
     		}
+    		ticket.setExtraDeliveryInfo(null);
     		OrderController.saveOrder(ticket);
     		
     		is.close();

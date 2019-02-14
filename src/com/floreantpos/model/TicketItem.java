@@ -186,6 +186,32 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 
 		return ticketItemModifier;
 	}
+	
+	public TicketItemModifier addTicketItemModifier(MenuModifier menuModifier, int modifierType, OrderType type, Multiplier multiplier, int itemQty) {
+		TicketItemModifier ticketItemModifier = new TicketItemModifier();
+		ticketItemModifier.setModifierId(menuModifier.getId());
+		MenuItemModifierGroup menuItemModifierGroup = menuModifier.getMenuItemModifierGroup();
+		if (menuItemModifierGroup != null) {
+			ticketItemModifier.setMenuItemModifierGroupId(menuItemModifierGroup.getId());
+		}
+		ticketItemModifier.setItemCount(itemQty);
+		ticketItemModifier.setName(menuModifier.getDisplayName());
+		double price = menuModifier.getPriceForMultiplier(multiplier);
+		if (multiplier != null) {
+			ticketItemModifier.setMultiplierName(multiplier.getName());
+			ticketItemModifier.setName(multiplier.getTicketPrefix() + " " + menuModifier.getDisplayName());
+		}
+		ticketItemModifier.setUnitPrice(price);
+		ticketItemModifier.setTaxRate(menuModifier.getTaxByOrderType(type));
+
+		ticketItemModifier.setModifierType(modifierType);
+		ticketItemModifier.setShouldPrintToKitchen(menuModifier.isShouldPrintToKitchen());
+		ticketItemModifier.setTicketItem(this);
+
+		addToticketItemModifiers(ticketItemModifier);
+
+		return ticketItemModifier;
+	}
 
 	public TicketItemModifier addTicketItemModifier(MenuModifier menuModifier, boolean addOn) {
 		TicketItemModifier ticketItemModifier = new TicketItemModifier();

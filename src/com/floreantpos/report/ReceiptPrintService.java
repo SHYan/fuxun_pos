@@ -1068,7 +1068,7 @@ public class ReceiptPrintService {
 		map.put("orderType", "* " + ticketType + " *"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		map.put("printerName", "Printer Name : " + virtualPrinterName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+		map.put("waiter", ticket.getWaiter());
 		//Diana - 19/7/2018
 		String uiFont = TerminalConfig.getUiDefaultFont();
 		map.put("uiFont", uiFont);

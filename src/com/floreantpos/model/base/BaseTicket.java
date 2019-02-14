@@ -854,6 +854,7 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 		return owner;
 	}
 	public void setOwner (com.floreantpos.model.User owner) {
+		
 		this.owner = owner;
 		setOwnerName(owner.getFullName());
 	}
