@@ -369,7 +369,8 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 	 * @param subtotalAmountWithoutModifiers the SUB_TOTAL_WITHOUT_MODIFIERS value
 	 */
 	public void setSubtotalAmountWithoutModifiers (java.lang.Double subtotalAmountWithoutModifiers) {
-		this.subtotalAmountWithoutModifiers = subtotalAmountWithoutModifiers;
+		if(subtotalAmountWithoutModifiers==null) subtotalAmountWithoutModifiers=0.0;
+		this.subtotalAmountWithoutModifiers = (double)subtotalAmountWithoutModifiers.intValue();
 	}
 
 
@@ -386,7 +387,8 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 	 * @param discountAmount the DISCOUNT value
 	 */
 	public void setDiscountAmount (java.lang.Double discountAmount) {
-		this.discountAmount = discountAmount;
+		if(discountAmount==null) discountAmount = 0.0;
+		this.discountAmount = (double)discountAmount.intValue();
 	}
 
 
@@ -403,7 +405,8 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 	 * @param taxAmount the TAX_AMOUNT value
 	 */
 	public void setTaxAmount (java.lang.Double taxAmount) {
-		this.taxAmount = taxAmount;
+		if(taxAmount==null) taxAmount = 0.0;
+		this.taxAmount = (double)taxAmount.intValue();
 	}
 
 
@@ -413,7 +416,8 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 	}
 
 	public void setServiceChargeAmount(java.lang.Double serviceChargeAmount) {
-		this.serviceChargeAmount = serviceChargeAmount;
+		if(serviceChargeAmount==null) serviceChargeAmount = 0.0;
+		this.serviceChargeAmount = (double)serviceChargeAmount.intValue();
 	}
 
 	/**
@@ -428,7 +432,8 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 	 * @param taxAmountWithoutModifiers the TAX_AMOUNT_WITHOUT_MODIFIERS value
 	 */
 	public void setTaxAmountWithoutModifiers (java.lang.Double taxAmountWithoutModifiers) {
-		this.taxAmountWithoutModifiers = taxAmountWithoutModifiers;
+		if(taxAmountWithoutModifiers==null) taxAmountWithoutModifiers=0.0;
+		this.taxAmountWithoutModifiers = (double)taxAmountWithoutModifiers.intValue();
 	}
 
 
@@ -462,7 +467,8 @@ public abstract class BaseTicketItem  implements Comparable, Serializable {
 	 * @param totalAmountWithoutModifiers the TOTAL_PRICE_WITHOUT_MODIFIERS value
 	 */
 	public void setTotalAmountWithoutModifiers (java.lang.Double totalAmountWithoutModifiers) {
-		this.totalAmountWithoutModifiers = totalAmountWithoutModifiers;
+		if(totalAmountWithoutModifiers==null) totalAmountWithoutModifiers = 0.0;
+		this.totalAmountWithoutModifiers = (double)totalAmountWithoutModifiers.intValue();
 	}
 
 

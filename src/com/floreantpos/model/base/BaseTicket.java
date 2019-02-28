@@ -513,7 +513,8 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	 * @param discountAmount the TOTAL_DISCOUNT value
 	 */
 	public void setDiscountAmount (java.lang.Double discountAmount) {
-		this.discountAmount = discountAmount;
+		if(discountAmount==null) discountAmount = 0.0;
+		this.discountAmount = (double)discountAmount.intValue();
 	}
 
 
@@ -532,7 +533,8 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	 * @param taxAmount the TOTAL_TAX value
 	 */
 	public void setTaxAmount (java.lang.Double taxAmount) {
-		this.taxAmount = taxAmount;
+		if(taxAmount==null) taxAmount = 0.0;
+		this.taxAmount = (double)taxAmount.intValue();
 	}
 
 
@@ -718,7 +720,8 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 	 * @param serviceCharge the SERVICE_CHARGE value
 	 */
 	public void setServiceCharge (java.lang.Double serviceCharge) {
-		this.serviceCharge = serviceCharge;
+		if(serviceCharge==null) serviceCharge = 0.0;
+		this.serviceCharge = (double)serviceCharge.intValue();
 	}
 
 
