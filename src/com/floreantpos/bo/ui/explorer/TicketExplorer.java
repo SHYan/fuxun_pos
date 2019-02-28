@@ -157,8 +157,8 @@ public class TicketExplorer extends TransparentPanel {
 		});
 
 		TransparentPanel panel = new TransparentPanel();
-		panel.add(btnVoid);
-		panel.add(btnVoidAll);
+		//panel.add(btnVoid);
+		//panel.add(btnVoidAll);
 		add(panel, BorderLayout.SOUTH);
 	}
 

@@ -544,7 +544,7 @@ public class Ticket extends BaseTicket {
 	}
 
 	private double calculateTax(double discount, boolean isParcel) {
-		if(isParcel && TerminalConfig.isPcNoTax()) return 0.0;
+		if((isParcel && TerminalConfig.isPcNoTax()) || !TerminalConfig.isSetTax()) return 0.0;
 		
 		List<TicketItem> ticketItems = getTicketItems();
 		if (ticketItems == null) {

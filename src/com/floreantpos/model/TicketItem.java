@@ -749,7 +749,7 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 	
 	private double calculateTax(boolean includeModifierTax, boolean isParcel) {
 		double subtotal = 0;
-		if(isParcel && TerminalConfig.isPcNoTax()) return 0.0;
+		if((isParcel && TerminalConfig.isPcNoTax()) || !TerminalConfig.isSetTax()) return 0.0;
 		
 		subtotal = getSubtotalAmountWithoutModifiers();
 		

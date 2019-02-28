@@ -53,7 +53,6 @@ public class TicketItemRowCreator {
 
 		List<TicketItem> ticketItems = ticket.getTicketItemsSummary();//ticket.getTicketItems();
 		for (TicketItem ticketItem : ticketItems) {
-			logger.error(ticketItem.getName()+" "+ticketItem.getItemQuantity()+" "+ticketItem.getItemCount());
 			ticketItem.setTableRowNum(rowNum);
 			
 			tableRows.put(String.valueOf(rowNum), ticketItem);
