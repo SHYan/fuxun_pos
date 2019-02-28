@@ -3,6 +3,9 @@ package com.floreantpos.model.dao;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
 import com.floreantpos.model.ShopTableStatus;
@@ -11,7 +14,7 @@ import com.floreantpos.model.TableStatus;
 import com.floreantpos.model.Ticket;
 
 public class ShopTableStatusDAO extends BaseShopTableStatusDAO {
-
+	Log logger = LogFactory.getLog(ShopTableStatusDAO.class);
 	/**
 	 * Default constructor.  Can be used in place of getInstance()
 	 */

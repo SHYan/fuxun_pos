@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -39,7 +40,7 @@ import com.floreantpos.model.Ticket;
 import com.floreantpos.model.User;
 
 public class ShopTableDAO extends BaseShopTableDAO {
-
+	Log logger = LogFactory.getLog(ShopTableDAO.class);
 	/**
 	 * Default constructor.  Can be used in place of getInstance()
 	 */
@@ -48,7 +49,7 @@ public class ShopTableDAO extends BaseShopTableDAO {
 
 	@Override
 	public Order getDefaultOrder() {
-		return Order.asc(ShopTable.PROP_DESCRIPTION);//ShopTable.PROP_ID);
+		return Order.asc(ShopTable.PROP_ID);//ShopTable.PROP_DESCRIPTION);//ShopTable.PROP_ID);
 	}
 
 	public int getNextTableNumber() {
@@ -127,7 +128,6 @@ public class ShopTableDAO extends BaseShopTableDAO {
 		List<Integer> tables = ticket.getTableNumbers();
 		if (tables == null)
 			return;
-
 		Session session = null;
 		Transaction tx = null;
 

@@ -25,11 +25,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.floreantpos.Messages;
+import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.main.Application;
 import com.floreantpos.model.ShopTable;
 import com.floreantpos.model.Ticket;
 import com.floreantpos.model.User;
 import com.floreantpos.model.UserPermission;
+import com.floreantpos.model.dao.TicketDAO;
 import com.floreantpos.model.dao.UserDAO;
 import com.floreantpos.model.util.DateUtil;
 import com.floreantpos.services.TicketService;
@@ -85,29 +87,45 @@ public class ShopTableButton extends PosButton {
 	}
 
 	public void update() {
-//		logger.debug("ShopTableButton: update : "+Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
+		//logger.debug("ShopTableButton: update : "+Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
 		if (shopTable == null)
 			return;
 		boolean serving = shopTable.isServing();
 		String userName = shopTable.getUserName();
-		
+		boolean timeLimitFlag = false;
 		String ticketIdAsString = shopTable.getTicketIdAsString();
 		Date ticketCreateTime = shopTable.getTicketCreateTime();
-
+		if(ticketIdAsString!=null && !ticketIdAsString.equals("")) {
+			int tId = shopTable.getTicketId();
+			Ticket tmpTicket = TicketDAO.getInstance().get(tId);
+			ticketCreateTime = tmpTicket.getCreateDate();
+		}
 		if (StringUtils.isNotEmpty(ticketIdAsString) && ticketCreateTime == null) {
 			ticketIdAsString = "<br>Chk#" + ticketIdAsString;
 			setForeground(Color.white);
 		}
 		else if (ticketCreateTime != null) {
 			ticketIdAsString = "<br>" + DateUtil.getElapsedTime(ticketCreateTime, new Date());
+			int timeLimit = TerminalConfig.getDineInTimeLimit();
+			if((TerminalConfig.isDineInTimeLimitEnable() && timeLimit !=0) && (System.currentTimeMillis()-ticketCreateTime.getTime())>(timeLimit*1000*60)) {
+				setBackground(Color.orange);
+				setForeground(Color.BLACK);
+				timeLimitFlag = true;
+			}else {
+				setBackground(Color.red);
+				setForeground(Color.white);
+			}
+			
 		}
 		else {
 			serving = false;
 			ticketIdAsString = "";
 		}
 		if (serving) {
-			setBackground(Color.red);
-			setForeground(Color.white);
+			if(!timeLimitFlag) {
+				setBackground(Color.red);
+				setForeground(Color.white);
+			}
 		}
 		else if (shopTable != null && shopTable.isBooked()) {
 			setEnabled(false);
