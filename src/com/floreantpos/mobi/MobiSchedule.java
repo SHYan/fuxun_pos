@@ -17,25 +17,25 @@
  */
 package com.floreantpos.mobi;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import javax.swing.Timer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-
 import com.floreantpos.POSConstants;
 import com.floreantpos.main.Application;
 import com.floreantpos.model.ActionHistory;
@@ -62,18 +62,24 @@ public class MobiSchedule {
 	
 	/*============mobi=================*/
 	public static int refreshDuration = 5000;
-	public static String dirPath = "C:\\mobi_tmp\\";
-	
+	public static String dirPath = "C:\\mobi_tmp\\", LASTFILE = "";
+	public static int orderType = 1, userId = 999;
 	public static boolean runningFlag = false;
-	public static Timer clockTimer = new Timer();
+	public static Timer clockTimer;
 	
 	public static void parseJson(File jsonFile) {
 		if(jsonFile==null) return;
-		
+		Application application = Application.getInstance();
+    	String modifierStr;
+    	
+		InputStream is;
 		try {
-        	Application application = Application.getInstance();
-        	String modifierStr;
-            InputStream is = new FileInputStream(jsonFile);
+			is = new FileInputStream(jsonFile);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+			return;
+		}
+        try {
             String jsonStr = IOUtils.toString(is, "UTF-8");
             JSONObject item, jsonObj = new JSONObject(jsonStr);//(JSONObject) parser.parse(new FileReader(jsonFile));
         	jsonObj = jsonObj.getJSONObject("value");
@@ -87,12 +93,11 @@ public class MobiSchedule {
         	
         	if(oldTicket!=null && oldTicket!=0) {
         		ticket = TicketDAO.getInstance().get(oldTicket);
-        		logger.debug(" old ticket "+ticket.getTicketItems().size());
         	} else {
         		ticket = new Ticket();
             	ticket.setPriceIncludesTax(application.isPriceIncludesTax());
         		OrderTypeDAO od = new OrderTypeDAO();
-        		ticket.setOrderType(od.get(1));
+        		ticket.setOrderType(od.get(orderType));
         		ticket.setTicketType("DINE IN");
         		Calendar currentTime = Calendar.getInstance();
         		ticket.setCreateDate(currentTime.getTime());
@@ -103,7 +108,7 @@ public class MobiSchedule {
 	        		ticket.setOwner(Application.getCurrentUser());
 	        		ticket.setOwnerName(Application.getCurrentUser().getFullName());
         		}else {
-        			User user = UserDAO.getInstance().findUser(999);
+        			User user = UserDAO.getInstance().findUser(userId);
         			ticket.setOwner(user);
 	        		ticket.setOwnerName(user.getFullName());
         		}
@@ -183,20 +188,22 @@ public class MobiSchedule {
     		}
     		ticket.setExtraDeliveryInfo(null);
     		OrderController.saveOrder(ticket);
-    		
-    		is.close();
-    		if(!jsonFile.delete()) jsonFile.renameTo(new File(jsonFile.getAbsoluteFile()+".bp"));
-    		if(jsonFile.exists()) jsonFile.renameTo(new File(jsonFile.getAbsoluteFile()+".bp"));
-    		
-            
-        }catch(Exception e) {
-        	e.printStackTrace();
-        	//logger.debug(jsonFile.getAbsolutePath());
-        	jsonFile.renameTo(new File(jsonFile.getAbsoluteFile()+".bp"));
+        }catch(IOException e) {
+        	logger.debug(e.getMessage());
+        }finally {
+        	try {
+				is.close();
+			} catch (IOException e) {
+				logger.debug(e.getMessage());
+			}	
         }
+       
 	}
 	
 	public static void checkMobiUpload() {
+		if(runningFlag) return; 
+		runningFlag = true;
+		
 		try {
 			File dir = new File(dirPath);
 			File[] files = dir.listFiles(new FilenameFilter(){
@@ -205,28 +212,44 @@ public class MobiSchedule {
 			    }
 			});
 			if(files==null) return;
+			String newFileName;
 			for(File file : files){
 			    if(file.isFile()){
-			        parseJson(file);
+			    	if(LASTFILE.equals(file.getName())) continue;
+			    	LASTFILE = file.getName();
+			    	newFileName = file.getAbsoluteFile()+".tmp";
+			    	if(file.renameTo(new File(newFileName))) {
+			    		file = new File(newFileName);
+				        parseJson(file);
+				        if(!file.delete()) 
+			        		file.renameTo(new File(file.getAbsoluteFile()+".bp"));
+				        if(file.exists()) 
+				        	file.renameTo(new File(file.getAbsoluteFile()+".bp"));
+			    	}
 			    }
 			}
 		}catch(Exception e) {
-			e.printStackTrace();
-		}finally{
 			runningFlag = false;
+			logger.debug(e.getMessage());
 		}
+		runningFlag = false;
 	}
 
+	public static void stopMobiTimer() {
+		if(clockTimer!=null && clockTimer.isRunning()) clockTimer.stop();
+	}
+	
 	public static void startMobiTimer() {
-		clockTimer.scheduleAtFixedRate(new TimerTask() {
-			  @Override
-			  public void run() {
-				  if(runningFlag) return;
-				  runningFlag = true;
-				  checkMobiUpload();
-				  runningFlag = false;
-			  }
-			}, 60000, refreshDuration);
+		
+		if(clockTimer==null) 
+			clockTimer = new Timer(refreshDuration, new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					checkMobiUpload();
+				}
+			});
+		if(!clockTimer.isRunning())
+			clockTimer.start();
+
 	}
 
 }
