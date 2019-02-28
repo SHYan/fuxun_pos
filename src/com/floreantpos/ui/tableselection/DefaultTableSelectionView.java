@@ -25,14 +25,10 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -42,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -76,7 +73,6 @@ import com.floreantpos.swing.ShopTableButton;
 import com.floreantpos.ui.dialog.NumberSelectionDialog2;
 import com.floreantpos.ui.dialog.POSDialog;
 import com.floreantpos.ui.dialog.POSMessageDialog;
-//import com.floreantpos.ui.dialog.SampleComparator;
 import com.floreantpos.ui.views.order.OrderView;
 import com.floreantpos.ui.views.order.RootView;
 import com.floreantpos.ui.views.payment.SplitedTicketSelectionDialog;
@@ -121,7 +117,6 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 	}
 
 	private void init() {
-		//logger.debug("DefaultTableSelectionView : init");
 		setLayout(new BorderLayout(10, 10));
 		buttonsPanel = new ScrollableFlowPanel(FlowLayout.CENTER);
 		TitledBorder titledBorder1 = BorderFactory.createTitledBorder(null, POSConstants.TABLES, TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION);
@@ -143,35 +138,40 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 		add(tabbedPane, java.awt.BorderLayout.CENTER);
 		createButtonActionPanel();
 		
-		if(TerminalConfig.isUseMobi())
-			startTimer();
+		if(TerminalConfig.isUseMobi()) {
+			if(tableClockTimer == null)
+				tableClockTimer = new Timer(refreshDuration, new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						startTimer();
+					}
+				});
+			if(!tableClockTimer.isRunning())
+				tableClockTimer.start();
+		}
+			
 		
 	}
 
 	public void startTimer() {
-		if(!timerAlive) {
-			tableClockTimer = new Timer();
-			timerAlive = true;
+		
+		if(RootView.getInstance().getCurrentView()!=null && RootView.getInstance().getCurrentView().getViewName()!=null) {
+			//logger.debug("DefaultTable : View : "+RootView.getInstance().getCurrentView().getViewName());
+			if(!RootView.getInstance().getCurrentView().getViewName().equals("TABLE_MAP")) {
+				return;
+			}
 		}
-		try {
-	    tableClockTimer.scheduleAtFixedRate(new TimerTask() {
-			  @Override
-			  public void run() {
-				  if(tableRefreshFlag) return;
-				  Long ticketTime = (Long)IBatisFactory.selectOneSQL("Report.get_last_ticket_modify", null);
-				  if(ticketTime==null) ticketTime = (long) 0;
-				  if((TerminalConfig.getLastMobiUpload()+10) < ticketTime) {
-					  tableRefreshFlag = true;
-					  redererTables();
-					  tableRefreshFlag = false;
-					  TerminalConfig.setLastMobiUpload(ticketTime);
-				  }
-			  }
-			}, 60000, refreshDuration);
-		}catch(Exception e) {
-			tableClockTimer = new Timer();
-			timerAlive = true;
+		Long ticketTime = (Long)IBatisFactory.selectOneSQL("Report.get_last_ticket_modify", null);
+		if(ticketTime==null) ticketTime = (long) 0;
+		//logger.debug("Last Mobi Upload : "+TerminalConfig.getLastMobiUpload());
+		//logger.debug("ticket Time : "+ticketTime+" is refresh flag "+tableRefreshFlag);
+		
+		if((TerminalConfig.getLastMobiUpload()+10) < ticketTime && !tableRefreshFlag) {
+			tableRefreshFlag = true;
+			redererTables();
+			tableRefreshFlag = false;
+			TerminalConfig.setLastMobiUpload(ticketTime);
 		}
+		
 	}
 	
 	private void createButtonActionPanel() {
@@ -289,23 +289,22 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 	}
 
 	public void pause(){
-		if(tableClockTimer!=null) tableClockTimer.cancel();
-		timerAlive = false;
+		if(tableClockTimer!=null && tableClockTimer.isRunning()) tableClockTimer.stop();
 	}
 	
 	public synchronized void redererTables() {
-		logger.debug("DefaultTableSelectorView : redererTables()");
+		//logger.debug("DefaultTableSelectorView : redererTables()");
 		//logger.debug(Thread.currentThread().getStackTrace()[2].getMethodName()+"-----"+Thread.currentThread().getStackTrace()[2].getClassName());
 		
 		//if(!RootView.getInstance().getCurrentView().getViewName().equals("TABLE_MAP")) {
 		/*
-		if(RootView.getInstance().getCurrentView()!=null && RootView.getInstance().getCurrentView().getViewName()!=null) {
+		if(RootView.getInstance().getCurrentView()!=null && RootView.getInstance().getCurrentView().getViewName()!=null) {TableMapView
 			if(!RootView.getInstance().getCurrentView().getViewName().equals("TABLE_MAP")) {
 				pause();
 				return;
 			}
-		}*/
-		
+		}
+		*/
 		clearSelection();
 		buttonsPanel.getContentPane().removeAll();
 

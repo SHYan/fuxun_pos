@@ -453,12 +453,16 @@ public class Application {
 		Object selectedValue = (String) optionPane.getValue();
 		if (selectedValue.equals(Messages.getString("Application.3"))) { //$NON-NLS-1$
 			try {
+				if(TerminalConfig.isUseMobi())
+					MobiSchedule.stopMobiTimer();
 				Main.restart();
 			} catch (Exception e) {
 			}
 		}
 		else if (selectedValue.equals(Messages.getString("Application.5"))) { //$NON-NLS-1$
 			posWindow.saveSizeAndLocation();
+			if(TerminalConfig.isUseMobi())
+				MobiSchedule.stopMobiTimer();
 			System.exit(0);
 		}
 		else {
