@@ -44,7 +44,11 @@ import javax.swing.event.ListSelectionListener;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.StaleStateException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 import com.floreantpos.IconFactory;
 import com.floreantpos.Messages;
@@ -103,6 +107,8 @@ import com.floreantpos.util.POSUtil;
  * @author  MShahriar
  */
 public class OrderView extends ViewPanel implements PaymentListener, TicketEditListener, RefreshableView {
+	Log logger = LogFactory.getLog(OrderView.class);
+	
 	private HashMap<String, JComponent> views = new HashMap<String, JComponent>();
 	private SettleTicketProcessor ticketProcessor = new SettleTicketProcessor(Application.getCurrentUser(), this);
 	public final static String VIEW_NAME = "ORDER_VIEW"; //$NON-NLS-1$
@@ -596,6 +602,7 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 			currentTicket.setTableNumbers(addedTables);
 			currentTicket.setTableNames(addedTableNames);
 			ShopTableDAO.getInstance().occupyTables(currentTicket);
+			OrderController.saveOrder(currentTicket);
 			actionUpdate();
 		} catch (Exception e) {
 			PosLog.error(getClass(), e);
