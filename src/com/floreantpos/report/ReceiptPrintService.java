@@ -452,7 +452,7 @@ public class ReceiptPrintService {
 		map.put(QUANTITY_TEXT, POSConstants.RECEIPT_REPORT_QUANTITY_LABEL);
 		map.put("subtotalHeaderText", Messages.getString("RECEIPT_REPORT_SUBTOTAL_HEADER")); //$NON-NLS-1$ //$NON-NLS-2$
 		//Diana - remove currency on slip - 24/7/2018
-	//	map.put(SUB_TOTAL_TEXT, POSConstants.RECEIPT_REPORT_SUBTOTAL_LABEL + " " + currencySymbol); //$NON-NLS-1$
+		map.put(SUB_TOTAL_TEXT, POSConstants.RECEIPT_REPORT_SUBTOTAL_LABEL + " " + currencySymbol); //$NON-NLS-1$
 		map.put(TOTAL_TEXT, POSConstants.RECEIPT_REPORT_TOTAL_AMOUNT_LABEL + " " + currencySymbol); //$NON-NLS-1$
 		map.put("tenderedAmountText", POSConstants.RECEIPT_REPORT_TENDERED_AMOUNT_LABEL + " " + currencySymbol); //$NON-NLS-1$
 		map.put(DISCOUNT_TEXT, POSConstants.RECEIPT_REPORT_DISCOUNT_LABEL + " " + currencySymbol); //$NON-NLS-1$
@@ -469,21 +469,13 @@ public class ReceiptPrintService {
 		map.put(SHOW_HEADER_SEPARATOR, Boolean.TRUE);
 		map.put(SHOW_FOOTER, Boolean.valueOf(printProperties.isShowFooter()));
 
-		map.put(TERMINAL, POSConstants.RECEIPT_REPORT_TERMINAL_LABEL + Application.getInstance().getTerminal().getId());
-		map.put(CHECK_NO, POSConstants.RECEIPT_REPORT_TICKET_NO_LABEL + ticket.getId());
-		map.put(TABLE_NO, POSConstants.RECEIPT_REPORT_TABLE_NO_LABEL + ticket.getTableNumbers());
-		map.put(GUEST_COUNT, POSConstants.RECEIPT_REPORT_GUEST_NO_LABEL + ticket.getNumberOfGuests());
-		map.put(SERVER_NAME, POSConstants.RECEIPT_REPORT_SERVER_LABEL + ticket.getOwner());
-		map.put(REPORT_DATE, POSConstants.RECEIPT_REPORT_DATE_LABEL + Application.formatDate(new Date()));
+		map.put(TERMINAL, "" + Application.getInstance().getTerminal().getId());
+		map.put(CHECK_NO, "" + ticket.getId());
+		map.put(TABLE_NO, "" + ticket.getTableNames());
+		map.put(GUEST_COUNT, "" + ticket.getNumberOfGuests());
+		map.put(SERVER_NAME, "" + ticket.getOwner());
+		map.put(REPORT_DATE, "" + (ticket.isClosed() ? reportDateFormat.format(ticket.getClosingDate()) : DateUtil.getReportDate()));
 
-		//John
-		/*
-		map.put("", );
-		map.put("", );
-		map.put("", );
-		map.put("", );
-		*/
-		
 		StringBuilder ticketHeaderBuilder = buildTicketHeader(ticket, printProperties);
 
 		map.put("ticketHeader", ticketHeaderBuilder.toString()); //$NON-NLS-1$
@@ -541,9 +533,8 @@ public class ReceiptPrintService {
 			}
 			map.put("totalAmount", NumberUtil.formatNumber(totalAmount)); //$NON-NLS-1$
 			if (transaction != null) {
-				map.put("tenderedAmount", NumberUtil.formatNumber(transaction.getTenderAmount())); //$NON-NLS-1$
-			}
-			map.put("paidAmount", NumberUtil.formatNumber(ticket.getPaidAmount())); //$NON-NLS-1$
+				map.put("paidAmount", NumberUtil.formatNumber(transaction.getTenderAmount())); //$NON-NLS-1$
+			}else map.put("paidAmount", NumberUtil.formatNumber(ticket.getPaidAmount())); //$NON-NLS-1$
 			map.put("dueAmount", NumberUtil.formatNumber(ticket.getDueAmount())); //$NON-NLS-1$
 			map.put("footerMessage", restaurant.getTicketFooterMessage()); //$NON-NLS-1$
 			map.put("copyType", printProperties.getReceiptCopyType()); //$NON-NLS-1$
@@ -632,22 +623,24 @@ public class ReceiptPrintService {
 	private static StringBuilder buildTicketHeader(Ticket ticket, TicketPrintProperties printProperties) {
 
 		StringBuilder ticketHeaderBuilder = new StringBuilder();
+		OrderType orderType = ticket.getOrderType();
+		
 		ticketHeaderBuilder.append("<html>"); //$NON-NLS-1$
 
+		/*
 		beginRow(ticketHeaderBuilder);
 		addColumn(ticketHeaderBuilder, "*" + ticket.getOrderType() + "*"); //$NON-NLS-1$ //$NON-NLS-2$
 		endRow(ticketHeaderBuilder);
-/*
+
 		beginRow(ticketHeaderBuilder);
 		addColumn(ticketHeaderBuilder, POSConstants.RECEIPT_REPORT_TERMINAL_LABEL + Application.getInstance().getTerminal().getId());
 		endRow(ticketHeaderBuilder);
-*/
+
 		beginRow(ticketHeaderBuilder);
 		
 		addColumn(ticketHeaderBuilder, POSConstants.RECEIPT_REPORT_TICKET_NO_LABEL + ticket.getId());
 		endRow(ticketHeaderBuilder);
 
-		OrderType orderType = ticket.getOrderType();
 		if (orderType.isShowTableSelection() || orderType.isShowGuestSelection()) {//fix
 			beginRow(ticketHeaderBuilder);
 			//Diana - show table name on receipt
@@ -677,6 +670,7 @@ public class ReceiptPrintService {
 		beginRow(ticketHeaderBuilder);
 		addColumn(ticketHeaderBuilder, POSConstants.RECEIPT_REPORT_DATE_LABEL + reportDateFormat.format(new Date()));
 		endRow(ticketHeaderBuilder);
+		*/
 /*
 		beginRow(ticketHeaderBuilder);
 		addColumn(ticketHeaderBuilder, ""); //$NON-NLS-1$
@@ -983,7 +977,7 @@ public class ReceiptPrintService {
 		HashMap map = new HashMap();
 
 		map.put(HEADER_LINE1, Application.getInstance().getRestaurant().getName());
-		map.put(HEADER_LINE2, Messages.getString("ReceiptPrintService.115")); //$NON-NLS-1$
+		map.put(HEADER_LINE2, ticket.getPrinter().getDisplayName());//Messages.getString("ReceiptPrintService.115")); //$NON-NLS-1$
 		map.put("cardPayment", true); //$NON-NLS-1$
 		map.put(SHOW_HEADER_SEPARATOR, Boolean.TRUE);
 		map.put(SHOW_HEADER_SEPARATOR, Boolean.TRUE);
@@ -1021,7 +1015,6 @@ public class ReceiptPrintService {
 			ticketType = ticketType.replaceAll("_", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		map.put("orderType", "* " + ticketType + " *"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
 		KitchenTicketDataSource dataSource = new KitchenTicketDataSource(ticket);
 		return createJasperPrint(ReportUtil.getReport("kitchen-receipt"), map, new JRTableModelDataSource(dataSource)); //$NON-NLS-1$
 	}
@@ -1030,7 +1023,7 @@ public class ReceiptPrintService {
 		HashMap map = new HashMap();
 
 		map.put(HEADER_LINE1, Application.getInstance().getRestaurant().getName());
-		map.put(HEADER_LINE2, Messages.getString("ReceiptPrintService.115")); //$NON-NLS-1$
+		map.put(HEADER_LINE2, virtualPrinterName);//ticket.getPrinter().getDisplayName());//Messages.getString("ReceiptPrintService.115")); //$NON-NLS-1$
 		map.put("cardPayment", true); //$NON-NLS-1$
 		map.put(SHOW_HEADER_SEPARATOR, Boolean.TRUE);
 		map.put(SHOW_HEADER_SEPARATOR, Boolean.TRUE);
@@ -1056,7 +1049,7 @@ public class ReceiptPrintService {
 			map.put("customer", Messages.getString("ReceiptPrintService.0") + ticket.getCustomerName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		map.put(SERVER_NAME, POSConstants.RECEIPT_REPORT_SERVER_LABEL + ticket.getServerName());
+		map.put(SERVER_NAME, "Clerk: " + ticket.getServerName());
 
 		map.put(REPORT_DATE, Messages.getString("ReceiptPrintService.119") + DateUtil.getReportDate()); //$NON-NLS-1$
 
@@ -1067,8 +1060,9 @@ public class ReceiptPrintService {
 		}
 		map.put("orderType", "* " + ticketType + " *"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		map.put("printerName", "Printer Name : " + virtualPrinterName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		map.put("waiter", ticket.getWaiter());
+		map.put("printerName", "Printer Name: " + virtualPrinterName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if(ticket.getWaiter()!=null)
+			map.put("waiter", "Waiter : "+ticket.getWaiter());
 		//Diana - 19/7/2018
 		String uiFont = TerminalConfig.getUiDefaultFont();
 		map.put("uiFont", uiFont);
@@ -1091,7 +1085,7 @@ public class ReceiptPrintService {
 			session = KitchenTicketDAO.getInstance().createNewSession();
 			transaction = session.beginTransaction();
 
-			List<KitchenTicket> kitchenTickets = KitchenTicket.fromTicket(ticket);
+			List<KitchenTicket> kitchenTickets = KitchenTicket.fromTicket(ticket, TerminalConfig.is1Z1C());
 
 			for (KitchenTicket kitchenTicket : kitchenTickets) {
 				Printer printer = kitchenTicket.getPrinter();//
