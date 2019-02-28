@@ -361,8 +361,10 @@ public class PaymentView extends JPanel {
 		calcButtonPanel.add(btnClear, "wrap");
 
 		btnExactAmount.setAction(nextButtonAction);
-		btnExactAmount.setText(Messages.getString("PaymentView.20")); //$NON-NLS-1$
-		btnExactAmount.setActionCommand("exactAmount"); //$NON-NLS-1$
+		//btnExactAmount.setText(Messages.getString("PaymentView.20")); //$NON-NLS-1$
+		btnExactAmount.setText((TerminalConfig.isSetTax()) ? "No Tax" : "Set Tax");
+		//btnExactAmount.setActionCommand("exactAmount"); //$NON-NLS-1$
+		btnExactAmount.setActionCommand("modifyTax"); //$NON-NLS-1$
 		btnExactAmount.setFocusable(false);
 
 		btnNoSale.setAction(nextButtonAction);
@@ -584,6 +586,10 @@ public class PaymentView extends JPanel {
 	protected void doSetGratuity() {
 		ticketProcessor.doSetGratuity();
 	}
+	
+	protected void doModifyTax() {
+		ticketProcessor.doModifyTax();
+	}
 
 	protected void doTaxExempt() {
 	}
@@ -655,6 +661,13 @@ public class PaymentView extends JPanel {
 					double amount = Math.ceil(dd);
 
 					txtTenderedAmount.setText(String.valueOf(format.format(amount)));
+				}
+				else if (command.equals("modifyTax")) { //$NON-NLS-1$
+
+					btnExactAmount.setText((TerminalConfig.isSetTax()) ? "Set Tax" : "No Tax");
+					TerminalConfig.setTax((TerminalConfig.isSetTax() ?  false : true));
+					doModifyTax();
+					
 				}
 				else if (command.equals("noSale")) {
 					
