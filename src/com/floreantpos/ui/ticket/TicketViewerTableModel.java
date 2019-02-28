@@ -575,6 +575,7 @@ public class TicketViewerTableModel extends AbstractTableModel {
 		cloneticketItem.setStockAmountAdjusted(true);
 		cloneticketItem.setBeverage(ticketItem.isBeverage());
 		cloneticketItem.setShouldPrintToKitchen(ticketItem.isShouldPrintToKitchen());
+		cloneticketItem.setPrinterGroup(ticketItem.getPrinterGroup());
 		//cloneticketItem.setPrintedToKitchen(ticketItem.isPrintedToKitchen());
 		
 		cloneticketItem.setReturnItemId(ticketItem.getId());
