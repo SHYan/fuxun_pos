@@ -582,4 +582,10 @@ public class SettleTicketProcessor implements CardInputListener {
 		this.tenderAmount = dueAmount;
 	}
 
+	public void doModifyTax() {
+		ticket.calculatePrice();
+		OrderController.saveOrder(ticket);
+		doInformListenerPaymentUpdate();
+	}
+
 }
