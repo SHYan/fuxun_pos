@@ -189,6 +189,116 @@ public class KitchenTicket extends BaseKitchenTicket {
 		}
 	}
 
+	public static List<KitchenTicket> fromTicket(Ticket ticket, boolean is1Z1C) {
+		if(!is1Z1C) return fromTicket(ticket);
+		List<KitchenTicket> kitchenTickets = new ArrayList<KitchenTicket>(4);
+
+		Ticket clonedTicket = (Ticket) SerializationUtils.clone(ticket);
+		clonedTicket.setGlobalId(GlobalIdGenerator.generateGlobalId());
+		clonedTicket.consolidateTicketItems();
+		List<TicketItem> ticketItems = clonedTicket.getTicketItems();
+		if (ticketItems == null) {
+			return kitchenTickets;
+		}
+
+		if (ticket.getOrderType().isAllowSeatBasedOrder()) {
+			Collections.sort(ticketItems, new Comparator<TicketItem>() {
+
+				@Override
+				public int compare(TicketItem o1, TicketItem o2) {
+					return o1.getId() - o2.getId();
+				}
+			});
+			Collections.sort(ticketItems, new Comparator<TicketItem>() {
+
+				@Override
+				public int compare(TicketItem o1, TicketItem o2) {
+					return o1.getSeatNumber() - o2.getSeatNumber();
+				}
+
+			});
+		}
+		
+		String kitchenTicketNumber = ticket.getProperty("KITCHEN_TICKET_NUMBER"); //$NON-NLS-1$
+		if (kitchenTicketNumber == null) {
+			kitchenTicketNumber = "1"; //$NON-NLS-1$
+		}
+		else {
+			kitchenTicketNumber = String.valueOf(Integer.valueOf(kitchenTicketNumber)+1);
+		}
+		ticket.addProperty("KITCHEN_TICKET_NUMBER", kitchenTicketNumber); //$NON-NLS-1$
+		
+		for (TicketItem ticketItem : ticketItems) {
+			if (ticketItem.isPrintedToKitchen() || !ticketItem.isShouldPrintToKitchen()) {
+				continue;
+			}
+
+			List<Printer> printers = ticketItem.getPrinters(ticket.getOrderType());
+			if (printers == null) {
+				continue;
+			}
+			
+			for (Printer printer : printers) {
+
+				KitchenTicket kitchenTicket = new KitchenTicket();
+				kitchenTicket.setPrinterGroup(ticketItem.getPrinterGroup());
+				kitchenTicket.setPrinter(printer);
+				kitchenTicket.setTicketId(ticket.getId());
+				kitchenTicket.setCreateDate(new Date());
+				kitchenTicket.setTicketType(ticket.getTicketType());
+
+				if (ticket.getTableNumbers() != null) {
+					kitchenTicket.setTableNumbers(new ArrayList<Integer>(ticket.getTableNumbers()));
+				}
+
+				kitchenTicket.setServerName(ticket.getOwner().getFullName());
+				kitchenTicket.setStatus(KitchenTicketStatus.WAITING.name());
+
+				if (StringUtils.isNotEmpty(ticket.getProperty(Ticket.CUSTOMER_NAME))) {
+					kitchenTicket.setCustomerName(ticket.getProperty(Ticket.CUSTOMER_NAME));
+				}
+				kitchenTicket.setWaiter(ticket.getExtraDeliveryInfo());
+				KitchenTicketDAO.getInstance().saveOrUpdate(kitchenTicket);
+
+				KitchenTicketItem item = new KitchenTicketItem();
+				item.setTicketItemId(ticketItem.getId());
+				item.setMenuItemCode(ticketItem.getItemCode());
+				item.setMenuItemName(ticketItem.getNameDisplay());
+				if (ticketItem.getMenuItem() == null) {
+					item.setMenuItemGroupName("MISC."); //$NON-NLS-1$
+					item.setMenuItemGroupId(1001);
+					item.setSortOrder(10001);
+				}
+				else {
+					item.setMenuItemGroupName(ticketItem.getGroupName());
+					item.setMenuItemGroupId(ticketItem.getMenuItem().getParent().getId());
+					item.setSortOrder(ticketItem.getMenuItem().getParent().getSortOrder());
+				}
+
+				item.setFractionalUnit(ticketItem.isFractionalUnit());
+				item.setUnitName(ticketItem.getItemUnitName());
+
+				if (ticketItem.isFractionalUnit()) {
+					item.setFractionalQuantity(ticketItem.getItemQuantity());
+				}
+				else {
+					item.setQuantity(ticketItem.getItemCount());
+				}
+				item.setStatus(KitchenTicketStatus.WAITING.name());
+
+				kitchenTicket.addToticketItems(item);
+				ticketItem.setPrintedToKitchen(true);
+				includeModifiers(ticketItem, kitchenTicket);
+				includeCookintInstructions(ticketItem, kitchenTicket);
+				kitchenTickets.add(kitchenTicket);
+				kitchenTicket.setSequenceNumber(Integer.valueOf(kitchenTicketNumber));
+			}
+		}
+
+		ticket.markPrintedToKitchen();
+		return kitchenTickets;
+	}
+	
 	public static List<KitchenTicket> fromTicket(Ticket ticket) {
 		Map<Printer, KitchenTicket> itemMap = new HashMap<Printer, KitchenTicket>();
 		List<KitchenTicket> kitchenTickets = new ArrayList<KitchenTicket>(4);
