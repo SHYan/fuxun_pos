@@ -45,29 +45,46 @@ import com.floreantpos.bo.actions.CategoryExplorerAction;
 import com.floreantpos.bo.actions.ConfigureRestaurantAction;
 import com.floreantpos.bo.actions.CookingInstructionExplorerAction;
 import com.floreantpos.bo.actions.CouponExplorerAction;
+import com.floreantpos.bo.actions.CreditCardReportAction;
 import com.floreantpos.bo.actions.CurrencyExplorerAction;
+import com.floreantpos.bo.actions.CustomPaymentReportAction;
 import com.floreantpos.bo.actions.DailySalesReportAction;
 import com.floreantpos.bo.actions.DataExportAction;
 import com.floreantpos.bo.actions.DataImportAction;
 import com.floreantpos.bo.actions.DrawerPullReportExplorerAction;
+import com.floreantpos.bo.actions.EmployeeAttendanceAction;
 import com.floreantpos.bo.actions.GroupExplorerAction;
 import com.floreantpos.bo.actions.HourlyLaborReportAction;
+import com.floreantpos.bo.actions.InventoryOnHandReportAction;
 import com.floreantpos.bo.actions.InventoryTransactonListAction;
 import com.floreantpos.bo.actions.ItemExplorerAction;
+import com.floreantpos.bo.actions.JournalReportAction;
+import com.floreantpos.bo.actions.KeyStatisticsSalesReportAction;
 import com.floreantpos.bo.actions.LanguageSelectionAction;
 import com.floreantpos.bo.actions.MenuItemSizeExplorerAction;
+import com.floreantpos.bo.actions.MenuUsageReportAction;
 import com.floreantpos.bo.actions.ModifierExplorerAction;
 import com.floreantpos.bo.actions.ModifierGroupExplorerAction;
+import com.floreantpos.bo.actions.ModifierSalesReportAction;
 import com.floreantpos.bo.actions.MultiplierExplorerAction;
+import com.floreantpos.bo.actions.OpenTicketSummaryReportAction;
 import com.floreantpos.bo.actions.OrderStatusReportAction;
 import com.floreantpos.bo.actions.OrdersTypeExplorerAction;
 import com.floreantpos.bo.actions.PayoutReportAction;
+import com.floreantpos.bo.actions.PayrollReportAction;
 import com.floreantpos.bo.actions.PizzaCrustExplorerAction;
 import com.floreantpos.bo.actions.PizzaItemExplorerAction;
 import com.floreantpos.bo.actions.PizzaModifierExplorerAction;
 import com.floreantpos.bo.actions.ProductSalesReportAction;
 import com.floreantpos.bo.actions.ProfitLossReportAction;
+import com.floreantpos.bo.actions.PurchaseReportAction;
 import com.floreantpos.bo.actions.SaleSummaryAction;
+import com.floreantpos.bo.actions.SalesAnalysisReportAction;
+import com.floreantpos.bo.actions.SalesBalanceReportAction;
+import com.floreantpos.bo.actions.SalesDetailReportAction;
+import com.floreantpos.bo.actions.SalesExceptionReportAction;
+import com.floreantpos.bo.actions.SalesReportAction;
+import com.floreantpos.bo.actions.ServerProductivityReportAction;
 import com.floreantpos.bo.actions.ShiftExplorerAction;
 import com.floreantpos.bo.actions.StockAdjustReportAction;
 import com.floreantpos.bo.actions.StockReportAction;
@@ -202,12 +219,14 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		reportMenu.add(new DailySalesReportAction());
 		reportMenu.add(new OrderStatusReportAction());
 		reportMenu.add(new ProductSalesReportAction());
-		//reportMenu.add(new SalesReportAction());
-		//reportMenu.add(new OpenTicketSummaryReportAction());
+		reportMenu.add(new ModifierSalesReportAction());
 		reportMenu.add(new HourlyLaborReportAction());
-		/*
-		reportMenu.add(new PayrollReportAction());
+		
 		reportMenu.add(new EmployeeAttendanceAction());
+		/*
+		reportMenu.add(new SalesReportAction());
+		reportMenu.add(new OpenTicketSummaryReportAction());
+		reportMenu.add(new PayrollReportAction());
 		reportMenu.add(new KeyStatisticsSalesReportAction());
 		reportMenu.add(new SalesAnalysisReportAction());
 		reportMenu.add(new CreditCardReportAction());
@@ -219,7 +238,8 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		reportMenu.add(new SalesExceptionReportAction());
 		reportMenu.add(new SalesDetailReportAction());
 		reportMenu.add(new PurchaseReportAction());
-		reportMenu.add(new InventoryOnHandReportAction());*/
+		reportMenu.add(new InventoryOnHandReportAction());
+		*/
 		reportMenu.add(new StockReportAction());
 		reportMenu.add(new StockAdjustReportAction());
 		reportMenu.add(new PayoutReportAction());

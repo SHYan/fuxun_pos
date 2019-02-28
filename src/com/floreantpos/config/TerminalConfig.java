@@ -109,9 +109,14 @@ public class TerminalConfig {
 	private static final String TAX_INCLUDE_SC = "tax_include_sc";
 	private static final String PC_NO_SC = "pc_no_sc";
 	private static final String PC_NO_TAX = "pc_no_tax";
+	private static final String SET_TAX = "set_tax";
+	private static final String PRINT1Z1C = "print_1Z1C";
 	
 	private static final String USE_MOBI = "use_mobi";
+	private static final String DINE_IN_TIME_LIMIT = "dine_in_time_limit";
 	private static final String LAST_MOBI_UPLOAD = "last_mobi_upload";
+
+	private static final String DINE_IN_TIME_LIMIT_ENABLE = "dine_in_time_limit_enable";
 	
 	
 	private static PropertiesConfiguration config = AppConfig.getConfig();
@@ -239,6 +244,21 @@ public class TerminalConfig {
 	public static int getAutoLogoffTime() {
 		return config.getInt(AUTO_LOGOFF_TIME, 60);
 	}
+	
+	public static void setDineInTimeLimit(int time) {
+		config.setProperty(DINE_IN_TIME_LIMIT, time);
+	}
+
+	public static int getDineInTimeLimit() {
+		return config.getInt(DINE_IN_TIME_LIMIT, 0);
+	}
+	public static boolean isDineInTimeLimitEnable() {
+		return config.getBoolean(DINE_IN_TIME_LIMIT_ENABLE, true);
+	}
+
+	public static void setDineInTimeLimitEnable(boolean enable) {
+		config.setProperty(DINE_IN_TIME_LIMIT_ENABLE, enable);
+	}
 
 	public static String getUiDefaultFont() {
 		return config.getString(UI_DEFAULT_FONT);
@@ -286,6 +306,13 @@ public class TerminalConfig {
 
 	public static boolean isGroupKitchenReceiptItems() {
 		return config.getBoolean(GROUP_KITCHEN_ITEMS_ON_RECEIPT, false);
+	}
+	public static void set1Z1C(boolean group) {
+		config.setProperty(PRINT1Z1C, group);
+	}
+
+	public static boolean is1Z1C() {
+		return config.getBoolean(PRINT1Z1C, false);
 	}
 
 	public static boolean isEnabledMultiCurrency() {
@@ -592,6 +619,12 @@ public class TerminalConfig {
 
 	public static void setScIncludeDis(boolean selected) {
 		config.setProperty(SC_INCLUDE_DIS, selected);
+	}
+	public static void setTax(boolean selected) {
+		config.setProperty(SET_TAX, selected);
+	}
+	public static boolean isSetTax() {
+		return config.getBoolean(SET_TAX, true);
 	}
 	/**
 	 * @return the taxIncludeSc

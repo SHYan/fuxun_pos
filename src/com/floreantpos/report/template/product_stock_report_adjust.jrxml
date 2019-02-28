@@ -61,7 +61,7 @@
 					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Left">
-					<font fontName="Monospaced"/>
+					<font fontName="Zawgyi-One"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{branchName}]]></textFieldExpression>
 			</textField>
@@ -140,14 +140,14 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement style="zhtext_left" stretchType="RelativeToTallestObject" x="155" y="0" width="103" height="18"/>
 				<textElement textAlignment="Left">
-					<font fontName="PMingLiU"/>
+					<font fontName="Zawgyi-One"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{categoryName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement style="zhtext_left" stretchType="RelativeToTallestObject" x="314" y="0" width="152" height="18"/>
 				<textElement textAlignment="Left">
-					<font fontName="PMingLiU"/>
+					<font fontName="Zawgyi-One"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{productName}]]></textFieldExpression>
 			</textField>
@@ -203,7 +203,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement style="zhtext_left" stretchType="RelativeToTallestObject" x="731" y="0" width="71" height="18"/>
 				<textElement textAlignment="Left">
-					<font fontName="Monospaced"/>
+					<font fontName="Zawgyi-One"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{vendorName}]]></textFieldExpression>
 			</textField>

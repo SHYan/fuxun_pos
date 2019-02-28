@@ -85,6 +85,7 @@ public class TerminalConfigurationView extends ConfigurationView {
 	private JCheckBox cbShowDbConfiguration = new JCheckBox(Messages.getString("TerminalConfigurationView.5")); //$NON-NLS-1$
 	private JCheckBox cbShowBarCodeOnReceipt = new JCheckBox(Messages.getString("TerminalConfigurationView.21")); //$NON-NLS-1$
 	private JCheckBox cbGroupKitchenReceiptItems = new JCheckBox("Group by Categories in kitchen Receipt");
+	private JCheckBox cb1Z1C = new JCheckBox("1Z1C");
 	private JCheckBox chkEnabledMultiCurrency = new JCheckBox("Enable multi currency");
 	private JCheckBox chkAllowToDelPrintedItem = new JCheckBox("Allow to delete printed ticket item");
 	private JCheckBox chkAllowQuickMaintenance = new JCheckBox("Allow quick maintenance");
@@ -105,6 +106,8 @@ public class TerminalConfigurationView extends ConfigurationView {
 	private IntegerTextField tfFontSize;
 	private JCheckBox cbAutoLogoff = new JCheckBox(Messages.getString("TerminalConfigurationView.16")); //$NON-NLS-1$
 	private IntegerTextField tfLogoffTime = new IntegerTextField(4);
+	private JCheckBox cbDineInTimeLimit = new JCheckBox(Messages.getString("Dine In Time Limit")); //$NON-NLS-1$
+	private IntegerTextField tfDineInTimeLimit = new IntegerTextField(4);
 
 	private JTextField tfDrawerName = new JTextField(10);
 	private JTextField tfDrawerCodes = new JTextField(15);
@@ -153,6 +156,17 @@ public class TerminalConfigurationView extends ConfigurationView {
 				}
 			}
 		});
+		cbDineInTimeLimit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (cbDineInTimeLimit.isSelected()) {
+					tfDineInTimeLimit.setEnabled(true);
+				}
+				else {
+					tfDineInTimeLimit.setEnabled(false);
+				}
+			}
+		});
 		contentPanel.add(sc_include_dis, "newline"); //$NON-NLS-1$
 		contentPanel.add(tax_include_sc, "wrap"); //$NON-NLS-1$
 		contentPanel.add(pc_no_sc, "newline"); //$NON-NLS-1$
@@ -160,6 +174,9 @@ public class TerminalConfigurationView extends ConfigurationView {
 		
 		contentPanel.add(cbAutoLogoff, "newline"); //$NON-NLS-1$
 		contentPanel.add(tfLogoffTime, "wrap"); //$NON-NLS-1$
+
+		contentPanel.add(cbDineInTimeLimit, "newline"); //$NON-NLS-1$
+		contentPanel.add(tfDineInTimeLimit, "wrap"); //$NON-NLS-1$
 
 		contentPanel.add(cbTranslatedName, "span 2"); //$NON-NLS-1$
 		//contentPanel.add(cbChineseTranName, "span 2"); //$NON-NLS-1$
@@ -169,6 +186,7 @@ public class TerminalConfigurationView extends ConfigurationView {
 		contentPanel.add(cbShowBarCodeOnReceipt, "newline"); //$NON-NLS-1$
 		contentPanel.add(use_mobi, "span 2"); //$NON-NLS-1$
 		contentPanel.add(cbGroupKitchenReceiptItems, "newline,span"); //$NON-NLS-1$
+		contentPanel.add(cb1Z1C, "span 2"); //$NON-NLS-1$
 		contentPanel.add(chkEnabledMultiCurrency, "newline,span"); //$NON-NLS-1$
 		contentPanel.add(chkAllowToDelPrintedItem, "newline,span"); //$NON-NLS-1$
 		contentPanel.add(chkAllowQuickMaintenance, "newline,span"); //$NON-NLS-1$
@@ -308,10 +326,14 @@ public class TerminalConfigurationView extends ConfigurationView {
 
 		TerminalConfig.setAutoLogoffEnable(cbAutoLogoff.isSelected());
 		TerminalConfig.setAutoLogoffTime(tfLogoffTime.getInteger() <= 0 ? 10 : tfLogoffTime.getInteger());
+		TerminalConfig.setDineInTimeLimitEnable(cbDineInTimeLimit.isSelected());
+		TerminalConfig.setDineInTimeLimit(tfDineInTimeLimit.getInteger() <= 0 ? 10 : tfDineInTimeLimit.getInteger());
+		
 		TerminalConfig.setUseSettlementPrompt(cbUseSettlementPrompt.isSelected());
 		TerminalConfig.setShowBarcodeOnReceipt(cbShowBarCodeOnReceipt.isSelected());
 		TerminalConfig.setUseMobi(use_mobi.isSelected());
 		TerminalConfig.setGroupKitchenReceiptItems(cbGroupKitchenReceiptItems.isSelected());
+		TerminalConfig.set1Z1C(cb1Z1C.isSelected());
 		TerminalConfig.setEnabledMultiCurrency(chkEnabledMultiCurrency.isSelected());
 		TerminalConfig.setAllowToDeletePrintedTicketItem(chkAllowToDelPrintedItem.isSelected());
 		TerminalConfig.setAllowQuickMaintenance(chkAllowQuickMaintenance.isSelected());
@@ -388,7 +410,10 @@ public class TerminalConfigurationView extends ConfigurationView {
 		cbAutoLogoff.setSelected(TerminalConfig.isAutoLogoffEnable());
 		tfLogoffTime.setText("" + TerminalConfig.getAutoLogoffTime()); //$NON-NLS-1$
 		tfLogoffTime.setEnabled(cbAutoLogoff.isSelected());
-
+		tfDineInTimeLimit.setText("" + TerminalConfig.getDineInTimeLimit()); //$NON-NLS-1$
+		tfDineInTimeLimit.setEnabled(cbDineInTimeLimit.isSelected());
+		cb1Z1C.setSelected(TerminalConfig.is1Z1C());
+		
 		initializeFontConfig();
 
 		cbDefaultView.setSelectedItem(TerminalConfig.getDefaultView());

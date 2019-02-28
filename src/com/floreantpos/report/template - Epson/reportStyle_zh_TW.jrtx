@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jasperTemplate PUBLIC "-//JasperReports//DTD Template//EN" "http://jasperreports.sourceforge.net/dtds/jaspertemplate.dtd">
+
+<jasperTemplate>
+	<style name="text" isDefault="true" hAlign="Center" vAlign="Middle" fontName="TW-Sung" fontSize="9" pdfFontName="MSung-Light" pdfEncoding="UniCNS-UCS2-H" isPdfEmbedded="true"/>
+	<style name="textKai" hAlign="Center" vAlign="Middle" fontName="TW-Kai" fontSize="9" pdfFontName="MSung-Light" pdfEncoding="UniCNS-UCS2-H" isPdfEmbedded="true"/>
+	<style name="reportTitle" style="textKai" hAlign="Center" vAlign="Middle" fontSize="26" isBold="true">
+		<box leftPadding="3" rightPadding="3"/>
+	</style>
+	<style name="reportTitle_left" style="reportTitle" hAlign="Left"/>
+	<style name="reportTitle_right" style="reportTitle" hAlign="Right"/>
+	<style name="subTitle" style="textKai" hAlign="Center" vAlign="Middle" fontSize="12" isBold="true">
+		<box leftPadding="3" rightPadding="3"/>
+	</style>
+	<style name="subTitle_left" style="subTitle" hAlign="Left"/>
+	<style name="subTitle_right" style="subTitle" hAlign="Right"/>
+	<style name="columnHeader" style="text" hAlign="Center" vAlign="Middle" fontSize="10" isBold="true"/>
+	<style name="columnHeader_left" style="columnHeader" hAlign="Left"/>
+	<style name="columnHeader_right" style="columnHeader" hAlign="Right"/>
+	<style name="columnHeader_border" style="columnHeader">
+		<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
+			<pen lineWidth="0.5"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="columnHeader_border_left" style="columnHeader_border" hAlign="Left"/>
+	<style name="columnHeader_border_right" style="columnHeader_border" hAlign="Right"/>
+	<style name="columnHeader_line" style="columnHeader">
+		<box>
+			<bottomPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="columnHeader_line_left" style="columnHeader_line" hAlign="Left"/>
+	<style name="columnHeader_line_right" style="columnHeader_line" hAlign="Right"/>
+	<style name="zhtext" style="text" fontSize="10">
+		<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2"/>
+	</style>
+	<style name="zhtext_noPad" style="text" fontSize="10">
+		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+	</style>
+	<style name="smallText" style="text" fontSize="8"/>
+	<style name="smallZhtext" style="zhtext" fontSize="8"/>
+	<style name="zhtext_line_top" style="zhtext" hAlign="Center">
+		<box>
+			<topPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="zhtext_left" style="zhtext" hAlign="Left"/>
+	<style name="zhtext_right" style="zhtext" hAlign="Right"/>
+	<style name="number" style="zhtext" hAlign="Right" pattern="#,##0;-#,##0"/>
+	<style name="dotOne" style="zhtext" hAlign="Right" pattern="#,##0.0;-#,##0.0"/>
+	<style name="dotTwo" style="zhtext" hAlign="Right" pattern="#,##0.00;-#,##0.00"/>
+	<style name="zhtext_border" style="zhtext_noPad">
+		<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
+			<pen lineWidth="0.5"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="zhtext_border_left" style="zhtext_border" hAlign="Left"/>
+	<style name="zhtext_border_right" style="zhtext_border" hAlign="Right"/>
+	<style name="number_border" style="zhtext_border" hAlign="Right" pattern="#,##0;-#,##0"/>
+	<style name="dotOne_border" style="zhtext_border" hAlign="Right" pattern="#,##0.0;-#,##0.0"/>
+	<style name="dotTwo_border" style="zhtext_border" hAlign="Right" pattern="#,##0.00;-#,##00"/>
+	<style name="zhtext_line" style="zhtext" hAlign="Center">
+		<box>
+			<bottomPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="zhtext_line_left" style="zhtext_line" hAlign="Left"/>
+	<style name="zhtext_line_right" style="zhtext_line" hAlign="Right"/>
+    <style name="number_line" style="zhtext_line" hAlign="Right" pattern="#,##0;-#,##0"/>
+    <style name="dotOne_line" style="zhtext_line" hAlign="Right" pattern="#,##0.0;-#,##0.0"/>
+	<style name="dotTwo_line" style="zhtext_line" hAlign="Right" pattern="#,##0.00;-#,##00"/>
+    <style name="number_line_top" style="zhtext_line_top" hAlign="Right" pattern="#,##0;-#,##0"/>
+    <style name="dotOne_line_top" style="zhtext_line_top" hAlign="Right" pattern="#,##0.0;-#,##0.0"/>
+	<style name="dotTwo_line_top" style="zhtext_line_top" hAlign="Right" pattern="#,##0.00;-#,##00"/>
+	<style name="pageFooter_line" style="zhtext">
+		<box>
+			<topPen lineWidth="0.5"/>
+		</box>
+	</style>
+</jasperTemplate>

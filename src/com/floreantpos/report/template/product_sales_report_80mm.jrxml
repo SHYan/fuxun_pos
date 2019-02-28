@@ -114,7 +114,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement style="zhtext_left" stretchType="RelativeToTallestObject" x="0" y="0" width="90" height="18"/>
 				<textElement textAlignment="Left">
-					<font fontName="PMingLiU"/>
+					<font fontName="Zawgyi-One"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{productName}]]></textFieldExpression>
 			</textField>

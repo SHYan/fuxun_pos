@@ -36,7 +36,7 @@
 					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Left">
-					<font fontName="SansSerif"/>
+					<font fontName="Zawgyi-One"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{branchName}]]></textFieldExpression>
 			</textField>
@@ -61,14 +61,14 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement style="zhtext_left" stretchType="RelativeToTallestObject" x="0" y="0" width="116" height="18"/>
 				<textElement textAlignment="Left">
-					<font fontName="PMingLiU"/>
+					<font fontName="Zawgyi-One"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{productName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="dotOne" stretchType="RelativeToTallestObject" x="116" y="0" width="46" height="18"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font fontName="SansSerif"/>
+					<font fontName="Monospaced"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{stockAmount}]]></textFieldExpression>
 			</textField>

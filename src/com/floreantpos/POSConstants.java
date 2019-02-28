@@ -505,6 +505,7 @@ public class POSConstants {
 	//John
 	public static final String REPORT_STOCK_REPORT = Messages.getString("REPORT_STOCK_REPORT"); //$NON-NLS-1$
 	public static final String REPORT_STOCK_ADJUST_REPORT = Messages.getString("REPORT_STOCK_ADJUST_REPORT"); //$NON-NLS-1$
+	public static final String REPORT_MODIFIER_SALES_REPORT = Messages.getString("REPORT_MODIFIER_SALES_REPORT"); //$NON-NLS-1$
 	//Diana
 	public static final String REPORT_SALES_SUMMARY_REPORT = Messages.getString("REPORT_SALES_SUMMARY_REPORT"); //$NON-NLS-1$
 	public static final String REPORT_PAYOUT_REPORT = Messages.getString("REPORT_PAYOUT_REPORT"); //$NON-NLS-1$

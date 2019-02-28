@@ -62,13 +62,18 @@
         ORDER by categoryName, productNo
     </select>-->
     <select id="getProduct_Sales" parameterType="Map" resultType="com.floreantpos.model.mybatis.ProductSalesM">
-        SELECT ti.item_id productNo, ti.item_name productName, ti.category_name categoryName, ti.beverage beverage, ti.item_price itemPrice, sum(ti.discount) discount,
+        SELECT ti.item_id productNo, ti.item_name productName, ti.category_name categoryName, ti.beverage beverage, ABS(ti.item_price) itemPrice, sum(ti.discount) discount,
         sum(ti.sub_total) subtotal, sum(ti.tax_amount) taxAmount, sum(ti.service_charge_amount) scAmount, sum(ti.total_price) totalSale, sum(ti.item_quantity) totalFractionQty, sum(ti.item_count) totalQty
         FROM ticket AS t, ticket_item AS ti
 	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate}  AND t.paid='true' AND t.voided='false' AND t.id=ti.ticket_id
 	    <if test="categoryName != null "> AND ti.category_name=#{categoryName} </if>
         GROUP By productNo, productName, categoryName, beverage, itemPrice
         ORDER by categoryName, productNo
+    </select>
+    
+    <select id="getModifier_Sales" parameterType="Map" resultType="com.floreantpos.model.mybatis.ProductSalesM">
+    	SELECT tim.modifier_name AS productName, sum(tim.item_count) AS totalQty, sum(tim.subtotal_price) AS subtotal, sum(tim.tax_amount) AS taxAmount, sum(tim.modifier_service_charge) AS scAmount, 
+    	sum(tim.total_price) AS totalSale FROM ticket t INNER JOIN ticket_item ti ON (t.id=ti.ticket_id AND t.create_date BETWEEN #{startDate} AND #{endDate}  AND t.paid='true' ) INNER JOIN ticket_item_modifier tim ON ti.id=tim.ticket_item_id GROUP BY tim.modifier_name
     </select>
     
     <select id="getOrder_Status" parameterType="Map" resultType="com.floreantpos.model.mybatis.OrderStatusReportM">
@@ -79,7 +84,7 @@
     		WHEN settled = 'false' THEN 'STORE' END) AS status
 		FROM ticket AS t
 	    WHERE t.create_date BETWEEN #{startDate} AND #{endDate}
-	    <if test="paid != null "> AND t.paid='true' </if>
+	    <if test="paid != null "> AND t.paid='true' AND t.voided='false' </if>
 	    <if test="voided != null"> AND t.voided='true' </if>
 	    <if test="store != null "> AND t.paid='false' AND t.voided='false' </if>
 	    ORDER BY factdate ASC, id

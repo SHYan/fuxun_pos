@@ -113,8 +113,8 @@ public class ProductSalesReportView extends JPanel {
 		cbPrintType.setPreferredSize(new Dimension(115, 0));
 		cbPrintType.setModel(new ListComboBoxModel(Arrays.asList("A4", "80mm")));
 		
-		topPanel.add(cbPrintType, "wrap");
-		topPanel.add(btnGo, "skip 2, al right"); //$NON-NLS-1$
+		topPanel.add(cbPrintType);
+		topPanel.add(btnGo, "wrap"); //$NON-NLS-1$
 		add(topPanel, BorderLayout.NORTH);
 		
 		JPanel centerPanel = new JPanel(new BorderLayout());
