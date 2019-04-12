@@ -115,6 +115,7 @@ public class TicketDAO extends BaseTicketDAO {
 		adjustInventoryItems(session, ticket);
 
 		ticket.setActiveDate(Calendar.getInstance().getTime());
+		
 
 		adjustStockAmount(ticket, session);
 		updateShopTableStatus(ticket, session);
@@ -138,12 +139,20 @@ public class TicketDAO extends BaseTicketDAO {
 	}
 
 	public void voidTicket(Ticket ticket) throws Exception {
+		voidTicket(ticket, false);
+	}
+	
+	public void voidTicket(Ticket ticket, boolean printedToKitchen) throws Exception {
 		Session session = null;
 		Transaction tx = null;
 		Terminal terminal = Application.getInstance().getTerminal();
 
+		
+		
 		try {
 			session = createNewSession();
+			if( !ticket.isWasted() )
+				adjustStockAmount(ticket, session, true);
 			tx = session.beginTransaction();
 
 			ticket.setVoided(true);
@@ -175,6 +184,16 @@ public class TicketDAO extends BaseTicketDAO {
 				ticket.addTotransactions(transaction);
 			}
 
+			if(printedToKitchen) {
+				ticket.setDiscountAmount(0.0);
+				ticket.setDiscountRate(null);
+				ticket.setTotalAmount(0.0);
+				ticket.setTotalAmount(0.0);
+				ticket.setServiceCharge(0.0);
+				ticket.setTaxAmount(0.0);
+				ticket.setDueAmount(0.0);
+				//ticket.setWasted(false);
+			}
 			session.update(ticket);
 			session.update(terminal);
 
@@ -187,7 +206,6 @@ public class TicketDAO extends BaseTicketDAO {
 			}
 			throw x;
 		}
-
 		finally {
 			closeSession(session);
 		}
@@ -1000,12 +1018,17 @@ public class TicketDAO extends BaseTicketDAO {
 	}
 
 	private void adjustStockAmount(Ticket ticket, Session session) {
-
+		adjustStockAmount(ticket, session, false);
+	}
+	
+	private void adjustStockAmount(Ticket ticket, Session session, Boolean isVoid) {
+		//logger.debug("TicketDAO : adjustStockAmount");
+		
 		List<TicketItem> items = ticket.getTicketItems();
 
 		HashMap<Integer, Double> itemMap = new LinkedHashMap<Integer, Double>();
 
-		if (!getAdjustedMap(items, itemMap)) {
+		if (!getAdjustedMap(items, itemMap, isVoid)) {
 			return;
 		}
 
@@ -1025,10 +1048,17 @@ public class TicketDAO extends BaseTicketDAO {
 			double stockAmount = menuItem.getStockAmount();
 
 			if (menuItem.isFractionalUnit()) {
-				availableStockAmount = stockAmount - itemMap.get(ticketItemId);
+				if(isVoid)
+					availableStockAmount = stockAmount + itemMap.get(ticketItemId);
+				else
+					availableStockAmount = stockAmount - itemMap.get(ticketItemId);
 			}
 			else {
-				availableStockAmount = stockAmount - itemMap.get(ticketItemId);
+				if(isVoid)
+					availableStockAmount = stockAmount + itemMap.get(ticketItemId);
+				else
+					availableStockAmount = stockAmount - itemMap.get(ticketItemId);
+				//logger.debug("AVAIL STOCK : "+availableStockAmount);
 			}
 			menuItem.setStockAmount(availableStockAmount);
 
@@ -1036,12 +1066,12 @@ public class TicketDAO extends BaseTicketDAO {
 		}
 	}
 
-	private boolean getAdjustedMap(List<TicketItem> items, HashMap<Integer, Double> itemMap) {
-
+	private boolean getAdjustedMap(List<TicketItem> items, HashMap<Integer, Double> itemMap, Boolean isVoid) {
+		
 		for (TicketItem ticketItem : items) {
-
-			if (ticketItem.isStockAmountAdjusted()) {
-				return false;
+			
+			if (ticketItem.isStockAmountAdjusted() && !isVoid) {
+				continue;
 			}
 
 			Double previousValue = itemMap.get(ticketItem.getItemId());

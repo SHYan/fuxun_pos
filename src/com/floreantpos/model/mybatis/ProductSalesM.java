@@ -2,6 +2,7 @@ package com.floreantpos.model.mybatis;
 
 public class ProductSalesM {
 	private int rankSeq;
+	private int ticketId;
 	private String productNo;
 	private String categoryName;
 	private String productName;
@@ -137,5 +138,19 @@ public class ProductSalesM {
 
 	public void setTotalFractionQty(double totalFractionQty) {
 		this.totalFractionQty = totalFractionQty;
+	}
+
+	/**
+	 * @return the ticketId
+	 */
+	public int getTicketId() {
+		return ticketId;
+	}
+
+	/**
+	 * @param ticketId the ticketId to set
+	 */
+	public void setTicketId(int ticketId) {
+		this.ticketId = ticketId;
 	}
 }

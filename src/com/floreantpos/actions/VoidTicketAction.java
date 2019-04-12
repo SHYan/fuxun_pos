@@ -46,7 +46,7 @@ public class VoidTicketAction extends PosAction {
 	public void execute() {
 		try {
 			Ticket ticket = ticketList.getSelectedTicket();
-
+			
 			if (ticket == null) {
 				int ticketId = NumberSelectionDialog2.takeIntInput(Messages.getString("VoidTicketAction.0")); //$NON-NLS-1$
 				if (ticketId == -1)
@@ -55,9 +55,13 @@ public class VoidTicketAction extends PosAction {
 				ticket = TicketService.getTicket(ticketId);
 			}
 			if (ticket.isVoided()) {
-				if (POSMessageDialog.showYesNoQuestionDialog(POSUtil.getFocusedWindow(), "This ticket is already voided. \nDo you want to re-void?", "Confirm") != JOptionPane.YES_OPTION) {
-					return;
-				}
+				POSMessageDialog.showYesNoQuestionDialog(POSUtil.getFocusedWindow(), "This ticket is already voided. \nYou cannot re-void!", "Confirm");
+				return;
+				
+			}
+			if (ticket.getMergeId()>0) {
+				POSMessageDialog.showYesNoQuestionDialog(POSUtil.getFocusedWindow(), "This ticket is already merge to another ticket. \nYou cannot void!", "Confirm");
+				return;
 			}
 			Ticket ticketToVoid = TicketDAO.getInstance().loadFullTicket(ticket.getId());
 

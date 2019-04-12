@@ -73,11 +73,12 @@ public class TicketViewerTable extends JTable {
 		setTicket(ticket);
 	}
 
+	/* TicketColumnWidth*/
 	private void resizeTableColumns() {
 		setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 		//setColumnWidth(1, PosUIManager.getSize(50));
-		setColumnWidth(0, PosUIManager.getSize(50));
-		setColumnWidth(2, PosUIManager.getSize(60));
+		setColumnWidth(0, PosUIManager.getSize(40));
+		setColumnWidth(2, PosUIManager.getSize(50));
 	}
 
 	private void setColumnWidth(int columnNumber, int width) {
@@ -170,6 +171,8 @@ public class TicketViewerTable extends JTable {
 	public void increaseItemAmount(TicketItem ticketItem) {
 		double itemCount = ticketItem.getItemCount();
 		ticketItem.setItemCount(++itemCount);
+		double qtyCount = ticketItem.getItemQuantity();
+		ticketItem.setItemQuantity(++qtyCount);
 		repaint();
 	}
 
@@ -336,6 +339,8 @@ public class TicketViewerTable extends JTable {
 				}
 
 				ticketItem.setItemCount(--itemCount);
+				double qtyCount = ticketItem.getItemQuantity();
+				ticketItem.setItemQuantity(--qtyCount);
 				fireTicketItemUpdated(getTicket(), ticketItem);
 				
 				//Diana -- decrease condiment count as well

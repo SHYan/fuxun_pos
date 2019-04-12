@@ -33,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.swingx.JXDatePicker;
@@ -52,7 +53,7 @@ import com.floreantpos.swing.ListComboBoxModel;
 import com.floreantpos.ui.dialog.POSMessageDialog;
 import com.floreantpos.ui.util.UiUtil;
 
-public class OrderStatusReportView extends JPanel {
+public class MemberSalesReportView extends JPanel {
 	private SimpleDateFormat fullDateFormatter = new SimpleDateFormat("yyyy MMM dd, hh:mm a"); //$NON-NLS-1$
 	private SimpleDateFormat timeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
 
@@ -68,9 +69,10 @@ public class OrderStatusReportView extends JPanel {
 	
 	private JButton btnGo = new JButton(com.floreantpos.POSConstants.GO);
 	private JPanel reportContainer;
+	private JTextField tfMemberName;
 	private JComboBox cbPrintType, cbOrderType;
 	
-	public OrderStatusReportView() {
+	public MemberSalesReportView() {
 		super(new BorderLayout());
 		
 		JPanel topPanel = new JPanel(new MigLayout());
@@ -96,6 +98,9 @@ public class OrderStatusReportView extends JPanel {
 		cbOrderType.setPreferredSize(new Dimension(115, 0));
 		cbOrderType.setModel(new ListComboBoxModel(Arrays.asList("ALL", "FINISH", "VOID", "STORE", "QUEUE")));
 		topPanel.add(cbOrderType);
+		topPanel.add(new JLabel(" Member :"));
+		tfMemberName = new JTextField(20);
+		topPanel.add(tfMemberName);
 		
 		topPanel.add(new JLabel("Report Template :"));
 		cbPrintType = new JComboBox();
@@ -121,7 +126,7 @@ public class OrderStatusReportView extends JPanel {
 				try {
 					viewReport();
 				} catch (Exception e1) {
-					POSMessageDialog.showError(OrderStatusReportView.this, POSConstants.ERROR_MESSAGE, e1);
+					POSMessageDialog.showError(MemberSalesReportView.this, POSConstants.ERROR_MESSAGE, e1);
 				}
 			}
 			
@@ -153,7 +158,8 @@ public class OrderStatusReportView extends JPanel {
 		ReportUtil.populateRestaurantProperties(map);
 		map.put("reportTime", fullDateFormatter.format(new Date())); //$NON-NLS-1$
 		
-		
+		if(tfMemberName.getText()!=null && !tfMemberName.getText().equals(""))
+			map.put("MemberName", tfMemberName.getText());
 
 		map.put("startDate", fromDate); //$NON-NLS-1$
 		map.put("endDate", toDate); //$NON-NLS-1$
@@ -170,12 +176,12 @@ public class OrderStatusReportView extends JPanel {
 		else if(cbOrderType.getSelectedItem().toString().equals("QUEUE"))
 			map.put("queue", true);
 		
-		List<OrderStatusReportM> dataSource = IBatisFactory.selectList("Report.getOrder_Status", map);
-		String reportTemplate = "order_status_report";
+		List<OrderStatusReportM> dataSource = IBatisFactory.selectList("Report.getMember_Sales", map);
+		String reportTemplate = "member_sales_report";
 		
 			
 		if(cbPrintType.getSelectedItem().toString().equals("80mm"))
-			reportTemplate = "order_status_report_80mm";
+			reportTemplate = "member_sales_report_80mm";
 		JasperReport masterReport = ReportUtil.getReport(reportTemplate);
 		JasperPrint print = JasperFillManager.fillReport(masterReport, map, new JRBeanCollectionDataSource(dataSource));
 		JRViewer viewer = new JRViewer(print);

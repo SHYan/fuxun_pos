@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -61,6 +62,9 @@ import com.floreantpos.model.OrderType;
 import com.floreantpos.model.Ticket;
 import com.floreantpos.model.TicketItem;
 import com.floreantpos.model.TicketItemModifier;
+import com.floreantpos.model.User;
+import com.floreantpos.model.UserPermission;
+import com.floreantpos.model.UserType;
 import com.floreantpos.model.dao.MenuItemDAO;
 import com.floreantpos.model.dao.ShopTableStatusDAO;
 import com.floreantpos.model.dao.TicketDAO;
@@ -109,9 +113,17 @@ public class TicketView extends JPanel {
 	private boolean cancelable;
 	private boolean allowToLogOut;
 	public final static String VIEW_NAME = "TICKET_VIEW"; //$NON-NLS-1$
-
+	Set<UserPermission> permissions = null;
+	
 	public TicketView() {
 		initComponents();
+		User user = Application.getCurrentUser();
+		UserType newUserType = user.getType();
+		
+		if (newUserType != null) {
+			permissions = newUserType.getPermissions();
+		}
+		
 	}
 
 	/**
@@ -413,6 +425,16 @@ public class TicketView extends JPanel {
 
 		closeView(false);
 	}// GEN-LAST:event_doFinishOrder
+	
+	public synchronized void doCloseOrder() {// GEN-FIRST:event_doFinishOrder
+		updateModel();
+
+		TicketDAO ticketDAO = TicketDAO.getInstance();
+		OrderController.closeOrder(ticket);
+		ticketDAO.refresh(ticket);
+
+		closeView(false);
+	}
 
 	public void saveTicketIfNeeded() {
 		updateModel();
@@ -739,13 +761,15 @@ public class TicketView extends JPanel {
 				btnDecreaseAmount.setEnabled(true);
 				btnDelete.setEnabled(true);
 				btnEdit.setEnabled(false);
-
+				//logger.debug((permissions!=null)? "Permission is null": "Perminssion is not null");
+				//logger.debug((permissions.contains(UserPermission.RETURN_ITEM))? "Permission contain" : "Perminssion is not contain");
 				if (selected instanceof TicketItem) {
 					TicketItem ticketItem = (TicketItem) selected;
 					if (ticketItem.isPrintedToKitchen()) {
 						btnIncreaseAmount.setEnabled(false);
 						btnDecreaseAmount.setEnabled(false);
-						if (TerminalConfig.isAllowedToDeletePrintedTicketItem()) {
+						if (permissions!=null && permissions.contains(UserPermission.RETURN_ITEM)) {
+						//if (TerminalConfig.isAllowedToDeletePrintedTicketItem()) {
 							btnDelete.setEnabled(true);
 						}
 						else {
@@ -763,7 +787,12 @@ public class TicketView extends JPanel {
 					else if (ticketItem.isFractionalUnit()) {
 						btnIncreaseAmount.setEnabled(true);
 						btnDecreaseAmount.setEnabled(false);
-						btnDelete.setEnabled(true);
+						if (!permissions.contains(UserPermission.RETURN_ITEM)) {
+							btnDelete.setEnabled(true);
+						}
+						else {
+							btnDelete.setEnabled(false);
+						}
 					}
 				}
 			}

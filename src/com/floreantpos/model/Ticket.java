@@ -17,6 +17,8 @@
  */
 package com.floreantpos.model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -343,6 +345,7 @@ public class Ticket extends BaseTicket {
 		double ticketDiscountAmount = calculateTicketDiscountAmount(discountAmount);
 		if (ticketDiscountAmount > 0) {
 			discountAmount = ticketDiscountAmount;
+			resetItemsDiscountAmount(discountAmount);
 		}
 
 		setSubtotalAmount(subtotalAmount);
@@ -359,11 +362,12 @@ public class Ticket extends BaseTicket {
 		double serviceChargeAmount = calculateServiceCharge(discountAmount, isParcel);
 
 		double taxAmount = calculateTax(discountAmount, isParcel);
+		/*
 		if (ticketDiscountAmount > 0 && taxAmount > 0) {
 			//double discountTax = taxAmount * (ticketDiscountAmount / subtotalAmount);
 			double discountTax = ticketDiscountAmount * (ticketDiscountAmount / subtotalAmount);
 			taxAmount = taxAmount - discountTax;  //for recalculate tax - Diana 20181118
-		}
+		}*/
 		setTaxAmount(taxAmount);
 		
 		Double deliveryChargeAmount = NumberUtil.roundToTwoDigit(getDeliveryCharge());		
@@ -441,23 +445,46 @@ public class Ticket extends BaseTicket {
 			subtotalAmount += ticketItem.getSubtotalAmount();
 		}
 
-		subtotalAmount = fixInvalidAmount(subtotalAmount);
-
+		//subtotalAmount = fixInvalidAmount(subtotalAmount);
 		return NumberUtil.roundToTwoDigit(subtotalAmount);
 	}
 
+	private void resetItemsDiscountAmount(double ticketDiscount) {
+		if(getDiscounts()==null) return;
+		if(calculateSubtotalAmount()==0) return;
+		
+		double disRate = ticketDiscount / calculateSubtotalAmount();
+		DecimalFormat df = new DecimalFormat("#.##");
+		df.setRoundingMode(RoundingMode.HALF_UP);
+		disRate = Double.parseDouble(df.format(disRate)); 
+		
+		List<TicketItem> ticketItems = getTicketItems();
+		if (ticketItems != null) {
+			for (TicketItem ticketItem : ticketItems) {
+				ticketItem.setDiscountAmount(ticketItem.getSubtotalAmount()*disRate);
+				ticketItem.calculatePrice();
+			}
+		}
+	}
+	
 	private double calculateItemsDiscountAmount() {
 		double ticketItemDiscounts = 0;
 
 		List<TicketItem> ticketItems = getTicketItems();
+		List<TicketItemDiscount> liDis = null;
 		if (ticketItems != null) {
 			for (TicketItem ticketItem : ticketItems) {
-				ticketItemDiscounts += ticketItem.getDiscountAmount();
-				if(ticketItem.getDiscountAmount() > 0) {
-					try {
-						setDiscountRate(new DecimalFormat("0.#").format(ticketItem.getDiscounts().get(0).getValue()));
-					}catch(Exception e) {
-						logger.debug(e.getMessage());
+				liDis = ticketItem.getDiscounts();
+				if(liDis!=null && liDis.size()>0) {
+					if(liDis.get(0)!=null && liDis.get(0).getAmount()>0) {
+						ticketItemDiscounts += ticketItem.getDiscountAmount();
+						if(ticketItem.getDiscountAmount() > 0) {
+							try {
+								setDiscountRate(new DecimalFormat("0.#").format(ticketItem.getDiscounts().get(0).getValue()));
+							}catch(Exception e) {
+								logger.debug(e.getMessage());
+							}
+						}
 					}
 				}
 			}
@@ -843,7 +870,7 @@ public class Ticket extends BaseTicket {
 	public void setCustomer(Customer customer) {
 		if (customer != null) {
 			addProperty(Ticket.CUSTOMER_ID, String.valueOf(customer.getAutoId()));
-			addProperty(Ticket.CUSTOMER_NAME, customer.getFirstName());
+			addProperty(Ticket.CUSTOMER_NAME, customer.getName());
 			addProperty(Ticket.CUSTOMER_MOBILE, customer.getMobileNo());
 			addProperty(Ticket.CUSTOMER_ZIP_CODE, customer.getZipCode());
 		}

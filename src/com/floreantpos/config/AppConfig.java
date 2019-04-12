@@ -18,6 +18,8 @@
 package com.floreantpos.config;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 
@@ -46,7 +48,13 @@ public class AppConfig {
 			//File workingDir = Application.getWorkingDir();
 			File configFile = new File("floreantpos.config.properties"); //$NON-NLS-1$
 			if(!configFile.exists()) {
-				configFile.createNewFile();
+				File configFileBp = new File("floreantpos.config.properties.bp");
+				if(!configFileBp.exists()) {
+					configFile.createNewFile();	
+				}else {
+					Files.copy(configFileBp.toPath(), configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+					configFile = new File("floreantpos.config.properties");
+				}
 			}
 			
 			config = new PropertiesConfiguration(configFile);

@@ -34,6 +34,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.floreantpos.IconFactory;
 import com.floreantpos.Messages;
 import com.floreantpos.main.Application;
@@ -49,6 +52,8 @@ import com.floreantpos.util.NumberUtil;
  * @author  MShahriar
  */
 public class TicketForSplitView extends com.floreantpos.swing.TransparentPanel implements TableModelListener {
+	Log logger = LogFactory.getLog(TicketForSplitView.class);
+	
 	private Ticket ticket;
 
 	public final static String VIEW_NAME = "TICKET_FOR_SPLIT_VIEW"; //$NON-NLS-1$
@@ -453,7 +458,7 @@ public class TicketForSplitView extends com.floreantpos.swing.TransparentPanel i
 			newTicketItem.setItemCount(1.0);
 		else
 			newTicketItem.setItemCount(ticketItem.getItemCount());
-
+		
 		newTicketItem.setItemId(ticketItem.getItemId());
 		newTicketItem.setHasModifiers(ticketItem.isHasModifiers());
 		//newTicketItem.setTicketItemModifierGroups(new ArrayList<TicketItemModifierGroup>(ticketItem.getTicketItemModifierGroups()));
@@ -461,9 +466,11 @@ public class TicketForSplitView extends com.floreantpos.swing.TransparentPanel i
 		newTicketItem.setGroupName(ticketItem.getGroupName());
 		newTicketItem.setCategoryName(ticketItem.getCategoryName());
 		newTicketItem.setUnitPrice(ticketItem.getUnitPrice());
+		newTicketItem.setItemQuantity(ticketItem.getItemQuantity());
 		newTicketItem.setTreatAsSeat(ticketItem.isTreatAsSeat());
 		newTicketItem.setSeatNumber(ticketItem.getSeatNumber());
-
+		newTicketItem.setStockAmountAdjusted(ticketItem.isStockAmountAdjusted());
+		
 		List<TicketItemDiscount> discounts = ticketItem.getDiscounts();
 		if (discounts != null) {
 			List<TicketItemDiscount> newDiscounts = new ArrayList<TicketItemDiscount>();
@@ -474,6 +481,7 @@ public class TicketForSplitView extends com.floreantpos.swing.TransparentPanel i
 			}
 			newTicketItem.setDiscounts(newDiscounts);
 		}
+		
 
 //		List<TicketItemModifierGroup> ticketItemModifierGroups = ticketItem.getTicketItemModifierGroups();
 //		if (ticketItemModifierGroups != null) {
@@ -497,6 +505,7 @@ public class TicketForSplitView extends com.floreantpos.swing.TransparentPanel i
 						newModifier.setPrintedToKitchen(ticketItemModifier.isPrintedToKitchen());
 						newModifier.setShouldPrintToKitchen(ticketItemModifier.isShouldPrintToKitchen());
 						newModifier.setTicketItem(newTicketItem);
+						newTicketItem.addToticketItemModifiers(newModifier);
 					}
 				}
 //			}
@@ -525,7 +534,7 @@ public class TicketForSplitView extends com.floreantpos.swing.TransparentPanel i
 		newTicketItem.setShouldPrintToKitchen(ticketItem.isShouldPrintToKitchen());
 		newTicketItem.setPrinterGroup(ticketItem.getPrinterGroup());
 		newTicketItem.setPrintedToKitchen(ticketItem.isPrintedToKitchen());
-
+		
 		double itemCount = ticketItem.getItemCount();
 
 		toTicketView.ticketViewerTable.addTicketItem(newTicketItem);

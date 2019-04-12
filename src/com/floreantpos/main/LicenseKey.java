@@ -120,7 +120,7 @@ public class LicenseKey {
 		return false;
 	}
 	
-	public  String encrypt_key(String value, String use_key) {
+	public String encrypt_key(String value, String use_key) {
 		try {
 			IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
 			SecretKeySpec skeySpec = new SecretKeySpec(use_key.getBytes("UTF-8"), "AES");
@@ -139,6 +139,7 @@ public class LicenseKey {
 	}
 	
 	public boolean registerKey(String name, String key, Boolean key_type){
+		
 		Calendar currentTime = Calendar.getInstance();
 		
 		HashMap map = new HashMap();

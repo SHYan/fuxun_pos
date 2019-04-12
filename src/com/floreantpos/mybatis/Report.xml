@@ -20,7 +20,8 @@
         SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) = 11 THEN total_price ELSE 0 END) AS novSale,
         SUM(CASE WHEN EXTRACT(MONTH FROM closing_date) = 12 THEN total_price ELSE 0 END) AS decSale
         FROM ticket AS t
-        WHERE closing_date BETWEEN #{startDate} AND #{endDate} AND paid='true' AND t.voided='false'
+        WHERE closing_date BETWEEN #{startDate} AND #{endDate} AND t.voided='false'
+        <if test="NeedPaid != null"> AND t.paid=#{NeedPaid} </if>
     </select>
     
     <select id="getDaily_Sales" parameterType="HashMap" resultType="com.floreantpos.model.mybatis.DailySalesReportM">
@@ -29,7 +30,8 @@
 		SUM(t.due_amount) AS due_subtotal, SUM(t.total_tax) AS tax_subtotal, SUM(t.total_discount) AS discount_subtotal,
 		SUM(t.service_charge) AS service_charge_subtotal, SUM(t.paid_amount) AS payment_subtotal, SUM(t.total_price) AS sale
 		FROM ticket AS t
-	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate} AND t.paid='true' AND t.voided='false'
+	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate} AND t.voided='false'
+	    <if test="NeedPaid != null"> AND t.paid=#{NeedPaid} </if>
 	    GROUP BY factdate
       	ORDER BY factdate ASC
 	</select>
@@ -39,7 +41,8 @@
 		SUM(CASE WHEN ti.beverage='true' THEN ti.total_price ELSE 0 END) AS beverage_subtotal,
 		SUM(CASE WHEN ti.beverage='false' THEN ti.total_price ELSE 0 END) AS food_subtotal 
 		FROM ticket AS t, ticket_item AS ti
-	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate} AND t.id=ti.ticket_id AND t.paid='true' AND t.voided='false'
+	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate} AND t.id=ti.ticket_id AND t.voided='false'
+	    <if test="NeedPaid != null"> AND t.paid=#{NeedPaid} </if>
 	    GROUP BY factdate ORDER BY factdate
 	</select>
 	
@@ -65,15 +68,28 @@
         SELECT ti.item_id productNo, ti.item_name productName, ti.category_name categoryName, ti.beverage beverage, ABS(ti.item_price) itemPrice, sum(ti.discount) discount,
         sum(ti.sub_total) subtotal, sum(ti.tax_amount) taxAmount, sum(ti.service_charge_amount) scAmount, sum(ti.total_price) totalSale, sum(ti.item_quantity) totalFractionQty, sum(ti.item_count) totalQty
         FROM ticket AS t, ticket_item AS ti
-	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate}  AND t.paid='true' AND t.voided='false' AND t.id=ti.ticket_id
+	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate}  AND t.voided='false' AND t.id=ti.ticket_id
+	    <if test="NeedPaid != null"> AND t.paid=#{NeedPaid} </if>
 	    <if test="categoryName != null "> AND ti.category_name=#{categoryName} </if>
-        GROUP By productNo, productName, categoryName, beverage, itemPrice
+	    GROUP By productNo, productName, categoryName, beverage, itemPrice
+        <if test=" orderBySales != null "> ORDER BY totalSale DESC, categoryName, productNo </if>
+        <if test=" orderByQty != null "> ORDER BY totalQty DESC, categoryName, productNo </if>
+        <if test=" orderByCategory != null "> ORDER BY categoryName, productNo </if>
+    </select>
+    
+    <select id="getProduct_Return" parameterType="Map" resultType="com.floreantpos.model.mybatis.ProductSalesM">
+        SELECT t.id AS ticketId, ti.item_id productNo, ti.item_name productName, ti.category_name categoryName, ti.beverage beverage, ABS(ti.item_price) itemPrice, sum(ti.discount) discount,
+        sum(ti.sub_total) subtotal, sum(ti.tax_amount) taxAmount, sum(ti.service_charge_amount) scAmount, sum(ti.total_price) totalSale, sum(ti.item_quantity) totalFractionQty, sum(ti.item_count) totalQty
+        FROM ticket AS t, ticket_item AS ti
+	    WHERE t.closing_date BETWEEN #{startDate} AND #{endDate}  AND t.paid='true' AND t.voided='false' AND ti.is_return='true' AND ti.return_item_id!=0 AND t.id=ti.ticket_id
+	    <if test="categoryName != null "> AND ti.category_name=#{categoryName} </if>
+        GROUP By ticketId, productNo, productName, categoryName, beverage, itemPrice
         ORDER by categoryName, productNo
     </select>
     
     <select id="getModifier_Sales" parameterType="Map" resultType="com.floreantpos.model.mybatis.ProductSalesM">
     	SELECT tim.modifier_name AS productName, sum(tim.item_count) AS totalQty, sum(tim.subtotal_price) AS subtotal, sum(tim.tax_amount) AS taxAmount, sum(tim.modifier_service_charge) AS scAmount, 
-    	sum(tim.total_price) AS totalSale FROM ticket t INNER JOIN ticket_item ti ON (t.id=ti.ticket_id AND t.create_date BETWEEN #{startDate} AND #{endDate}  AND t.paid='true' ) INNER JOIN ticket_item_modifier tim ON ti.id=tim.ticket_item_id GROUP BY tim.modifier_name
+    		SUM(tim.total_price) AS totalSale FROM ticket t INNER JOIN ticket_item ti ON (t.id=ti.ticket_id AND t.create_date BETWEEN #{startDate} AND #{endDate}  AND t.paid='true' ) INNER JOIN ticket_item_modifier tim ON ti.id=tim.ticket_item_id GROUP BY tim.modifier_name
     </select>
     
     <select id="getOrder_Status" parameterType="Map" resultType="com.floreantpos.model.mybatis.OrderStatusReportM">
@@ -81,13 +97,37 @@
     	t.paid_amount, t.due_amount, t.service_charge, t.ticket_type, t.shift_id, t.terminal_id, t.owner_name, t.voided, t.paid, t.settled, t.void_by_user_name,
     	(CASE WHEN voided = 'true' THEN 'VOIDED' 
     		WHEN paid = 'true' THEN 'FINISH'
-    		WHEN settled = 'false' THEN 'STORE' END) AS status
+    		WHEN settled = 'false' THEN 'QUEUE'
+    		WHEN settled = 'true' AND paid = 'false' THEN 'STORE' 
+    		END) AS status
 		FROM ticket AS t
 	    WHERE t.create_date BETWEEN #{startDate} AND #{endDate}
 	    <if test="paid != null "> AND t.paid='true' AND t.voided='false' </if>
 	    <if test="voided != null"> AND t.voided='true' </if>
-	    <if test="store != null "> AND t.paid='false' AND t.voided='false' </if>
+	    <if test="queue != null "> AND t.paid='false' AND settled='false' AND t.voided='false' </if>
+	    <if test="store != null "> AND t.paid='false' AND settled='true' AND t.voided='false' </if>
 	    ORDER BY factdate ASC, id
+    </select> 
+    
+    <select id="getMember_Sales" parameterType="Map" resultType="com.floreantpos.model.mybatis.MemberSalesReportM">
+    	SELECT t.id, t.create_date::timestamp(0) AS factdate, t.closing_date::timestamp(0) AS closedate, t.number_of_guests, t.sub_total, t.total_discount, t.total_tax, t.total_price, t.item_qty,
+    	t.paid_amount, t.due_amount, t.service_charge, t.ticket_type, t.shift_id, t.terminal_id, t.owner_name, t.voided, t.paid, t.settled, t.void_by_user_name,
+    	c.name AS member_name, c.mobile_no AS member_mobile, 
+    	(CASE WHEN voided = 'true' THEN 'VOIDED' 
+    		WHEN paid = 'true' THEN 'FINISH'
+    		WHEN settled = 'false' THEN 'QUEUE'
+    		WHEN settled = 'true' AND paid = 'false' THEN 'STORE' 
+    		END) AS status
+		FROM ticket AS t, customer AS c
+	    WHERE t.create_date BETWEEN #{startDate} AND #{endDate} AND t.customer_id=c.auto_id 
+	    <if test="paid != null "> AND t.paid='true' AND t.voided='false' </if>
+	    <if test="voided != null"> AND t.voided='true' </if>
+	    <if test="queue != null "> AND t.paid='false' AND settled='false' AND t.voided='false' </if>
+	    <if test="store != null "> AND t.paid='false' AND settled='true' AND t.voided='false' </if>
+	    <if test="MemberName != null"> 
+	    	<bind name="pattern" value="'%' + MemberName + '%'" />AND (c.name LIKE #{pattern} OR c.mobile_no LIKE #{pattern}) 
+	    </if>
+	    ORDER BY factdate ASC, closedate ASC, member_name
     </select>  
     
     <select id="getCategory_List" parameterType="Map" resultType="java.lang.String">

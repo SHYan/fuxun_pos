@@ -201,10 +201,10 @@ public class ReceiptPrintService {
 			printProperties.setPrintCookingInstructions(false);
 			HashMap map = populateTicketProperties(ticket, printProperties, null);
 
-			List<TerminalPrinters> terminalPrinters = TerminalPrintersDAO.getInstance().findTerminalPrinters();
+			//List<TerminalPrinters> terminalPrinters = TerminalPrintersDAO.getInstance().findTerminalPrinters();
 
 			List<Printer> activeReceiptPrinters = new ArrayList<Printer>();
-
+/*
 			for (TerminalPrinters terminalPrinters2 : terminalPrinters) {
 
 				int printerType = terminalPrinters2.getVirtualPrinter().getType();
@@ -215,7 +215,7 @@ public class ReceiptPrintService {
 					activeReceiptPrinters.add(printer);
 				}
 			}
-
+*/
 			if (activeReceiptPrinters == null || activeReceiptPrinters.isEmpty()) {
 
 				JasperPrint jasperPrint = createPrint(ticket, map, null);
@@ -256,21 +256,17 @@ public class ReceiptPrintService {
 			map.put("copyType", copyType); //$NON-NLS-1$
 			map.put("cardPayment", true); //$NON-NLS-1$
 
-			List<TerminalPrinters> terminalPrinters = TerminalPrintersDAO.getInstance().findTerminalPrinters();
-
+			//List<TerminalPrinters> terminalPrinters = TerminalPrintersDAO.getInstance().findTerminalPrinters();
 			List<Printer> activeReceiptPrinters = new ArrayList<Printer>();
-
+/*
 			for (TerminalPrinters terminalPrinters2 : terminalPrinters) {
-
 				int printerType = terminalPrinters2.getVirtualPrinter().getType();
-
 				if (printerType == VirtualPrinter.RECEIPT) {
-
 					Printer printer = new Printer(terminalPrinters2.getVirtualPrinter(), terminalPrinters2.getPrinterName());
 					activeReceiptPrinters.add(printer);
 				}
 			}
-
+*/
 			if (activeReceiptPrinters == null || activeReceiptPrinters.isEmpty()) {
 
 				JasperPrint jasperPrint = createPrint(ticket, map, null);
@@ -280,15 +276,12 @@ public class ReceiptPrintService {
 
 			}
 			else {
-
 				for (Printer activeReceiptPrinter : activeReceiptPrinters) {
-
 					JasperPrint jasperPrint = createPrint(ticket, map, null);
 					jasperPrint.setName(ORDER_ + ticket.getId() + activeReceiptPrinter.getDeviceName());
 					jasperPrint.setProperty(PROP_PRINTER_NAME, activeReceiptPrinter.getDeviceName());
 					printQuitely(jasperPrint);
 				}
-
 			}
 		} catch (Exception e) {
 			logger.error(com.floreantpos.POSConstants.PRINT_ERROR, e);
@@ -356,10 +349,43 @@ public class ReceiptPrintService {
 			}
 			else {
 				if(TerminalConfig.isPrintReceipt()) {
+					List<TerminalPrinters> terminalPrinters = TerminalPrintersDAO.getInstance().findTerminalPrinters();
+
+					List<Printer> activeReceiptPrinters = new ArrayList<Printer>();
+
+					for (TerminalPrinters terminalPrinters2 : terminalPrinters) {
+
+						int printerType = terminalPrinters2.getVirtualPrinter().getType();
+
+						if (printerType == VirtualPrinter.RECEIPT) {
+
+							Printer printer = new Printer(terminalPrinters2.getVirtualPrinter(), terminalPrinters2.getPrinterName());
+							activeReceiptPrinters.add(printer);
+						}
+					}
+
+					if (activeReceiptPrinters == null || activeReceiptPrinters.isEmpty()) {
+						JasperPrint jasperPrint = createPrint(ticket, map, transaction);
+						jasperPrint.setName("Ticket-" + ticket.getId()); //$NON-NLS-1$
+						jasperPrint.setProperty(PROP_PRINTER_NAME, Application.getPrinters().getReceiptPrinter());
+						printQuitely(jasperPrint);
+					}
+					else {
+
+						for (Printer activeReceiptPrinter : activeReceiptPrinters) {
+							JasperPrint jasperPrint = createPrint(ticket, map, transaction);
+							jasperPrint.setName("Ticket-" + ticket.getId()); //$NON-NLS-1$
+							jasperPrint.setProperty(PROP_PRINTER_NAME, activeReceiptPrinter.getDeviceName());
+							printQuitely(jasperPrint);
+						}
+
+					}
+					/*
 					JasperPrint jasperPrint = createPrint(ticket, map, transaction);
 					jasperPrint.setName("Ticket-" + ticket.getId()); //$NON-NLS-1$
 					jasperPrint.setProperty(PROP_PRINTER_NAME, Application.getPrinters().getReceiptPrinter());
 					printQuitely(jasperPrint);
+					*/
 					//logger.info("print receipt");
 				}
 				//else{logger.info("no print receipt");}
@@ -1008,7 +1034,11 @@ public class ReceiptPrintService {
 		map.put("ticketHeader", ticketHeaderBuilder.toString()); //$NON-NLS-1$
 		map.put(SERVER_NAME, POSConstants.RECEIPT_REPORT_SERVER_LABEL + ticket.getServerName());
 		map.put(REPORT_DATE, Messages.getString("ReceiptPrintService.119") + reportDateFormat.format(new Date())); //$NON-NLS-1$
-
+		try {
+			map.put("guest", "Guest : "+TicketDAO.getInstance().get(ticket.getTicketId()).getNumberOfGuests());
+		}catch(Exception e) {
+			
+		}
 		//map.put("ticketHeader", Messages.getString("ReceiptPrintService.10")); //$NON-NLS-1$ //$NON-NLS-2$
 		String ticketType = ticket.getTicketType();
 		if (StringUtils.isNotEmpty(ticketType)) {
@@ -1063,6 +1093,11 @@ public class ReceiptPrintService {
 		map.put("printerName", "Printer Name: " + virtualPrinterName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if(ticket.getWaiter()!=null)
 			map.put("waiter", "Waiter : "+ticket.getWaiter());
+		try {
+			map.put("guest", "Guest : "+TicketDAO.getInstance().get(ticket.getTicketId()).getNumberOfGuests());
+		}catch(Exception e) {
+			
+		}
 		//Diana - 19/7/2018
 		String uiFont = TerminalConfig.getUiDefaultFont();
 		map.put("uiFont", uiFont);

@@ -98,7 +98,8 @@ public class ShopTableButton extends PosButton {
 		if(ticketIdAsString!=null && !ticketIdAsString.equals("")) {
 			int tId = shopTable.getTicketId();
 			Ticket tmpTicket = TicketDAO.getInstance().get(tId);
-			ticketCreateTime = tmpTicket.getCreateDate();
+			if(tmpTicket!=null)
+				ticketCreateTime = tmpTicket.getCreateDate();
 		}
 		if (StringUtils.isNotEmpty(ticketIdAsString) && ticketCreateTime == null) {
 			ticketIdAsString = "<br>Chk#" + ticketIdAsString;

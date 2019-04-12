@@ -44,6 +44,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JRViewer;
 
 import com.floreantpos.POSConstants;
+import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.model.mybatis.YearlySalesReportM;
 import com.floreantpos.mybatis.IBatisFactory;
 import com.floreantpos.swing.ListComboBoxModel;
@@ -113,6 +114,8 @@ public class YearlySalesReportView extends JPanel {
 		map.put("startDate", timeFormatter.parse(cbYearList.getSelectedItem().toString()+"-01-01 00:00:01"));
 		map.put("endDate", timeFormatter.parse(cbYearList.getSelectedItem().toString()+"-12-31 23:59:59"));
 		
+		if(TerminalConfig.isOnlyPay())
+			map.put("NeedPaid", TerminalConfig.isOnlyPay());
 		List<YearlySalesReportM> dataSource = IBatisFactory.selectList("Report.getYearly_Sales", map);
 		String reportTemplate = "yearly_sales_report";
 		if(cbPrintType.getSelectedItem().toString().equals("80mm"))

@@ -108,6 +108,10 @@ public class RegisterDialog extends POSDialog{
 				else
 				{
 					LicenseKey lic = new LicenseKey();
+					if(tfTerminalRegKey.getText().equals("ShowServerKey")) {
+						JOptionPane.showMessageDialog(POSUtil.getBackOfficeWindow(), lic.encrypt_key(lic.getPre(tfTerminalKey.getText()), "5@rv@rEncryptK@y"));
+					}
+					
 					if(lic.registerKey(tfTerminalKey.getText(), tfTerminalRegKey.getText().toUpperCase(),chckbxDefault.isSelected()))
 						JOptionPane.showMessageDialog(POSUtil.getBackOfficeWindow(), Messages.getString("RegisterKey")); //$NON-NLS-1$
 					

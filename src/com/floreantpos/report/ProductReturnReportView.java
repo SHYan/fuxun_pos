@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,11 +31,14 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jdesktop.swingx.JXDatePicker;
 
 import net.miginfocom.swing.MigLayout;
@@ -45,14 +49,17 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JRViewer;
 
 import com.floreantpos.POSConstants;
-import com.floreantpos.model.mybatis.OrderStatusReportM;
+import com.floreantpos.model.mybatis.DailySalesReportM;
+import com.floreantpos.model.mybatis.ProductSalesM;
 import com.floreantpos.model.util.DateUtil;
 import com.floreantpos.mybatis.IBatisFactory;
 import com.floreantpos.swing.ListComboBoxModel;
 import com.floreantpos.ui.dialog.POSMessageDialog;
 import com.floreantpos.ui.util.UiUtil;
 
-public class OrderStatusReportView extends JPanel {
+public class ProductReturnReportView extends JPanel {
+	Log logger = LogFactory.getLog(ProductReturnReportView.class);
+	
 	private SimpleDateFormat fullDateFormatter = new SimpleDateFormat("yyyy MMM dd, hh:mm a"); //$NON-NLS-1$
 	private SimpleDateFormat timeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
 
@@ -60,29 +67,30 @@ public class OrderStatusReportView extends JPanel {
 	private JXDatePicker dpEndDate;
 	private JXDatePicker dpStartDate;
 	
-	private JSpinner dpStartTime;
-	private JSpinner dpEndTime;
+	private JSpinner dpStartTime;//
+	private JSpinner dpEndTime;//
 	
 	private JLabel lblFromDate;
 	private JLabel lblToDate;
 	
 	private JButton btnGo = new JButton(com.floreantpos.POSConstants.GO);
 	private JPanel reportContainer;
-	private JComboBox cbPrintType, cbOrderType;
+	private JComboBox cbPrintType, categoryListBox;
 	
-	public OrderStatusReportView() {
+	public ProductReturnReportView() {
 		super(new BorderLayout());
 		
 		JPanel topPanel = new JPanel(new MigLayout());
 		
 		lblFromDate = new JLabel(com.floreantpos.POSConstants.START_DATE + ":");
 		dpStartDate = UiUtil.getCurrentMonthStart();
+		
 
 		lblToDate = new JLabel(com.floreantpos.POSConstants.END_DATE + ":");
 		dpEndDate = UiUtil.getCurrentMonthEnd();
 		
-		dpStartTime = UiUtil.getTimeSpinner("start");
-		dpEndTime = UiUtil.getTimeSpinner("end");
+		dpStartTime = UiUtil.getTimeSpinner("start");//
+		dpEndTime = UiUtil.getTimeSpinner("end");//
 		
 		topPanel.add(lblFromDate);
 		topPanel.add(dpStartDate);
@@ -91,19 +99,22 @@ public class OrderStatusReportView extends JPanel {
 		topPanel.add(dpEndDate);
 		topPanel.add(dpEndTime, "wrap");//
 		
-		topPanel.add(new JLabel("Order Type :"));
-		cbOrderType = new JComboBox();
-		cbOrderType.setPreferredSize(new Dimension(115, 0));
-		cbOrderType.setModel(new ListComboBoxModel(Arrays.asList("ALL", "FINISH", "VOID", "STORE", "QUEUE")));
-		topPanel.add(cbOrderType);
+		topPanel.add(new JLabel("Category :"));
+		List<String> cateList = IBatisFactory.selectList("Report.getCategory_List", null);
+		cateList.add(0, "All");
+		
+		categoryListBox = new JComboBox();
+		categoryListBox.setPreferredSize(new Dimension(115, 0));
+		categoryListBox.setModel(new ListComboBoxModel(cateList));
+		topPanel.add(categoryListBox);
 		
 		topPanel.add(new JLabel("Report Template :"));
 		cbPrintType = new JComboBox();
 		cbPrintType.setPreferredSize(new Dimension(115, 0));
 		cbPrintType.setModel(new ListComboBoxModel(Arrays.asList("A4", "80mm")));
-		topPanel.add(cbPrintType);
 		
-		topPanel.add(btnGo, "wrap"); //$NON-NLS-1$
+		topPanel.add(cbPrintType);
+		topPanel.add(btnGo, "wrap");
 		add(topPanel, BorderLayout.NORTH);
 		
 		JPanel centerPanel = new JPanel(new BorderLayout());
@@ -121,7 +132,7 @@ public class OrderStatusReportView extends JPanel {
 				try {
 					viewReport();
 				} catch (Exception e1) {
-					POSMessageDialog.showError(OrderStatusReportView.this, POSConstants.ERROR_MESSAGE, e1);
+					POSMessageDialog.showError(ProductReturnReportView.this, POSConstants.ERROR_MESSAGE, e1);
 				}
 			}
 			
@@ -149,6 +160,7 @@ public class OrderStatusReportView extends JPanel {
 		fromDate = DateUtil.startOfDay(fromDate, sh, sm );
 		toDate = DateUtil.endOfDay(toDate, eh, em);
 		
+		
 		HashMap map = new HashMap();
 		ReportUtil.populateRestaurantProperties(map);
 		map.put("reportTime", fullDateFormatter.format(new Date())); //$NON-NLS-1$
@@ -160,22 +172,24 @@ public class OrderStatusReportView extends JPanel {
 		
 		map.put("periodString", timeFormatter.format(fromDate)+"~"+timeFormatter.format(toDate));
 		
+		/*
+		DailySalesReportM sales = (DailySalesReportM) IBatisFactory.selectOneSQL("Report.getSales", map);
+		if(sales != null) {
+			map.put("serviceCharge", sales.getService_charge_subtotal());
+			map.put("totalTax", sales.getTax_subtotal());
+			map.put("totalDiscount", sales.getDiscount_subtotal());
+			map.put("totalSales", sales.getSale());
+		}
+		*/
 		
-		if(cbOrderType.getSelectedItem().toString().equals("FINISH"))
-			map.put("paid", true);
-		else if(cbOrderType.getSelectedItem().toString().equals("VOID")) 
-			 map.put("voided", true);
-		else if(cbOrderType.getSelectedItem().toString().equals("STORE"))
-			map.put("store", true);
-		else if(cbOrderType.getSelectedItem().toString().equals("QUEUE"))
-			map.put("queue", true);
-		
-		List<OrderStatusReportM> dataSource = IBatisFactory.selectList("Report.getOrder_Status", map);
-		String reportTemplate = "order_status_report";
-		
-			
+		if(categoryListBox.getSelectedItem().toString().equals("All"))
+			map.remove("categoryName");
+		else map.put("categoryName", categoryListBox.getSelectedItem().toString());
+		List<ProductSalesM> dataSource = IBatisFactory.selectList("Report.getProduct_Return", map);
+		String reportTemplate = "product_return_report";
 		if(cbPrintType.getSelectedItem().toString().equals("80mm"))
-			reportTemplate = "order_status_report_80mm";
+			reportTemplate = "product_return_report_80mm";
+		
 		JasperReport masterReport = ReportUtil.getReport(reportTemplate);
 		JasperPrint print = JasperFillManager.fillReport(masterReport, map, new JRBeanCollectionDataSource(dataSource));
 		JRViewer viewer = new JRViewer(print);

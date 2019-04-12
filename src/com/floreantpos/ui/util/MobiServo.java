@@ -61,7 +61,7 @@ public class MobiServo {
 	}
 	
 	public void newTicket() {
-		logger.debug("MobiServo : newTicket(");
+		//logger.debug("MobiServo : newTicket(");
 		
 		Application application = Application.getInstance();
 		writeTmp();
@@ -150,7 +150,7 @@ public class MobiServo {
 			dtv.setOrderType(ticket.getOrderType());
 			dtv.redererTables();
 		}
-		else logger.debug("Table Selected view is null");
+		//else logger.debug("Table Selected view is null");
 	}
 	
 }

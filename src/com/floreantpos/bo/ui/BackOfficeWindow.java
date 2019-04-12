@@ -61,6 +61,7 @@ import com.floreantpos.bo.actions.ItemExplorerAction;
 import com.floreantpos.bo.actions.JournalReportAction;
 import com.floreantpos.bo.actions.KeyStatisticsSalesReportAction;
 import com.floreantpos.bo.actions.LanguageSelectionAction;
+import com.floreantpos.bo.actions.MemberSalesReportAction;
 import com.floreantpos.bo.actions.MenuItemSizeExplorerAction;
 import com.floreantpos.bo.actions.MenuUsageReportAction;
 import com.floreantpos.bo.actions.ModifierExplorerAction;
@@ -75,6 +76,7 @@ import com.floreantpos.bo.actions.PayrollReportAction;
 import com.floreantpos.bo.actions.PizzaCrustExplorerAction;
 import com.floreantpos.bo.actions.PizzaItemExplorerAction;
 import com.floreantpos.bo.actions.PizzaModifierExplorerAction;
+import com.floreantpos.bo.actions.ProductReturnReportAction;
 import com.floreantpos.bo.actions.ProductSalesReportAction;
 import com.floreantpos.bo.actions.ProfitLossReportAction;
 import com.floreantpos.bo.actions.PurchaseReportAction;
@@ -127,6 +129,7 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 	private JMenu floorPlanMenu;
 	private static BackOfficeWindow instance;
 	private JMenuBar menuBar;
+	Set<UserPermission> permissions = null;
 
 	/** Creates new form BackOfficeWindow */
 	public BackOfficeWindow() {
@@ -170,8 +173,6 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		User user = Application.getCurrentUser();
 		UserType newUserType = user.getType();
 
-		Set<UserPermission> permissions = null;
-
 		if (newUserType != null) {
 			permissions = newUserType.getPermissions();
 		}
@@ -206,7 +207,7 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		}
 
 		JMenu helpMenu = new JMenu(Messages.getString("BackOfficeWindow.0")); //$NON-NLS-1$
-		//helpMenu.add(new UpdateAction());
+		helpMenu.add(new UpdateAction());
 		helpMenu.add(new AboutAction());
 		menuBar.add(helpMenu);
 
@@ -217,20 +218,26 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		JMenu reportMenu = new JMenu(com.floreantpos.POSConstants.REPORTS);
 		reportMenu.add(new YearlyReportAction());
 		reportMenu.add(new DailySalesReportAction());
-		reportMenu.add(new OrderStatusReportAction());
+		if (permissions != null && permissions.contains(UserPermission.REPORT_ORDER_STATUS)) {
+			reportMenu.add(new OrderStatusReportAction());	
+		}
 		reportMenu.add(new ProductSalesReportAction());
+		if (permissions != null && permissions.contains(UserPermission.REPORT_PRODUCT_RETURN)) {
+			reportMenu.add(new ProductReturnReportAction());	
+		}
+		reportMenu.add(new MemberSalesReportAction());
 		reportMenu.add(new ModifierSalesReportAction());
 		reportMenu.add(new HourlyLaborReportAction());
-		
 		reportMenu.add(new EmployeeAttendanceAction());
+		reportMenu.add(new CreditCardReportAction());
+		reportMenu.add(new CustomPaymentReportAction());
+		
 		/*
 		reportMenu.add(new SalesReportAction());
 		reportMenu.add(new OpenTicketSummaryReportAction());
 		reportMenu.add(new PayrollReportAction());
 		reportMenu.add(new KeyStatisticsSalesReportAction());
 		reportMenu.add(new SalesAnalysisReportAction());
-		reportMenu.add(new CreditCardReportAction());
-		reportMenu.add(new CustomPaymentReportAction());
 		reportMenu.add(new MenuUsageReportAction());
 		reportMenu.add(new ServerProductivityReportAction());
 		reportMenu.add(new JournalReportAction());
@@ -244,7 +251,7 @@ public class BackOfficeWindow extends javax.swing.JFrame {
 		reportMenu.add(new StockAdjustReportAction());
 		reportMenu.add(new PayoutReportAction());
 		reportMenu.add(new ProfitLossReportAction());
-		reportMenu.add(new SaleSummaryAction());
+		//reportMenu.add(new SaleSummaryAction());
 		reportMenu.add(new TicketExplorerAction());
 		reportMenu.add(new AttendanceHistoryAction());
 		menuBar.add(reportMenu);

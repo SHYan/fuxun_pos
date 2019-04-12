@@ -111,7 +111,7 @@ public class TerminalConfig {
 	private static final String PC_NO_TAX = "pc_no_tax";
 	private static final String SET_TAX = "set_tax";
 	private static final String PRINT1Z1C = "print_1Z1C";
-	
+	private static final String ONLYPAYINREPORT = "only_pay_in_report"; 
 	private static final String USE_MOBI = "use_mobi";
 	private static final String DINE_IN_TIME_LIMIT = "dine_in_time_limit";
 	private static final String LAST_MOBI_UPLOAD = "last_mobi_upload";
@@ -230,7 +230,7 @@ public class TerminalConfig {
 	}
 
 	public static boolean isAutoLogoffEnable() {
-		return config.getBoolean(AUTO_LOGOFF_ENABLE, true);
+		return config.getBoolean(AUTO_LOGOFF_ENABLE, false);
 	}
 
 	public static void setAutoLogoffEnable(boolean enable) {
@@ -253,7 +253,7 @@ public class TerminalConfig {
 		return config.getInt(DINE_IN_TIME_LIMIT, 0);
 	}
 	public static boolean isDineInTimeLimitEnable() {
-		return config.getBoolean(DINE_IN_TIME_LIMIT_ENABLE, true);
+		return config.getBoolean(DINE_IN_TIME_LIMIT_ENABLE, false);
 	}
 
 	public static void setDineInTimeLimitEnable(boolean enable) {
@@ -281,7 +281,7 @@ public class TerminalConfig {
 	}
 
 	public static boolean isShowDbConfigureButton() {
-		return config.getBoolean(SHOW_DB_CONFIGURATION, true);
+		return config.getBoolean(SHOW_DB_CONFIGURATION, false);
 	}
 
 	public static void setShowBarcodeOnReceipt(boolean show) {
@@ -313,6 +313,13 @@ public class TerminalConfig {
 
 	public static boolean is1Z1C() {
 		return config.getBoolean(PRINT1Z1C, false);
+	}
+	public static void setOnlyPay(boolean group) {
+		config.setProperty(ONLYPAYINREPORT, group);
+	}
+
+	public static boolean isOnlyPay() {
+		return config.getBoolean(ONLYPAYINREPORT, true);
 	}
 
 	public static boolean isEnabledMultiCurrency() {
@@ -582,7 +589,7 @@ public class TerminalConfig {
 	}
 
 	public static boolean isAllowedQuickMaintenance() {
-		return config.getBoolean(ALLOW_QUICK_MAINTENANCE, true);
+		return config.getBoolean(ALLOW_QUICK_MAINTENANCE, false);
 	}
 
 	public static void setKDSTicketsPerPage(int value) {
@@ -598,7 +605,7 @@ public class TerminalConfig {
 		config.setProperty(ALLOW_OPEN_PRICE, selected);
 	}
 	public static boolean isAllowOpenPrice() {
-		return config.getBoolean(ALLOW_OPEN_PRICE, true);
+		return config.getBoolean(ALLOW_OPEN_PRICE, false);
 	}
 	
 	//Diana

@@ -29,6 +29,8 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.hibernate.Session;
+
 import com.floreantpos.IconFactory;
 import com.floreantpos.Messages;
 import com.floreantpos.POSConstants;
@@ -291,14 +293,17 @@ public class VoidTicketDialog extends POSDialog {
 			ticket.setVoidedBy(Application.getCurrentUser());
 
 			TicketDAO dao = new TicketDAO();
+			/*
 			if (ticket.getPaidAmount() == 0 && !printedToKitchen()) {
 				List list = new ArrayList<>();
 				list.add(ticket);
 				dao.deleteTickets(list);
 			}
 			else {
-				dao.voidTicket(ticket);
-			}
+			*/
+				//dao.voidTicket(ticket);
+			//}
+			dao.voidTicket(ticket, printedToKitchen());
 
 			try {
 				String title = "- " + Messages.getString("VoidTicketDialog.0"); //$NON-NLS-1$ //$NON-NLS-2$

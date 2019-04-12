@@ -69,6 +69,7 @@ import com.floreantpos.model.TicketItem;
 import com.floreantpos.model.User;
 import com.floreantpos.model.UserPermission;
 import com.floreantpos.model.UserType;
+import com.floreantpos.model.dao.ShopTableStatusDAO;
 import com.floreantpos.model.dao.TicketDAO;
 import com.floreantpos.services.TicketService;
 import com.floreantpos.swing.OrderTypeButton;
@@ -543,10 +544,8 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 					if (selectedTicket == null) {
 						return;
 					}
-
 					// initialize the ticket.
 					Ticket ticket = TicketDAO.getInstance().loadFullTicket(selectedTicket.getId());
-					
 					if(ticket.getClosingDate() == null){ //Diana - 2018-08-07 - prevent split bill on closed bill
 						if(merge_arr[0] == null){
 							merge_arr[0]= ticket;
@@ -563,7 +562,7 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 						if(merge_arr[0] != null && merge_arr[1] != null){
 						//	System.out.print(merge_arr[0].getId()+" "+merge_arr[1].getId());
 							if(merge_arr[0].getId() == merge_arr[1].getId()){
-								POSMessageDialog.showMessage("You cannot merge same ticket. Select Ticket is "+merge_arr[0].getId()+".");
+								POSMessageDialog.showMessage("You cannot merge same ticket. Please select again.");
 								merge_arr[1] = null;
 							}else{
 								int option = POSMessageDialog.showYesNoQuestionDialog(Application.getPosWindow(),
@@ -583,9 +582,11 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 									ticket.setServiceCharge(0.0);
 									ticket.setSubtotalAmount(0.0);
 									ticket.setTaxAmount(0.0);
+									ticket.setItemQty(0.0);
 									ticket.setTotalAmount(0.0);
 									ticket.setDiscountAmount(0.0);
 									ticket.setDueAmount(0.0);
+									ticket.setPaidAmount(0.0);
 									ticket.setClosed(true);
 									ticket.setPaid(true);
 									List<TicketItem>  ticketitems = ticket.getTicketItems();
@@ -593,8 +594,8 @@ public class SwitchboardView extends ViewPanel implements ActionListener, ITicke
 									    item.setTicket(merge_arr[0]);
 									}
 									try{
+										ShopTableStatusDAO.getInstance().removeTicketFromShopTableStatus(ticket, null);
 										TicketDAO.getInstance().saveOrUpdate(ticket);
-										//merge_arr = new Ticket[]{null,null};
 									}
 									catch(Exception ex){
 										POSMessageDialog.showMessage("You cannot merge same ticket. Select Ticket is "+merge_arr[0].getId()+".");	

@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="77"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -143,7 +143,7 @@
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement key="staticText-2" positionType="Float" x="0" y="146" width="124" height="15"/>
+				<reportElement key="staticText-2" positionType="Float" x="0" y="146" width="126" height="15"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Zawgyi-One" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
@@ -163,7 +163,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font fontName="Zawgyi-One" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{subtotalHeaderText}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["AMOUNT"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-16" x="0" y="80" width="195" height="15" isRemoveLineWhenBlank="true"/>
@@ -327,8 +327,8 @@
 	<detail>
 		<band height="12" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField" x="0" y="0" width="124" height="12" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[($F{itemQty}.equals("0") ? false : true)]]></printWhenExpression>
+				<reportElement key="textField" x="0" y="0" width="126" height="12" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[((Integer.parseInt($F{itemSubtotal}.replace(",", "")) > 0) ? true : false)]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -343,7 +343,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField" x="148" y="0" width="47" height="12" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[($F{itemQty}.equals("0") ? false : true)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[((Integer.parseInt($F{itemSubtotal}.replace(",", "")) > 0) ? true : false)]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -358,7 +358,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField" x="126" y="0" width="20" height="12">
-					<printWhenExpression><![CDATA[($F{itemQty}.equals("0") ? false : true)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[((Integer.parseInt($F{itemSubtotal}.replace(",", "")) > 0) ? true : false)]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

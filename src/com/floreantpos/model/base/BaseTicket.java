@@ -1092,6 +1092,7 @@ public abstract class BaseTicket  implements Comparable, Serializable {
 			tableNames = new ArrayList<String>();
 			ShopTableDAO st = new ShopTableDAO();
 			List<ShopTable> tables = st.getByNumbers(getTableNumbers());
+			if(tables==null) return null;
 			for (ShopTable shopTable : tables) {
 				tableNames.add(shopTable.getDescOrNum());
 			}

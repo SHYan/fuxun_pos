@@ -133,7 +133,7 @@ public class TicketViewerTableModel extends AbstractTableModel {
 			return;
 		}
 	
-			System.out.print(openPrice);
+			//System.out.print(openPrice);
 			ticketItem.setUnitPrice(openPrice);
 			
 			ticketItems.set(pos, ticketItem);
@@ -566,13 +566,14 @@ public class TicketViewerTableModel extends AbstractTableModel {
 		
 		//cloneticketItem.setId(0);
 		cloneticketItem.setItemCount(ticketItem.getItemCount() * (-1));
+		cloneticketItem.setItemQuantity(ticketItem.getItemQuantity() * (-1));
 		cloneticketItem.setUnitPrice(unitprice);
 		cloneticketItem.setName(ticketItem.getName());
 		cloneticketItem.setGroupName(ticketItem.getGroupName());
 		cloneticketItem.setCategoryName(ticketItem.getCategoryName());
 		cloneticketItem.setItemId(ticketItem.getItemId());
 		cloneticketItem.setTaxRate(ticketItem.getTaxRate());
-		cloneticketItem.setStockAmountAdjusted(true);
+		//cloneticketItem.setStockAmountAdjusted(true);
 		cloneticketItem.setBeverage(ticketItem.isBeverage());
 		cloneticketItem.setShouldPrintToKitchen(ticketItem.isShouldPrintToKitchen());
 		cloneticketItem.setPrinterGroup(ticketItem.getPrinterGroup());

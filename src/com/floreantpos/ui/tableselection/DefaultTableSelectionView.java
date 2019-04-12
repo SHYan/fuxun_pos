@@ -409,7 +409,7 @@ public class DefaultTableSelectionView extends TableSelector implements ActionLi
 			return;
 		}
 		
-		if (shopTableStatus.hasMultipleTickets() && !btnUnGroup.isSelected()) {
+		if (shopTableStatus!=null && shopTableStatus.hasMultipleTickets() && !btnUnGroup.isSelected()) {
 			if (isCreateNewTicket()) {
 				showSplitTickets(shopTableStatus, shopTable);
 			}

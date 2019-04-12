@@ -132,6 +132,7 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 	private com.floreantpos.swing.PosButton btnHold = new com.floreantpos.swing.PosButton(com.floreantpos.POSConstants.HOLD_BUTTON_TEXT);
 	private com.floreantpos.swing.PosButton btnDone = new com.floreantpos.swing.PosButton(com.floreantpos.POSConstants.SAVE_BUTTON_TEXT);
 	private com.floreantpos.swing.PosButton btnSend = new com.floreantpos.swing.PosButton(com.floreantpos.POSConstants.SEND_TO_KITCHEN);
+	private com.floreantpos.swing.PosButton btnClose = new com.floreantpos.swing.PosButton(com.floreantpos.POSConstants.CLOSE_ORDER_BUTTON_TEXT);
 	private com.floreantpos.swing.PosButton btnCancel = new com.floreantpos.swing.PosButton(POSConstants.CANCEL_BUTTON_TEXT);
 	private com.floreantpos.swing.PosButton btnGuestNo = new com.floreantpos.swing.PosButton(POSConstants.GUEST_NO_BUTTON_TEXT);
 	private com.floreantpos.swing.PosButton btnSeatNo = new com.floreantpos.swing.PosButton("SEAT:");
@@ -284,6 +285,23 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 				try {
 
 					ticketView.doFinishOrder();
+
+				} catch (StaleStateException x) {
+					POSMessageDialog.showMessageDialogWithReloadButton(POSUtil.getFocusedWindow(), getInstance());
+				} catch (PosException x) {
+					POSMessageDialog.showError(POSUtil.getFocusedWindow(),x.getMessage());
+				} catch (Exception x) {
+					POSMessageDialog.showError(Application.getPosWindow(), POSConstants.ERROR_MESSAGE, x);
+				}
+			}
+		});
+		
+		btnClose.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+
+					ticketView.doCloseOrder();
 
 				} catch (StaleStateException x) {
 					POSMessageDialog.showMessageDialogWithReloadButton(POSUtil.getFocusedWindow(), getInstance());
@@ -452,6 +470,7 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 		actionButtonPanel.add(btnHold);
 		actionButtonPanel.add(btnSend);
 		actionButtonPanel.add(btnCancel);
+		actionButtonPanel.add(btnClose);
 		actionButtonPanel.add(btnDone);
 
 		btnCookingInstruction.setEnabled(false);
@@ -834,6 +853,7 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 			OrderType type = currentTicket.getOrderType();
 
 			btnDone.setVisible(!type.isPrepaid());
+			btnClose.setVisible(type.isPrepaid());
 			btnSend.setEnabled(type.isShouldPrintToKitchen());
 
 			if (!type.isAllowSeatBasedOrder()) {
@@ -955,6 +975,7 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 
 	private void setHideButtonForRetailView() {
 		btnDone.setVisible(false);
+		btnClose.setVisible(true);
 		btnCancel.setVisible(false);
 		btnDeliveryInfo.setVisible(false);
 		btnDiscount.setVisible(false);
@@ -967,6 +988,7 @@ public class OrderView extends ViewPanel implements PaymentListener, TicketEditL
 
 	private void setVisibleButtonForOrderView() {
 		btnDone.setVisible(true);
+		btnClose.setVisible(true);
 		btnCancel.setVisible(true);
 		btnDiscount.setVisible(true);
 		btnGuestNo.setVisible(true);

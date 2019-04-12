@@ -49,6 +49,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JRViewer;
 
 import com.floreantpos.POSConstants;
+import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.model.mybatis.DailySalesReportM;
 import com.floreantpos.model.mybatis.ProductSalesM;
 import com.floreantpos.model.util.DateUtil;
@@ -75,7 +76,7 @@ public class ProductSalesReportView extends JPanel {
 	
 	private JButton btnGo = new JButton(com.floreantpos.POSConstants.GO);
 	private JPanel reportContainer;
-	private JComboBox cbPrintType, categoryListBox;
+	private JComboBox cbPrintType, categoryListBox, cbSortBy;
 	
 	public ProductSalesReportView() {
 		super(new BorderLayout());
@@ -114,6 +115,13 @@ public class ProductSalesReportView extends JPanel {
 		cbPrintType.setModel(new ListComboBoxModel(Arrays.asList("A4", "80mm")));
 		
 		topPanel.add(cbPrintType);
+		
+		
+		topPanel.add(new JLabel("Sort By :"));
+		cbSortBy = new JComboBox();
+		cbSortBy.setPreferredSize(new Dimension(115, 0));
+		cbSortBy.setModel(new ListComboBoxModel(Arrays.asList("Category", "Sales", "Qty")));
+		topPanel.add(cbSortBy);
 		topPanel.add(btnGo, "wrap"); //$NON-NLS-1$
 		add(topPanel, BorderLayout.NORTH);
 		
@@ -165,7 +173,8 @@ public class ProductSalesReportView extends JPanel {
 		ReportUtil.populateRestaurantProperties(map);
 		map.put("reportTime", fullDateFormatter.format(new Date())); //$NON-NLS-1$
 		
-		
+		if(TerminalConfig.isOnlyPay())
+			map.put("NeedPaid", TerminalConfig.isOnlyPay());
 
 		map.put("startDate", fromDate); //$NON-NLS-1$
 		map.put("endDate", toDate); //$NON-NLS-1$
@@ -185,6 +194,15 @@ public class ProductSalesReportView extends JPanel {
 		if(categoryListBox.getSelectedItem().toString().equals("All"))
 			map.remove("categoryName");
 		else map.put("categoryName", categoryListBox.getSelectedItem().toString());
+		
+		if(cbSortBy.getSelectedItem().toString().equals("Sales")) {
+			map.put("orderBySales", "Sales");
+		}else if(cbSortBy.getSelectedItem().toString().equals("Qty")) {
+			map.put("orderByQty", "Qty");
+		}else {
+			map.put("orderByCategory", "Category");
+		}
+
 		List<ProductSalesM> dataSource = IBatisFactory.selectList("Report.getProduct_Sales", map);
 		String reportTemplate = "product_sales_report";
 		if(cbPrintType.getSelectedItem().toString().equals("80mm"))

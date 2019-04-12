@@ -102,7 +102,7 @@ public class PosTransactionService {
 			}
 
 			adjustTerminalBalance(transaction);
-
+			
 			session.update(terminal);
 			//session.saveOrUpdate(ticket);
 			TicketDAO.getInstance().saveOrUpdate(ticket, session);

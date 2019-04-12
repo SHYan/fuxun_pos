@@ -428,6 +428,10 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 	}
 
 	public void calculatePrice() {
+		if(getItemCount()<0 || getItemQuantity()<0) {
+			calculatePriceforReturn();
+			return;
+		}
 		priceIncludesTax = Application.getInstance().isPriceIncludesTax();
 		boolean isParcel = false;
 		if(getTicket().getTableNumbers()!=null && getTicket().getTableNames()!=null) {
@@ -467,6 +471,11 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 		setTotalAmountWithoutModifiers(NumberUtil.roundToTwoDigit(calculateTotal(false)));
 	}
 	
+	public double getNegativeValue(double val) {
+		if(val<0) return val;
+		else return ((-1)*val);
+	}
+	
 	//Diana - new function
 		public void calculatePriceforReturn() {
 			priceIncludesTax = Application.getInstance().isPriceIncludesTax();
@@ -496,19 +505,19 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 				}
 			}
 			
-			setSubtotalAmount((-1)*NumberUtil.roundToTwoDigit(calculateSubtotal(true)));
-			setSubtotalAmountWithoutModifiers((-1)*NumberUtil.roundToTwoDigit(calculateSubtotal(false)));
+			setSubtotalAmount(getNegativeValue(NumberUtil.roundToTwoDigit(calculateSubtotal(true))));
+			setSubtotalAmountWithoutModifiers(getNegativeValue(NumberUtil.roundToTwoDigit(calculateSubtotal(false))));
 			
-			setDiscountAmount((-1)*NumberUtil.roundToTwoDigit(calculateDiscount()));
-			setServiceChargeAmount(NumberUtil.roundToTwoDigit(calculateServiceCharge(getDiscountAmount(), isParcel)));
+			setDiscountAmount(getNegativeValue(NumberUtil.roundToTwoDigit(calculateDiscount())));
+			setServiceChargeAmount(getNegativeValue(NumberUtil.roundToTwoDigit(calculateServiceCharge(getDiscountAmount(), isParcel))));
 			
-			setTaxAmount(NumberUtil.roundToTwoDigit(calculateTax(true, isParcel)));
-			setTaxAmountWithoutModifiers(NumberUtil.roundToTwoDigit(calculateTax(false, isParcel)));
+			setTaxAmount(getNegativeValue(NumberUtil.roundToTwoDigit(calculateTax(true, isParcel))));
+			setTaxAmountWithoutModifiers(getNegativeValue(NumberUtil.roundToTwoDigit(calculateTax(false, isParcel))));
 			
 			
 			
-			setTotalAmount(NumberUtil.roundToTwoDigit(calculateTotal(true)));
-			setTotalAmountWithoutModifiers(NumberUtil.roundToTwoDigit(calculateTotal(false)));
+			setTotalAmount(getNegativeValue(NumberUtil.roundToTwoDigit(calculateTotal(true))));
+			setTotalAmountWithoutModifiers(getNegativeValue(NumberUtil.roundToTwoDigit(calculateTotal(false))));
 			
 		}
 
@@ -706,6 +715,7 @@ public class TicketItem extends BaseTicketItem implements ITicketItem {
 		if (maxDiscount != null) {
 			discount = maxDiscount.calculateDiscount();
 		}
+		if(getTicket().getDiscountAmount()>0) return getDiscountAmount();
 		return discount;
 	}
 

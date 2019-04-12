@@ -25,8 +25,11 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Vector;
 
@@ -78,7 +81,7 @@ public class TerminalConfigurationView extends ConfigurationView {
 	private JCheckBox cbChineseTranName = new JCheckBox(Messages.getString("TerminalConfigurationView.48")); //$NON-NLS-1$
 	//Diana - allow open price
 	private JCheckBox cbOpenPrice = new JCheckBox(Messages.getString("TerminalConfigurationView.49")); //$NON-NLS-1$
-	private JCheckBox cbPrintReceipt = new JCheckBox(Messages.getString("TerminalConfigurationView.50")); //$NON-NLS-1$
+	//private JCheckBox cbPrintReceipt = new JCheckBox(Messages.getString("TerminalConfigurationView.50")); //$NON-NLS-1$
 	
 	private JCheckBox cbFullscreenMode = new JCheckBox(Messages.getString("TerminalConfigurationView.3")); //$NON-NLS-1$
 	private JCheckBox cbUseSettlementPrompt = new JCheckBox(Messages.getString("TerminalConfigurationView.4")); //$NON-NLS-1$
@@ -86,8 +89,9 @@ public class TerminalConfigurationView extends ConfigurationView {
 	private JCheckBox cbShowBarCodeOnReceipt = new JCheckBox(Messages.getString("TerminalConfigurationView.21")); //$NON-NLS-1$
 	private JCheckBox cbGroupKitchenReceiptItems = new JCheckBox("Group by Categories in kitchen Receipt");
 	private JCheckBox cb1Z1C = new JCheckBox("1Z1C");
+	private JCheckBox cbOnlyPay = new JCheckBox("Only Paid Order In Report");
 	private JCheckBox chkEnabledMultiCurrency = new JCheckBox("Enable multi currency");
-	private JCheckBox chkAllowToDelPrintedItem = new JCheckBox("Allow to delete printed ticket item");
+	//private JCheckBox chkAllowToDelPrintedItem = new JCheckBox("Allow to delete printed ticket item");
 	private JCheckBox chkAllowQuickMaintenance = new JCheckBox("Allow quick maintenance");
 	private JCheckBox chkModifierCannotExceedMaxLimit = new JCheckBox("Allow adding modifier when it reaches max limit");
 	
@@ -187,13 +191,14 @@ public class TerminalConfigurationView extends ConfigurationView {
 		contentPanel.add(use_mobi, "span 2"); //$NON-NLS-1$
 		contentPanel.add(cbGroupKitchenReceiptItems, "newline,span"); //$NON-NLS-1$
 		contentPanel.add(cb1Z1C, "span 2"); //$NON-NLS-1$
+		contentPanel.add(cbOnlyPay, "span 2");
 		contentPanel.add(chkEnabledMultiCurrency, "newline,span"); //$NON-NLS-1$
-		contentPanel.add(chkAllowToDelPrintedItem, "newline,span"); //$NON-NLS-1$
+		//contentPanel.add(chkAllowToDelPrintedItem, "newline,span"); //$NON-NLS-1$
 		contentPanel.add(chkAllowQuickMaintenance, "newline,span"); //$NON-NLS-1$
 		contentPanel.add(chkModifierCannotExceedMaxLimit, "newline,span"); //$NON-NLS-1$
 		//Diana
 		contentPanel.add(cbOpenPrice, "span 2"); //$NON-NLS-1$
-		contentPanel.add(cbPrintReceipt, "span 2"); //$NON-NLS-1$
+		//contentPanel.add(cbPrintReceipt, "span 2"); //$NON-NLS-1$
 		
 		contentPanel.add(new JLabel(Messages.getString("TerminalConfigurationView.17")), "newline"); //$NON-NLS-1$//$NON-NLS-2$
 		contentPanel.add(cbFonts, "span 2, wrap"); //$NON-NLS-1$
@@ -334,12 +339,13 @@ public class TerminalConfigurationView extends ConfigurationView {
 		TerminalConfig.setUseMobi(use_mobi.isSelected());
 		TerminalConfig.setGroupKitchenReceiptItems(cbGroupKitchenReceiptItems.isSelected());
 		TerminalConfig.set1Z1C(cb1Z1C.isSelected());
+		TerminalConfig.setOnlyPay(cbOnlyPay.isSelected());
 		TerminalConfig.setEnabledMultiCurrency(chkEnabledMultiCurrency.isSelected());
-		TerminalConfig.setAllowToDeletePrintedTicketItem(chkAllowToDelPrintedItem.isSelected());
+		//TerminalConfig.setAllowToDeletePrintedTicketItem(chkAllowToDelPrintedItem.isSelected());
 		TerminalConfig.setAllowQuickMaintenance(chkAllowQuickMaintenance.isSelected());
 		//Diana
 		TerminalConfig.setAllowOpenPrice(cbOpenPrice.isSelected());
-		TerminalConfig.setPrintReceipt(cbPrintReceipt.isSelected());
+		//TerminalConfig.setPrintReceipt(cbPrintReceipt.isSelected());
 		
 
 		//POSMessageDialog.showMessage(com.floreantpos.util.POSUtil.getFocusedWindow(), Messages.getString("TerminalConfigurationView.40")); //$NON-NLS-1$
@@ -373,6 +379,15 @@ public class TerminalConfigurationView extends ConfigurationView {
 		restaurant.setAllowModifierMaxExceed(chkModifierCannotExceedMaxLimit.isSelected());
 		RestaurantDAO.getInstance().saveOrUpdate(restaurant);
 
+		try {
+			File configFile = new File("floreantpos.config.properties"); //$NON-NLS-1$
+			if(configFile.exists()) {
+				File configFileBp = new File("floreantpos.config.properties.bp");
+				Files.copy(configFile.toPath(), configFileBp.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		restartPOS();
 		return true;
 	}
@@ -394,11 +409,11 @@ public class TerminalConfigurationView extends ConfigurationView {
 		cbShowBarCodeOnReceipt.setSelected(TerminalConfig.isShowBarcodeOnReceipt());
 		cbGroupKitchenReceiptItems.setSelected(TerminalConfig.isGroupKitchenReceiptItems());
 		chkEnabledMultiCurrency.setSelected(TerminalConfig.isEnabledMultiCurrency());
-		chkAllowToDelPrintedItem.setSelected(TerminalConfig.isAllowedToDeletePrintedTicketItem());
+		//chkAllowToDelPrintedItem.setSelected(TerminalConfig.isAllowedToDeletePrintedTicketItem());
 		chkAllowQuickMaintenance.setSelected(TerminalConfig.isAllowedQuickMaintenance());
 		//Diana
 		cbOpenPrice.setSelected(TerminalConfig.isAllowOpenPrice());
-		cbPrintReceipt.setSelected(TerminalConfig.isPrintReceipt());
+		//cbPrintReceipt.setSelected(TerminalConfig.isPrintReceipt());
 		
 		tfButtonHeight.setText("" + TerminalConfig.getTouchScreenButtonHeight()); //$NON-NLS-1$
 		tfScaleFactor.setText("" + TerminalConfig.getScreenScaleFactor()); //$NON-NLS-1$
@@ -408,11 +423,13 @@ public class TerminalConfigurationView extends ConfigurationView {
 		cbTranslatedName.setSelected(TerminalConfig.isUseTranslatedName());
 		cbChineseTranName.setSelected(TerminalConfig.isChineseTranName());
 		cbAutoLogoff.setSelected(TerminalConfig.isAutoLogoffEnable());
+		cbDineInTimeLimit.setSelected(TerminalConfig.isDineInTimeLimitEnable());
 		tfLogoffTime.setText("" + TerminalConfig.getAutoLogoffTime()); //$NON-NLS-1$
 		tfLogoffTime.setEnabled(cbAutoLogoff.isSelected());
 		tfDineInTimeLimit.setText("" + TerminalConfig.getDineInTimeLimit()); //$NON-NLS-1$
 		tfDineInTimeLimit.setEnabled(cbDineInTimeLimit.isSelected());
 		cb1Z1C.setSelected(TerminalConfig.is1Z1C());
+		cbOnlyPay.setSelected(TerminalConfig.isOnlyPay());
 		
 		initializeFontConfig();
 

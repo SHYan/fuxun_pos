@@ -160,9 +160,10 @@ public class DatabaseUtil {
 
 			Restaurant restaurant = new Restaurant();
 			restaurant.setId(Integer.valueOf(1));
-			restaurant.setName("Sample Restaurant");
-			restaurant.setAddressLine1("Somewhere");
-			restaurant.setTelephone("+0123456789");
+			restaurant.setName("FUXUN POS");
+			restaurant.setAddressLine1("Yangon");
+			restaurant.setTelephone("09264672001");
+			restaurant.setTicketFooterMessage("Have a nice day!");
 			RestaurantDAO.getInstance().saveOrUpdate(restaurant);
 
 			
@@ -206,62 +207,31 @@ public class DatabaseUtil {
 			//server.setTest(Arrays.asList(OrderType.BAR_TAB));
 			UserTypeDAO.getInstance().saveOrUpdate(server);
 
+			
+
+			UserDAO dao = new UserDAO();
+
+
+			User cashierUser = new User();
+			cashierUser.setUserId(999);
+			cashierUser.setSsn("999");
+			cashierUser.setPassword("9875");
+			cashierUser.setFirstName("Tablet");
+			cashierUser.setLastName("Default");
+			cashierUser.setType(cashier);
+			cashierUser.setActive(true);
+			dao.saveOrUpdate(cashierUser);
+
 			User administratorUser = new User();
-			administratorUser.setUserId(123);
-			administratorUser.setSsn("123");
+			administratorUser.setUserId(1000);
+			administratorUser.setSsn("1000");
 			administratorUser.setPassword("1111");
 			administratorUser.setFirstName("Admin");
 			administratorUser.setLastName("System");
 			administratorUser.setType(administrator);
 			administratorUser.setActive(true);
-
-			UserDAO dao = new UserDAO();
 			dao.saveOrUpdate(administratorUser);
 
-			User managerUser = new User();
-			managerUser.setUserId(124);
-			managerUser.setSsn("124");
-			managerUser.setPassword("2222");
-			managerUser.setFirstName("Lisa");
-			managerUser.setLastName("Carol");
-			managerUser.setType(manager);
-			managerUser.setActive(true);
-
-			dao.saveOrUpdate(managerUser);
-
-			User cashierUser = new User();
-			cashierUser.setUserId(125);
-			cashierUser.setSsn("125");
-			cashierUser.setPassword("3333");
-			cashierUser.setFirstName("Janet");
-			cashierUser.setLastName("Ann");
-			cashierUser.setType(cashier);
-			cashierUser.setActive(true);
-
-			dao.saveOrUpdate(cashierUser);
-
-			User serverUser = new User();
-			serverUser.setUserId(126);
-			serverUser.setSsn("126");
-			serverUser.setPassword("7777");
-			serverUser.setFirstName("John");
-			serverUser.setLastName("Doe");
-			serverUser.setType(server);
-			serverUser.setActive(true);
-
-			dao.saveOrUpdate(serverUser);
-
-			User driverUser = new User();
-			driverUser.setUserId(127);
-			driverUser.setSsn("127");
-			driverUser.setPassword("8888");
-			driverUser.setFirstName("Poll");
-			driverUser.setLastName("Brien");
-			driverUser.setType(server);
-			driverUser.setDriver(true);
-			driverUser.setActive(true);
-
-			dao.saveOrUpdate(driverUser);
 
 			OrderTypeDAO orderTypeDAO = new OrderTypeDAO();
 			OrderType orderType = new OrderType();
@@ -363,36 +333,14 @@ public class DatabaseUtil {
 			currency.setCode("USD");
 			currency.setSymbol("$");
 			currency.setExchangeRate(1.0);
+			CurrencyDAO.getInstance().save(currency);
+
+			currency = new Currency();
+			currency.setName("MMK");
+			currency.setCode("MMK");
+			currency.setSymbol("Ks");
+			currency.setExchangeRate(1.0);
 			currency.setMain(true);
-			CurrencyDAO.getInstance().save(currency);
-
-			currency = new Currency();
-			currency.setName("EUR");
-			currency.setCode("EUR");
-			currency.setSymbol("E");
-			currency.setExchangeRate(0.8);
-			CurrencyDAO.getInstance().save(currency);
-
-			currency = new Currency();
-			currency.setName("BRL");
-			currency.setCode("BRL");
-			currency.setSymbol("B");
-			currency.setExchangeRate(3.47);
-			CurrencyDAO.getInstance().save(currency);
-
-			currency = new Currency();
-			currency.setName("ARS");
-			currency.setCode("ARS");
-			currency.setSymbol("P");
-			currency.setExchangeRate(13.89);
-			CurrencyDAO.getInstance().save(currency);
-
-			currency = new Currency();
-			currency.setName("PYG");
-			currency.setCode("PYG");
-			currency.setSymbol("P");
-			currency.setExchangeRate(5639.78);
-			currency.setDecimalPlaces(0);
 			CurrencyDAO.getInstance().save(currency);
 
 			MenuItemSize menuItemSize = new MenuItemSize();

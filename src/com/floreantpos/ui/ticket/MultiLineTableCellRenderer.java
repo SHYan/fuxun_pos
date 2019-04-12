@@ -33,21 +33,22 @@ public class MultiLineTableCellRenderer extends JTextPane implements TableCellRe
 		setBorder(new EmptyBorder(10, 2, 10, 2));
 	}
 
+	//TicketTableRowHeight
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		int colWidth = table.getTableHeader().getColumnModel().getColumn(column).getWidth();
 		setSize(new Dimension(colWidth, 240));
-//Diana
-		/*int height = getPreferredSize().height;
-		height = height < 60 ? 60 : height;
+
+		int height = getPreferredSize().height;
+		height = height < 40 ? 40 : height;
 		height = PosUIManager.getSize(height);
 
 		if (table.getRowHeight() < height) {
 			table.setRowHeight(height);
 		}
-*/
+/*
 		int height = 30;
 		table.setRowHeight(height);	
-		
+*/		
 		if (isSelected) {
 			setBackground(table.getSelectionBackground());
 			setForeground(this, table.getSelectionForeground());

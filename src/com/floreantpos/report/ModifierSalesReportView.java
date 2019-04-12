@@ -49,6 +49,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JRViewer;
 
 import com.floreantpos.POSConstants;
+import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.model.mybatis.DailySalesReportM;
 import com.floreantpos.model.mybatis.ProductSalesM;
 import com.floreantpos.model.util.DateUtil;
@@ -157,7 +158,7 @@ public class ModifierSalesReportView extends JPanel {
 		map.put("reportTime", fullDateFormatter.format(new Date())); //$NON-NLS-1$
 		
 		
-
+		//map.put("NeedPaid", TerminalConfig.isOnlyPay());
 		map.put("startDate", fromDate); //$NON-NLS-1$
 		map.put("endDate", toDate); //$NON-NLS-1$
 		

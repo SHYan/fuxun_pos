@@ -102,15 +102,19 @@ public class UserPermission extends BaseUserPermission {
 	public final static UserPermission MERGE_TICKET = new UserPermission("Merge Ticket", "Merge_Ticket"); //$NON-NLS-1$ //$NON-NLS-2$
 	public final static UserPermission TRUNCATE_DATA = new UserPermission("Truncate Data", "Truncate_Data"); 	
 	
-	public final static UserPermission BILL_PAYMENT = new UserPermission("Bill Payment", "Bill_Payment"); 	
+	public final static UserPermission BILL_PAYMENT = new UserPermission("Bill Payment", "Bill_Payment");
+	public final static UserPermission RETURN_ITEM = new UserPermission("Return Item", "Return_Item");
+	public final static UserPermission REPORT_PRODUCT_RETURN = new UserPermission("Product Return Report", "Report_Product_Return");
+	public final static UserPermission REPORT_ORDER_STATUS = new UserPermission("Order Status Report", "Report_Order_Status");
 	
 	//public final static UserPermission VIEW_USER_LIST = new UserPermission("View User List");
 	//public final static UserPermission GRATUITY_ADMINISTRATION = new UserPermission("Gratuity Administration");
 	//public final static UserPermission VIEW_DRAWER_PULL_REPORT = new UserPermission("View Drawer Pull Report");
-	public final static UserPermission[] permissions = new UserPermission[] { VIEW_ALL_OPEN_TICKETS, CREATE_TICKET, VOID_TICKET, VIEW_BACK_OFFICE,
-		AUTHORIZE_TICKETS, SPLIT_TICKET, SETTLE_TICKET, REOPEN_TICKET, PAY_OUT, DRAWER_ASSIGNMENT, DRAWER_PULL, VIEW_EXPLORERS, VIEW_REPORTS, SHUT_DOWN,
-		ADD_DISCOUNT, REFUND, PERFORM_MANAGER_TASK, PERFORM_ADMINISTRATIVE_TASK, MANAGE_TABLE_LAYOUT, TABLE_BOOKING, MODIFY_PRINTED_TICKET,
-		TRANSFER_TICKET, KITCHEN_DISPLAY, ALL_FUNCTIONS, HOLD_TICKET, VIEW_ALL_CLOSE_TICKETS, QUICK_MAINTENANCE, MERGE_TICKET, VIEW_INVENTORY,TRUNCATE_DATA, BILL_PAYMENT};
+	public final static UserPermission[] permissions = new UserPermission[] { VIEW_ALL_OPEN_TICKETS, VIEW_ALL_CLOSE_TICKETS, CREATE_TICKET, VOID_TICKET, RETURN_ITEM,
+		AUTHORIZE_TICKETS, SPLIT_TICKET, MERGE_TICKET, SETTLE_TICKET, REOPEN_TICKET, TRANSFER_TICKET, MODIFY_PRINTED_TICKET, HOLD_TICKET, BILL_PAYMENT,
+		VIEW_BACK_OFFICE, PAY_OUT, DRAWER_ASSIGNMENT, DRAWER_PULL, VIEW_EXPLORERS, VIEW_REPORTS, REPORT_PRODUCT_RETURN, REPORT_ORDER_STATUS, ADD_DISCOUNT, REFUND, PERFORM_MANAGER_TASK, 
+		PERFORM_ADMINISTRATIVE_TASK, MANAGE_TABLE_LAYOUT, TABLE_BOOKING, KITCHEN_DISPLAY, ALL_FUNCTIONS, QUICK_MAINTENANCE, VIEW_INVENTORY,TRUNCATE_DATA,
+		SHUT_DOWN};
 	/*public final static UserPermission[] permissions = new UserPermission[] { VIEW_ALL_OPEN_TICKETS, CREATE_TICKET, VOID_TICKET, VIEW_BACK_OFFICE,
 			AUTHORIZE_TICKETS, SPLIT_TICKET, SETTLE_TICKET, REOPEN_TICKET, PAY_OUT, DRAWER_ASSIGNMENT, DRAWER_PULL, VIEW_EXPLORERS, VIEW_REPORTS, SHUT_DOWN,
 			ADD_DISCOUNT, REFUND, PERFORM_MANAGER_TASK, PERFORM_ADMINISTRATIVE_TASK, MANAGE_TABLE_LAYOUT, TABLE_BOOKING, MODIFY_PRINTED_TICKET,

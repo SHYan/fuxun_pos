@@ -42,14 +42,14 @@ public class NumberUtil {
 		
 		
 		BigDecimal bd = new BigDecimal(value);
-		bd = bd.setScale(0, RoundingMode.HALF_UP);
+		bd = bd.setScale(0, RoundingMode.DOWN);//RoundingMode.HALF_UP);
 		return bd.doubleValue();
 		
 	}
 
 	public static double roundToThreeDigit(double value) {
 		BigDecimal bd = new BigDecimal(value);
-		bd = bd.setScale(0, RoundingMode.HALF_UP);
+		bd = bd.setScale(0, RoundingMode.DOWN);
 		return bd.doubleValue();
 	}
 
@@ -123,7 +123,7 @@ public class NumberUtil {
 		NumberFormat format = DecimalFormat.getInstance();
 		format.setMinimumFractionDigits(decimalPlaces);
 		format.setMaximumFractionDigits(decimalPlaces);
-		format.setRoundingMode(RoundingMode.HALF_UP);
+		format.setRoundingMode(RoundingMode.DOWN);
 		return format.format(value);
 	}
 }

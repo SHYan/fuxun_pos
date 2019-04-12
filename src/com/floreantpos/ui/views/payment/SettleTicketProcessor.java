@@ -86,7 +86,8 @@ public class SettleTicketProcessor implements CardInputListener {
 			POSMessageDialog.showError(POSUtil.getFocusedWindow(), com.floreantpos.POSConstants.TICKET_IS_EMPTY_);
 			return;
 		}
-		/*double diff = (Double)tenderAmount - ticket.getTotalAmount();
+		/*
+		double diff = (Double)tenderAmount - ticket.getTotalAmount();
 		if(diff >= 0)	{
 			ticket.setPaid(true);
 			ticket.setClosed(true);
@@ -96,8 +97,8 @@ public class SettleTicketProcessor implements CardInputListener {
 		}
 		else{
 			//ticket.setTotalAmount(ticket.getTotalAmount() - (Double)tenderAmount);
-		}*/
-
+		}
+		 */
 		OrderController.saveOrder(ticket);
 
 		/*
